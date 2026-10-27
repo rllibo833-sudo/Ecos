@@ -34,6 +34,7 @@
 5. [Bioma, iklim, air, dan tanah](./05-bioma-iklim-air-tanah.md)
 6. [Peta, orientasi, dan kebebasan modifikasi](./06-peta-dan-modifikasi.md)
 7. [Kehidupan sosial dan jaminan warga kawasan masjid](./07-kehidupan-sosial-dan-jaminan-warga.md)
+8. [Atlas administratif Negara ECOS](./08-atlas-administratif-negara-ecos.md)
 
 ## Aturan pengembangan
 
