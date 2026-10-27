@@ -27,21 +27,22 @@ Kawasan ini merupakan ruang utama protagonis belajar beradaptasi sambil menjalan
 
 ## Prinsip hukum, solidaritas, dan jaminan kebutuhan warga
 
-**Keputusan pemilik proyek:** seluruh wilayah kawasan masjid menerapkan hukum berbasis agama. Masjid menjadi sentral kawasan. Arah sosial yang dimaksud pemilik proyek menekankan **kewajiban saling membantu dan jaminan kebutuhan warga**.
+**Kerangka hukum:** hukum negara ECOS berlaku secara nasional. Di kawasan masjid, kehidupan dan pengelolaan internal berlandaskan agama. Masjid menjadi sentral spiritual dan pusat ekonomi berbasis agama. Arah sosial kawasan menekankan **kewajiban saling membantu dan jaminan kebutuhan warga**; prinsip kawasan ini tidak otomatis berlaku sebagai aturan internal bagi seluruh wilayah negara ECOS.
 
 Prinsip ini bukan sekadar slogan atau latar dekoratif. Inilah salah satu alasan utama protagonis dapat belajar dan beradaptasi di lingkungan kawasan masjid. Ia tidak harus menghadapi setiap kesulitan sendirian: masyarakat memiliki tanggung jawab untuk membantu warga yang membutuhkan, dan kebutuhan dasar warga menjadi perhatian bersama.
 
 ### Makna dalam kehidupan sehari-hari
 
 - **Saling membantu:** warga saling mendukung ketika seseorang kesulitan, membutuhkan pengetahuan, menghadapi masalah pekerjaan, atau sedang berusaha pulih dari kegagalan.
-- **Jaminan kebutuhan:** kawasan memiliki prinsip bahwa kebutuhan warga harus diperhatikan dan warga yang sedang kesulitan tidak dibiarkan tanpa bantuan. Bentuk, cakupan, dan cara menjaminnya masih perlu dirancang.
+- **Bantuan masjid:** warga yang kekurangan dana dapat dibantu masjid. Warga tetap bebas menjadi kaya atau miskin; sentralitas masjid tidak menghapus kepemilikan pribadi.
+- **Kepemilikan dan kerja:** lahan tani/ternak milik pribadi, alat berat dimiliki bersama, dan tenaga komunitas dipanggil saat dibutuhkan melalui kerja sama berbasis saling membutuhkan serta sistem bagi hasil.
 - **Belajar dan beradaptasi:** protagonis dapat memperoleh bimbingan, kesempatan berlatih, pengetahuan praktis, dan bantuan untuk menjalankan peran sebagai peternak dan pekebun. Dukungan tidak harus berarti semua pekerjaan diselesaikan untuknya; warga dapat membantunya sampai ia makin mampu berdiri sendiri.
 - **Martabat dan tanggung jawab:** menerima bantuan tidak membuat protagonis dianggap rendah. Ia tetap memiliki kesempatan untuk berkontribusi, belajar, dan kelak membantu orang lain sesuai kemampuannya.
 - **Kehidupan bersama:** masjid menjadi pusat kawasan, sedangkan kehidupan sosial juga berlangsung di permukiman, kebun, peternakan, tempat kerja, dan ruang pertemuan warga.
 
 ### Batas yang belum diputuskan
 
-Belum ditetapkan kebutuhan apa saja yang dijamin, siapa yang mengelola bantuan, bagaimana sumber daya dikumpulkan dan dibagikan, atau bagaimana warga meminta bantuan. Rincian agama, lembaga yang menafsirkan dan menerapkan hukum, proses penyelesaian sengketa, serta perlindungan hak warga juga tetap terbuka.
+Belum ditetapkan sumber dana dan proses bantuan, tata kelola alat berat dan bagi hasil, serta prosedur mediasi di Ruang Komunitas. Hukum negara berlaku secara nasional; rincian aturan internal kawasan berbasis agama masih dapat dikembangkan tanpa mengaburkan perbedaan tingkat hukum tersebut.
 
 Jangan menyimpulkan bahwa semua aset dimiliki bersama, semua usaha dikelola negara, atau setiap warga selalu bersikap baik. Sistem sosial ini menetapkan kewajiban dan tujuan bersama, tetapi manusia tetap dapat berbeda pendapat, keliru, lalai, atau gagal memenuhi nilai yang mereka anut. Konflik semacam itu dapat menjadi bagian dari lore apabila dikembangkan secara konsisten, bukan dianggap sebagai fakta yang sudah terjadi.
 
@@ -76,6 +77,9 @@ Juailin menjadi latar asal protagonis dan tempat ia mengalami arus informasi yan
 - [x] Pada peta konseptual berbentuk kotak, kawasan masjid berada di sisi kanan bawah.
 - [x] Juailin adalah ecosentral dengan arus informasi cepat dan merupakan asal protagonis.
 - [x] Protagonis berperan sebagai peternak dan pekebun.
+- [x] Hukum negara ECOS berlaku secara nasional; kehidupan dan pengelolaan internal kawasan masjid berlandaskan agama.
+- [x] Masjid membantu warga yang kekurangan dana; lahan tani/ternak milik pribadi, alat berat bersama, dan kerja komunitas menggunakan sistem bagi hasil.
+- [x] Konflik kawasan dimediasi di Ruang Komunitas dengan sumber agama sebagai acuan netral dalam kerangka hukum negara ECOS.
 
 ## Hal yang masih terbuka
 
