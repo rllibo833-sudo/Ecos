@@ -1,17 +1,22 @@
 # Premis Dunia
 
-**Status: Ditetapkan secara konseptual; belum menjadi canon final sampai pemilik proyek meninjau.**
+**Status: Premis konseptual diperbarui berdasarkan putusan pemilik proyek; detail yang belum diputuskan tetap terbuka.**
 
-ECOS adalah game open-world sci-fi dan teknologi yang mengikuti seorang pemuda yang belum memahami teknologi ketika kehidupan di pedesaan dan perkotaan berubah akibat kemajuan teknologi serta arus informasi yang semakin cepat. Ia belajar memahami layanan dan sistem yang memengaruhi kesehariannya, membedakan informasi berguna dari informasi menyesatkan, dan menentukan sikap melalui pengamatan, percakapan, percobaan, kegagalan, bantuan orang lain, serta pilihan yang memiliki konsekuensi. Dunia tetap membumi dan berpusat pada manusia; teknologi maju tidak otomatis membuatnya cyberpunk.
+ECOS adalah game open-world sci-fi dan teknologi tentang seorang pemuda yang berasal dari **Juailin**, ecosentral tempat sistem informasi bergerak sangat cepat, tetapi ia sendiri sangat kesulitan beradaptasi dengan arus informasi dan kemajuan teknologi. Untuk belajar beradaptasi, ia menjalani kehidupan sebagai **peternak dan pekebun** di kawasan masjid seluas **1.000 hektare**. Kawasan ini menjadi ruang utama pembelajaran melalui pekerjaan, interaksi dengan masyarakat, pengamatan, percobaan, kegagalan, dan keputusan sehari-hari. Sementara itu, kawasan masjid merupakan bagian dari target wilayah ECOS seluas **10.000 hektare**, bukan keseluruhan wilayah. Dunia tetap membumi dan berpusat pada manusia; teknologi maju tidak otomatis menjadikannya cyberpunk.
 
-Kawasan masjid seluas **1.000 hektare** merupakan bagian penting dari target wilayah ECOS seluas **10.000 hektare**, bukan keseluruhan dunia. Angka dan hubungan konseptual ini bersumber dari dokumen fondasi; geometri, pembagian lahan, dan peta belum ditetapkan.
+## Putusan pemilik proyek
 
-## Keputusan dan batas
+- [x] Asal kota protagonis ditetapkan sebagai **Juailin**, sebuah ecosentral dengan arus informasi sangat cepat.
+- [x] Kesulitan utama protagonis ditetapkan sebagai kesulitan beradaptasi dengan teknologi dan arus informasi.
+- [x] Kawasan masjid 1.000 hektare ditetapkan sebagai ruang utama protagonis belajar beradaptasi melalui peran sebagai peternak dan pekebun.
 
-- [x] Premis satu paragraf menyatukan protagonis, perubahan teknologi, arus informasi, serta latar desa dan kota.
-- [x] Skala kawasan masjid 1.000 ha dibedakan dari target wilayah ECOS 10.000 ha.
-- [x] Premis dibandingkan dengan [Fondasi Konsep Dunia dan Narasi ECOS](../../referensi/FONDASI-KONSEP-DUNIA-DAN-NARASI-ECOS.md); peta, geometri, bioma, dan detail cerita tetap terbuka.
+## Batas yang masih terbuka
 
-## Hal yang belum diputuskan
+- Peristiwa pemicu spesifik belum ditetapkan.
+- Geometri, pembagian zona, batas dan hubungan spasial Juailin dengan kawasan masjid belum dipetakan secara rinci.
+- Empat bioma lama masih perlu dievaluasi; belum dinyatakan dipertahankan atau dihapus.
+- Nama dan isi 25 legenda belum ditambahkan karena memerlukan sumber yang benar.
 
-Asal kampung/kota protagonis, peristiwa pemicu spesifik, peta final, empat bioma lama, dan lore 25 legenda tidak ditambahkan sebagai fakta karena belum dikonfirmasi.
+## Acuan
+
+Premis ini memperbarui [Fondasi Konsep Dunia dan Narasi ECOS](../../referensi/FONDASI-KONSEP-DUNIA-DAN-NARASI-ECOS.md) berdasarkan putusan terbaru pemilik proyek. Detail yang tidak diberikan tidak dikarang.
