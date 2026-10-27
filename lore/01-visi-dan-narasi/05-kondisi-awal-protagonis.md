@@ -1,11 +1,24 @@
 # Kondisi Awal Protagonis
 
-Mendefinisikan titik awal pemuda yang beradaptasi dengan dunia teknologi.
+## Titik awal
 
-> Status: **Belum dikerjakan / belum diverifikasi**. Checklist ini memecah satu item roadmap menjadi tiga langkah kecil. Centang setelah hasilnya benar-benar ditulis dan ditinjau.
+Protagonis adalah seorang pemuda yang belum memahami teknologi yang semakin memengaruhi kehidupan. Ketidaktahuan ini adalah kesenjangan pengalaman dan pengetahuan, bukan bukti bahwa ia bodoh, malas, atau tidak mampu belajar. Fondasi lore belum menetapkan nama, usia pasti, keluarga, pekerjaan, tempat tinggal, atau riwayat pribadi; detail tersebut tetap terbuka.
 
-## Checklist turunan
+## Pengetahuan dan pembelajaran
 
-- [ ] Tentukan latar kehidupan, lingkungan sosial, kebutuhan sehari-hari, dan alasan ia belum memahami teknologi tanpa merendahkan kecerdasannya.
-- [ ] Pisahkan hal yang ia ketahui, belum ketahui, salah pahami, dan dapat pelajari dari orang atau sumber lain.
-- [ ] Tetapkan kemampuan awal, keterbatasan, hubungan penting, dan keadaan yang membuat pemain mudah memahami posisinya.
+Pada awal cerita, ia:
+- dapat mengamati keadaan dan bertanya kepada orang lain;
+- belum tentu memahami istilah, antarmuka, atau alasan suatu sistem menghasilkan informasi tertentu;
+- bisa salah menafsirkan informasi ketika konteksnya kurang;
+- dapat belajar melalui percakapan, bukti, percobaan, kegagalan, dan bantuan;
+- tidak harus menjadi ahli teknologi untuk mengambil keputusan yang lebih baik.
+
+## Kemampuan dan keterbatasan
+
+Kemampuan awal sebaiknya berupa kecakapan hidup umum dan kemauan mencari jawaban. Keterbatasannya mencakup pengetahuan teknologi dan kemampuan menilai arus informasi yang belum matang. Hubungan penting, keterampilan spesifik, sumber daya awal, dan lokasi pembuka belum diputuskan.
+
+## Checklist
+
+- [x] Kesenjangan pengetahuan didefinisikan tanpa merendahkan kecerdasan tokoh; detail biografi yang belum ada tidak dikarang.
+- [x] Hal yang diketahui, belum diketahui, berpotensi disalahpahami, dan dapat dipelajari dipisahkan.
+- [x] Kemampuan awal dan keterbatasan naratif ditetapkan; nama, hubungan, lokasi, dan keterampilan spesifik tetap terbuka.
