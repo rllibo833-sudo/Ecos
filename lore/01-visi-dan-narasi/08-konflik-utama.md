@@ -1,11 +1,23 @@
 # Konflik Utama
 
-Mendefinisikan hambatan yang membuat perjalanan protagonis bermakna.
+## Konflik inti
 
-> Status: **Belum dikerjakan / belum diverifikasi**. Checklist ini memecah satu item roadmap menjadi tiga langkah kecil. Centang setelah hasilnya benar-benar ditulis dan ditinjau.
+Konflik utama ECOS bukan manusia melawan teknologi secara sederhana. Konfliknya adalah seorang pemuda yang pengetahuan teknologinya terbatas harus membuat keputusan dalam dunia tempat teknologi dan arus informasi berubah cepat, sementara bukti, pemahaman, sumber daya, dan kepercayaan manusia tidak selalu sejalan.
 
-## Checklist turunan
+## Lapisan konflik
 
-- [ ] Tentukan konflik inti antara keterbatasan pemahaman protagonis dan dunia yang berubah cepat, bukan konflik generik melawan teknologi.
-- [ ] Petakan benturan kepentingan, informasi yang bertentangan, keterbatasan sumber daya, atau persoalan kepercayaan yang relevan.
-- [ ] Pastikan konflik memiliki beberapa pendekatan yang masuk akal dan tidak diselesaikan otomatis oleh satu AI atau satu sistem.
+- **Pribadi:** keterbatasan pengetahuan, rasa ragu, dan risiko salah mengambil keputusan.
+- **Informasi:** klaim yang tidak lengkap, sumber yang berbeda, dan konteks yang hilang.
+- **Sosial:** warga memiliki pengalaman, kepentingan, dan tingkat kepercayaan yang berbeda.
+- **Praktis:** waktu, akses layanan, alat, dan sumber daya membatasi pilihan.
+- **Teknologi:** sistem dapat membantu tetapi mempunyai batas, risiko, dan kemungkinan kesalahan.
+
+## Penyelesaian
+
+Konflik tidak boleh otomatis selesai hanya karena AI memberi jawaban atau satu sistem dianggap serba tahu. Pemain perlu memahami konteks, memeriksa bukti yang tersedia, meminta bantuan bila perlu, dan mempertimbangkan konsekuensi. Beberapa persoalan boleh tetap memiliki ketidakpastian.
+
+## Checklist
+
+- [x] Konflik inti berpusat pada adaptasi dan pengambilan keputusan, bukan perang generik melawan teknologi.
+- [x] Lapisan konflik pribadi, informasi, sosial, praktis, dan teknologi dipetakan.
+- [x] Berbagai pendekatan dan keterbatasan solusi otomatis dinyatakan; konflik misi spesifik tetap terbuka.
