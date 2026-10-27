@@ -1,73 +1,52 @@
 # Atlas Administratif Negara ECOS
 
-**Status: rancangan kanon nama dan pembagian wilayah — ditetapkan sebagai dasar kerja, dapat direvisi jika ditemukan benturan dengan lore yang sudah pasti.**
+**Sumber utama:** [Kanon Induk Dunia ECOS](./00-kanon-induk-dunia-ecos.md). Jika dokumen ini berbeda dari kanon induk, kanon induk menjadi acuan sampai pembaruan diselaraskan.
 
-Dokumen ini menjadi satu-satunya sumber utama untuk nama negara, provinsi, kota, dan permukiman ECOS. Dokumen lain sebaiknya merujuk ke sini, bukan membuat daftar wilayah tandingan.
+## Negara dan skala
 
-## 1. Negara
+ECOS adalah negara fiksi dengan luas naratif sekitar **1,7 juta km²** (kurang lebih sepersepuluh luas Rusia). Wilayahnya tersebar dan tidak harus membentuk satu daratan menyatu. **Wilayah inti offline 10.000 hektare** adalah cakupan awal untuk rancangan permainan, bukan ukuran total negara. Kawasan masjid **1.000 hektare** termasuk di dalam wilayah inti tersebut.
 
-Nama resmi: **Negara ECOS**.
+## Provinsi dan pusat administratif
 
-ECOS adalah negara fiksi yang memiliki beberapa provinsi dan kota. Wilayahnya dapat terdiri dari kawasan-kawasan yang terpisah; jangan menganggap seluruh wilayah ECOS sebagai satu daratan yang menyatu.
-
-Untuk rancangan awal offline, luas konseptual ECOS tetap **10.000 hektare**. Angka ini merupakan target rancangan awal, bukan ukuran final semua kemungkinan ekspansi dunia.
-
-Hukum negara ECOS berlaku secara nasional. Kawasan masjid memiliki landasan agama bagi kehidupan dan pengelolaan internalnya, di dalam kerangka hukum negara.
-
-## 2. Pembagian wilayah administratif
-
-Untuk memudahkan konsistensi, rancangan awal menggunakan **4 provinsi**. Nama dan ciri di bawah ditetapkan sebagai nama kerja kanon ECOS, kecuali detail yang secara eksplisit masih disebut sebagai rancangan.
-
-| Provinsi | Karakter utama | Kota/permukiman utama |
+| Provinsi | Karakter utama | Pusat administratif |
 |---|---|---|
-| **Provinsi Arunika** | Wilayah perkotaan, pusat layanan, pendidikan, dan arus informasi | Kota Juailin |
-| **Provinsi Wanasera** | Pertanian, peternakan, kebun, dan permukiman | Kota Madiraya; Permukiman Lembah Sari |
-| **Provinsi Tirta Nusa** | Sungai, danau, perikanan, serta jalur perdagangan air | Kota Telukara; Kota Ranujaya |
-| **Provinsi Giriwana** | Dataran tinggi, hutan, dan kegiatan sumber daya alam | Kota Darmawangi; Permukiman Puncak Arga |
+| **Arunika** | pemerintahan, layanan, pendidikan, komunikasi, kawasan urban | **Nawasena** — ibu kota nasional dan pusat provinsi |
+| **Wanasera** | pertanian, peternakan, kebun, sabana dan logistik pangan | **Madiraya** |
+| **Tirta Nusa** | pesisir, sungai, danau, pelabuhan, perikanan dan perdagangan air | **Telukara** |
+| **Giriwana** | pegunungan, hutan, lembah, dataran tinggi dan kawasan bersalju | **Darmawangi** |
 
-Nama-nama tersebut adalah ciptaan untuk dunia fiksi ECOS, bukan rujukan ke tempat nyata. Karakter provinsi memberi kerangka awal dan belum menetapkan bioma final, bentuk batas, ukuran, populasi, atau peta berskala.
+Wilayah provinsi dapat terdiri dari beberapa kawasan terpisah yang secara administratif tetap menjadi bagian provinsi. Estimasi luas dan populasi ada di kanon induk dan merupakan baseline worldbuilding.
 
-## 3. Juailin
+## Kota dan permukiman yang sudah dinamai
 
-**Juailin** tetap merupakan kota kecil asal protagonis dan sebuah **ecosentral**, yaitu tempat dengan sistem serta arus informasi yang sangat cepat. Protagonis kesulitan mengikuti laju informasi dan perkembangan teknologi; ini pengalaman pribadinya, bukan sifat semua warga Juailin.
+- **Nawasena:** ibu kota nasional.
+- **Juailin:** kota kecil asal protagonis, ecosentral dengan arus informasi sangat cepat.
+- **Madiraya:** kota pertanian dan logistik.
+- **Lembah Sari:** permukiman pertanian.
+- **Telukara:** kota pelabuhan.
+- **Ranujaya:** kota danau/air tawar.
+- **Darmawangi:** pusat layanan dataran tinggi.
+- **Puncak Arga:** permukiman dataran tinggi dengan musim dingin berat.
 
-Dalam rancangan administratif ini, Juailin ditempatkan di Provinsi Arunika. Penempatan administratif ini tidak mengubah keputusan spasial bahwa Juailin adalah permukiman terpencil di salah satu sudut kawasan masjid.
+Nama di atas adalah nama fiksi dalam kanon kerja. Nama dan lokasi tambahan harus ditambahkan ke atlas setelah hubungan geografisnya jelas.
 
-## 4. Kawasan Masjid
+## Kawasan masjid
 
-Kawasan masjid seluas **1.000 hektare** adalah kawasan gabungan yang mencakup beberapa kota kecil dan permukiman. Kawasan ini berada pada sisi kanan bawah peta konseptual berbentuk kotak; masjid menjadi titik sentralnya; Juailin berada terpencil di salah satu sudut kawasan.
+Kawasan masjid seluas **1.000 hektare** adalah kawasan khusus yang seluruhnya berada di Provinsi Arunika dan di dalam wilayah inti offline 10.000 hektare. Kawasan ini mencakup beberapa kota kecil dan permukiman, termasuk Juailin; bukan provinsi tersendiri, bukan hanya bangunan masjid, dan bukan sinonim bagi Juailin.
 
-Untuk menghindari konflik administrasi, kawasan masjid ditetapkan sebagai **kawasan khusus yang seluruhnya berada di Provinsi Arunika**. Kawasan ini mencakup beberapa kota kecil dan permukiman, termasuk Juailin; kawasan khusus tersebut bukan provinsi baru, bukan sinonim bagi Juailin, dan tidak berarti seluruh Provinsi Arunika termasuk kawasan masjid. Nama tempat di dalam kawasan harus mengacu pada atlas ini dan dokumen geografi terkait, bukan ditambah sembarangan.
+Pada peta konseptual berbentuk kotak, kawasan masjid berada di sisi kanan bawah, masjid menjadi titik pusat, dan Juailin berada terpencil di salah satu sudut kawasan. Sudut tepatnya belum ditentukan.
 
-### Prinsip kehidupan kawasan masjid
+## Hukum dan kehidupan komunitas
 
 - Hukum negara ECOS berlaku secara nasional.
-- Kehidupan dan pengelolaan internal kawasan masjid berlandaskan agama.
-- Masjid menjadi sentral spiritual dan pusat ekonomi berbasis agama; warga yang kekurangan dana dapat dibantu masjid.
-- Warga bebas menjadi kaya ataupun miskin dan tetap dapat memiliki rumah, kendaraan, lahan, serta usaha sendiri.
-- Lahan pertanian dan peternakan adalah milik pribadi; alat berat dimiliki bersama.
-- Tenaga komunitas dipanggil saat dibutuhkan atas dasar saling membutuhkan, bukan paksaan, dengan sistem bagi hasil.
-- Konflik kawasan dimediasi di Ruang Komunitas dengan sumber agama sebagai acuan netral, tetap dalam kerangka hukum negara ECOS.
-- Warga dapat mengakses hal-hal yang disediakan kawasan untuk belajar dan beradaptasi.
-- Kehidupan tetap tidak sempurna: kondisi ekonomi naik turun, drama sosial dan sindiran terjadi, serta bahaya alam tetap ada.
+- Kawasan masjid menggunakan prinsip agama untuk kehidupan dan pengelolaan internalnya, tetap di dalam kerangka hukum nasional dan perlindungan hak warga.
+- Masjid menjadi pusat spiritual dan ekonomi berbasis agama serta membantu warga yang kekurangan dana.
+- Warga dapat kaya atau miskin dan memiliki rumah, kendaraan, lahan, serta usaha sendiri.
+- Lahan pertanian/peternakan bersifat pribadi; alat berat dimiliki bersama.
+- Tenaga komunitas dilakukan berdasarkan kebutuhan dan kesepakatan, bukan paksaan, dengan sistem bagi hasil.
+- Konflik dapat dimediasi di Ruang Komunitas dengan sumber agama sebagai rujukan netral. Mediasi tidak menggantikan hukum nasional atau akses ke pengadilan.
+- Masyarakat tidak utopis: sindiran, persaingan, kesulitan ekonomi, kegagalan manusia, dan bencana tetap mungkin terjadi.
 
-## 5. Nama wilayah lain dan aturan penambahan
+## Rujukan konsistensi
 
-Nama berikut sudah ditetapkan sebagai nama kerja awal:
-- Negara: **Negara ECOS**
-- Provinsi: **Arunika, Wanasera, Tirta Nusa, Giriwana**
-- Kota: **Juailin, Madiraya, Telukara, Ranujaya, Darmawangi**
-- Permukiman: **Lembah Sari, Puncak Arga**
-
-Nama baru boleh ditambahkan ketika ada kebutuhan cerita atau geografi yang jelas. Sebelum menambah nama, periksa daftar ini dan dokumen geografi terkait agar tidak membuat dua nama untuk tempat yang sama atau membuat wilayah yang saling bertentangan.
-
-## 6. Hal yang sengaja belum ditentukan
-
-- Bentuk dan koordinat batas provinsi serta wilayah yang terpisah.
-- Apakah setiap provinsi berada pada satu daratan atau beberapa kawasan terpisah.
-- Populasi, luas setiap provinsi/kota, ibu kota negara, struktur pemerintah, dan sejarah politik.
-- Empat bioma lama dan apakah semuanya akan dipertahankan.
-- Nama serta isi 25 legenda yang belum diverifikasi.
-- Detail peta, jaringan jalan, jarak perjalanan, dan lokasi fasilitas.
-
-Rincian tersebut tidak perlu ditentukan sekaligus. Nama dan kerangka wilayah ini cukup menjadi acuan awal untuk menjaga konsistensi saat lore dikembangkan.
+Untuk geografi makro, luas dan populasi, pemerintahan, sejarah politik, transportasi, bioma, dan status legenda, gunakan [Kanon Induk Dunia ECOS](./00-kanon-induk-dunia-ecos.md).
