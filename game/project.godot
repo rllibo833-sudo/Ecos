@@ -1,0 +1,15 @@
+config_version=5
+
+[application]
+config/name="ECOS Offline Prototype"
+run/main_scene="res://scenes/studio.tscn"
+
+[display]
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.48, 0.68, 0.88, 1)
