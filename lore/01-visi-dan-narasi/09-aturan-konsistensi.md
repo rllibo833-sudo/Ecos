@@ -55,6 +55,10 @@ Menulis nama proyek atau fitur dalam dokumen tidak membuktikan integrasi teknisn
 
 ## Aturan dunia yang sudah ditetapkan
 
+- ECOS adalah negara fiksi; hukum negara ECOS berlaku secara nasional.
+- Kawasan masjid memiliki landasan agama untuk kehidupan dan pengelolaan internalnya; hal ini tidak berarti aturan internal kawasan otomatis berlaku di seluruh negara.
+- Masjid menjadi pusat ekonomi berbasis agama dan membantu warga yang kekurangan dana; kepemilikan pribadi tetap ada, alat berat dimiliki bersama, dan kerja komunitas memakai sistem bagi hasil.
+- Konflik kawasan masjid dimediasi di Ruang Komunitas dengan sumber agama sebagai acuan netral, tetap dalam kerangka hukum negara ECOS.
 - ECOS menggabungkan lingkungan pedesaan dan perkotaan.
 - Cyberpunk bukan genre maupun arah estetika ECOS.
 - Kawasan masjid 1.000 hektare berada di dalam wilayah konseptual ECOS seluas 10.000 hektare. Geometri dan pembagian peta belum final.
