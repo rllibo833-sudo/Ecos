@@ -1,24 +1,37 @@
 # ECOS — Lore dan Worldbuilding
 
-ECOS dikembangkan melalui lore yang saling terhubung: cerita utama, geografi, masyarakat, ekonomi, teknologi, misteri, dan sejarah. **Visi dan Narasi** menetapkan fondasi protagonis dan alur cerita; **Kanon Induk Dunia ECOS** menjadi sumber utama keputusan dunia dan geografi.
+ECOS dibangun sebagai lore yang saling terhubung: narasi, geografi, karakter, ekonomi, teknologi, legenda, dan cerita. **Visi dan Narasi** menetapkan fondasi protagonis; **Kanon Induk Dunia ECOS** menetapkan acuan makro dunia dan geografi.
 
-## Aturan kerja
+## Status pekerjaan
 
-- Bedakan kanon eksplisit pemilik proyek, keputusan worldbuilding yang ditetapkan, usulan, pertanyaan terbuka, dan implementasi terverifikasi.
-- Dokumen konseptual tidak membuktikan bahwa game atau fitur telah dibuat.
-- Jangan mengubah fondasi protagonis: asal Juailin, peran peternak/pekebun, kesulitan adaptasi, sindiran, kehilangan dan rasa suka yang belum diungkapkan.
-- Hukum ECOS berlaku nasional; prinsip agama kawasan masjid berlaku untuk kehidupan internalnya di dalam kerangka hukum negara.
-- Empat bioma lama dipertahankan dan bioma tambahan dicatat dalam kanon induk.
-- Wilayah nasional dalam lore sekitar 1,7 juta km²; wilayah inti offline 10.000 hektare; kawasan masjid 1.000 hektare berada di dalam wilayah inti.
-- Jangan menganggap 25 legenda telah terverifikasi sebelum daftar lengkap dibuat dan diperiksa silang.
+- Visi dan Narasi: 11 dokumen fondasi serta alur utama tersedia.
+- Dunia dan Geografi: kanon makro, atlas, bioma, skala, dan hubungan kawasan diselaraskan.
+- Karakter dan Komunitas: kerangka fungsi karakter pendukung dan prinsip relasi tersedia.
+- Ekonomi dan Pekerjaan: ekonomi nasional, kawasan masjid, dan konflik kerja sudah dirumuskan.
+- Teknologi dan Sistem: prinsip teknologi dunia diselaraskan; dokumen proyek individual tetap perlu audit integrasi dan relevansi.
+- Misteri dan Legenda: katalog awal 25 legenda kawasan masjid tersedia sebagai cerita yang belum otomatis terverifikasi.
+- Cerita: struktur empat babak dan cabang akhir emosional tersedia.
+- Audit dan Keputusan: masih perlu log keputusan dan audit tautan lintas seluruh dokumen.
 
-## Fondasi lore
+## Aturan kanon
 
-1. [Visi dan Narasi](lore/01-visi-dan-narasi/ROADMAP.md) — premis, protagonis, konflik, dan alur utama.
-2. [Dunia dan Geografi](lore/02-dunia-dan-geografi/README.md) — [Kanon Induk Dunia ECOS](lore/02-dunia-dan-geografi/00-kanon-induk-dunia-ecos.md), atlas administratif, bioma, skala, dan kawasan masjid.
+- Bedakan keputusan eksplisit pemilik proyek, keputusan worldbuilding, usulan, pertanyaan terbuka, dan implementasi terverifikasi.
+- ECOS nasional sekitar 1,7 juta km²; wilayah inti offline 10.000 hektare; kawasan masjid 1.000 hektare termasuk di wilayah inti.
+- Hukum negara ECOS berlaku nasional; prinsip agama kawasan masjid mengatur kehidupan internal di dalam kerangka hukum nasional.
+- Protagonis berasal dari Juailin, bekerja sebagai peternak dan pekebun, kesulitan beradaptasi, menerima sindiran, dan menyimpan rasa suka yang belum diungkapkan.
+- Empat bioma lama dipertahankan dan bioma tambahan mengikuti kanon induk.
+- Jangan menganggap semua legenda benar, semua warga baik/jahat, semua aset kolektif, atau semua sistem teknologi telah terintegrasi.
+- Dokumen lore tidak membuktikan bahwa game atau fitur telah dibuat.
 
-## Domain pendukung
+## Pintu masuk
 
-Domain karakter/komunitas, ekonomi, teknologi, misteri/legenda, dan integrasi proyek perlu diaudit serta diselaraskan setelah fondasi cerita dan geografi. Lihat [Indeks Arsip Lore](lore/99-arsip/README.md) untuk materi lama; status arsip berarti ditunda untuk audit, bukan otomatis dibuang.
+1. [Visi dan Narasi](lore/01-visi-dan-narasi/ROADMAP.md)
+2. [Dunia dan Geografi](lore/02-dunia-dan-geografi/README.md) — [Kanon Induk Dunia ECOS](lore/02-dunia-dan-geografi/00-kanon-induk-dunia-ecos.md)
+3. [Karakter dan Komunitas](lore/04-karakter-dan-komunitas/ROADMAP.md) — [kerangka karakter pendukung](lore/04-karakter-dan-komunitas/01-karakter-pendukung-dan-relasi.md)
+4. [Ekonomi dan Pekerjaan](lore/05-ekonomi-dan-pekerjaan/ROADMAP.md) — [ekonomi dan kehidupan kerja](lore/05-ekonomi-dan-pekerjaan/01-ekonomi-dan-kehidupan-kerja.md)
+5. [Teknologi dan Sistem](lore/06-teknologi-dan-sistem/README.md) — [prinsip teknologi dunia](lore/06-teknologi-dan-sistem/00-prinsip-teknologi-dunia.md)
+6. [Misteri dan Legenda](lore/08-misteri-dan-legenda/ROADMAP.md)
+7. [Struktur Cerita](lore/09-cerita/ROADMAP.md) — [struktur dan cabang akhir](lore/09-cerita/01-struktur-cerita-dan-cabang-akhir.md)
+8. [Audit dan Keputusan](lore/90-audit-dan-keputusan/ROADMAP.md)
 
-Nama teknologi atau proyek lain di dokumen lama tidak membuktikan integrasi teknis dengan ECOS. Semua klaim implementasi perlu bukti pengujian yang nyata.
+Materi lama dalam [Indeks Arsip Lore](lore/99-arsip/README.md) tetap disimpan. Status arsip berarti perlu ditinjau, bukan otomatis dibuang. Nama proyek lain di repositori atau dokumen tidak membuktikan integrasi teknis ke ECOS.
