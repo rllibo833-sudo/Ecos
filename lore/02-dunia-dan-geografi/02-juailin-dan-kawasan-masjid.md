@@ -24,6 +24,32 @@ Arah dan posisi ini merupakan panduan tata letak konseptual, bukan peta berskala
 
 Kawasan ini merupakan ruang utama protagonis belajar beradaptasi sambil menjalani peran sebagai peternak dan pekebun. Cara fungsi ibadah, peternakan, kebun, tempat tinggal, layanan, dan kegiatan warga saling berbagi ruang masih perlu dirancang; jangan menganggap seluruh fungsi tersebar merata atau sudah memiliki zona tertentu.
 
+
+## Prinsip hukum dan kehidupan sosial
+
+**Keputusan pemilik proyek:** seluruh wilayah kawasan masjid menerapkan hukum berbasis agama. Masjid menjadi sentral kawasan. Arah sosial masyarakat ini disebut pemilik proyek sebagai **“sosialis”**.
+
+Catatan ini merekam visi dunia fiksi; rincian sistemnya belum ditentukan. Jangan langsung menyamakannya dengan sistem politik atau negara nyata tertentu. Hal-hal yang masih perlu dirancang meliputi:
+- agama dan tradisi penafsiran yang menjadi dasar hukum;
+- lembaga atau proses yang membuat keputusan, menyelesaikan sengketa, dan menerapkan aturan;
+- hak warga, perlindungan kelompok rentan, dan cara menangani perbedaan pendapat;
+- arti “sosialis” dalam konteks kawasan: misalnya solidaritas, kerja kolektif, pengelolaan sumber daya untuk kepentingan warga, pemerataan, atau jaminan kebutuhan dasar;
+- pengelolaan lahan, hasil peternakan dan kebun, usaha, upah, perdagangan, serta layanan warga.
+
+Belum diputuskan bahwa semua aset dimiliki bersama, semua usaha dikelola negara, atau seluruh keputusan berada di tangan satu pemimpin. Begitu pula, aturan agama yang spesifik tidak akan ditambahkan sebagai canon sebelum ditentukan.
+
+Prinsip ini perlu terlihat dalam keseharian warga—ibadah, kerja, saling membantu, produksi pangan, perdagangan, pendidikan, pertemuan, dan penyelesaian konflik—bukan hanya menjadi slogan. Lore boleh mengeksplorasi jarak antara nilai yang diajarkan dan perilaku nyata tanpa menganggap semua warga selalu baik atau selalu buruk.
+
+## Fungsi kehidupan kawasan yang perlu dikembangkan
+
+- **Ibadah dan pembinaan:** masjid sebagai sentral spiritual dan sosial.
+- **Peternakan dan kebun:** pekerjaan, pangan, perawatan hewan, serta pengetahuan praktis.
+- **Tempat tinggal:** beberapa kota kecil dan permukiman, termasuk Juailin yang terpencil.
+- **Layanan dan kebutuhan bersama:** jenis fasilitas dan cara pengelolaannya masih terbuka.
+- **Kegiatan warga dan ekonomi:** kerja, pertukaran hasil, perdagangan, pendidikan, pertemuan, dan bantuan sosial sebagai kemungkinan desain, belum sebagai fasilitas yang sudah dipastikan.
+
+Daftar ini adalah kerangka untuk pengembangan lore, bukan zonasi final atau klaim bahwa seluruh fasilitas sudah tersedia.
+
 ## Tingkatan wilayah yang sudah diketahui
 
 **Negara ECOS → wilayah-wilayahnya yang dapat terpisah → provinsi dan kota/permukiman → kawasan masjid 1.000 hektare yang mencakup beberapa kota kecil dan permukiman.**
