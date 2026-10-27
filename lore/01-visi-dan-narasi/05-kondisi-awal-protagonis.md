@@ -1,24 +1,25 @@
 # Kondisi Awal Protagonis
 
-## Titik awal
+## Titik awal yang telah diputuskan
 
-Protagonis adalah seorang pemuda yang belum memahami teknologi yang semakin memengaruhi kehidupan. Ketidaktahuan ini adalah kesenjangan pengalaman dan pengetahuan, bukan bukti bahwa ia bodoh, malas, atau tidak mampu belajar. Fondasi lore belum menetapkan nama, usia pasti, keluarga, pekerjaan, tempat tinggal, atau riwayat pribadi; detail tersebut tetap terbuka.
+Protagonis adalah seorang pemuda yang berasal dari **Juailin**, ecosentral tempat sistem informasi bergerak sangat cepat. Walaupun tinggal di lingkungan dengan arus informasi yang deras, ia sangat kesulitan beradaptasi dengan teknologi dan memahami informasi yang datang kepadanya. Ini adalah kesenjangan pengalaman dan pengetahuan, bukan bukti bahwa ia bodoh atau tidak mampu belajar.
+
+Ia kemudian mengambil peran sebagai **peternak dan pekebun** di kawasan masjid seluas **1.000 hektare**. Aktivitas ini menjadi konteks utama untuk belajar secara bertahap: mengelola pekerjaan harian, mengamati lingkungan, berinteraksi dengan masyarakat, serta memahami informasi dan teknologi yang memengaruhi kehidupannya.
 
 ## Pengetahuan dan pembelajaran
 
 Pada awal cerita, ia:
-- dapat mengamati keadaan dan bertanya kepada orang lain;
-- belum tentu memahami istilah, antarmuka, atau alasan suatu sistem menghasilkan informasi tertentu;
-- bisa salah menafsirkan informasi ketika konteksnya kurang;
-- dapat belajar melalui percakapan, bukti, percobaan, kegagalan, dan bantuan;
-- tidak harus menjadi ahli teknologi untuk mengambil keputusan yang lebih baik.
+- hidup dengan arus informasi cepat di Juailin, tetapi kesulitan memilah dan menyesuaikan diri;
+- belum memahami sebagian teknologi atau sistem informasi yang memengaruhi kehidupan sehari-hari;
+- dapat belajar melalui pengalaman beternak, berkebun, percakapan, pengamatan, percobaan, kegagalan, dan bantuan;
+- tidak harus menjadi programmer atau ahli teknologi untuk berkembang dan mengambil keputusan yang lebih baik.
 
-## Kemampuan dan keterbatasan
+## Detail yang belum diputuskan
 
-Kemampuan awal sebaiknya berupa kecakapan hidup umum dan kemauan mencari jawaban. Keterbatasannya mencakup pengetahuan teknologi dan kemampuan menilai arus informasi yang belum matang. Hubungan penting, keterampilan spesifik, sumber daya awal, dan lokasi pembuka belum diputuskan.
+Nama, usia pasti, keluarga, alasan ia menjalani kehidupan di kawasan masjid, jenis ternak, jenis tanaman, skala usaha, kemampuan awal spesifik, dan hubungan pribadinya belum ditetapkan. Dokumen ini tidak mengarang detail tersebut.
 
 ## Checklist
 
-- [x] Kesenjangan pengetahuan didefinisikan tanpa merendahkan kecerdasan tokoh; detail biografi yang belum ada tidak dikarang.
-- [x] Hal yang diketahui, belum diketahui, berpotensi disalahpahami, dan dapat dipelajari dipisahkan.
-- [x] Kemampuan awal dan keterbatasan naratif ditetapkan; nama, hubungan, lokasi, dan keterampilan spesifik tetap terbuka.
+- [x] Asal protagonis ditetapkan di Juailin dan kesulitan adaptasinya dijelaskan.
+- [x] Peran sebagai peternak dan pekebun di kawasan masjid 1.000 hektare ditetapkan sebagai konteks belajar.
+- [x] Batas pengetahuan dan detail biografi yang belum diputuskan dibedakan secara jelas.
