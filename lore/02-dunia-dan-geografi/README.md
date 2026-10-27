@@ -15,6 +15,8 @@
 - Kebebasan pemain untuk memodifikasi peta adalah visi desain, bukan bukti bahwa editor peta sudah tersedia.
 - Empat bioma yang pernah disebut sebelumnya belum diputuskan untuk dipertahankan atau dihapus.
 
+- Prinsip sosial kawasan masjid: masjid menjadi pusat ekonomi berbasis agama dan membantu warga yang kekurangan dana; lahan pribadi, alat berat bersama, kerja komunitas berbasis kebutuhan dan bagi hasil, serta mediasi di Ruang Komunitas. Rincian pelaksanaan masih terbuka.
+
 ## Cara membaca status
 
 - **Canon/keputusan:** sudah ditetapkan pemilik proyek.
@@ -31,6 +33,7 @@
 4. [Kerangka zona dan hubungan antarkawasan](./04-kerangka-zona.md)
 5. [Bioma, iklim, air, dan tanah](./05-bioma-iklim-air-tanah.md)
 6. [Peta, orientasi, dan kebebasan modifikasi](./06-peta-dan-modifikasi.md)
+7. [Kehidupan sosial dan jaminan warga kawasan masjid](./07-kehidupan-sosial-dan-jaminan-warga.md)
 
 ## Aturan pengembangan
 
