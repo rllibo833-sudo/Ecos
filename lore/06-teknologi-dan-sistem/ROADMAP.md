@@ -1,20 +1,20 @@
 # Roadmap — Teknologi dan Sistem
 
-Roadmap domain **Teknologi dan Sistem** dalam lore ECOS. Kerjakan satu item pada satu waktu dan catat ketergantungan bila ada.
+**Status:** prinsip teknologi dunia ditetapkan; audit sistem/proyek individual masih terbuka.
 
-> Status awal: **Belum dirancang / belum diverifikasi**. Checklist ini adalah roadmap, bukan klaim bahwa isi atau fitur telah selesai. Centang setelah hasilnya ditulis dan ditinjau.
+## Dokumen
 
-## Roadmap
+- [x] [Prinsip Teknologi Dunia ECOS](./00-prinsip-teknologi-dunia.md)
 
-- [ ] Jelaskan tingkat kemajuan teknologi ECOS.
-- [ ] Buat dokumen terpisah bagi setiap sistem yang disebut.
-- [ ] Definisikan fungsi lore tiap sistem.
-- [ ] Catat batas konseptual setiap sistem.
-- [ ] Pisahkan klaim kemampuan dari bukti implementasi.
-- [ ] Jelaskan interaksi masyarakat dengan teknologi.
-- [ ] Definisikan risiko dan kegagalan teknologi.
-- [ ] Dokumentasikan relasi antarproyek secara hati-hati.
-- [ ] Buat contoh skenario naratif.
-- [ ] Audit konsistensi istilah.
-- [ ] Tentukan bukti minimum untuk klaim integrasi nyata.
-- [ ] Hindari mengklaim fitur yang belum diverifikasi.
+## Checklist
+
+- [x] Tetapkan dunia sci-fi/teknologi yang membumi dan bukan cyberpunk.
+- [x] Jelaskan arus informasi cepat di Juailin dan risiko informasi salah.
+- [x] Tetapkan teknologi sehari-hari di pertanian, transportasi, layanan publik, riset, dan arsip.
+- [x] Catat batas, kegagalan, privasi, dan akses teknologi.
+- [x] Bedakan konsep lore dari implementasi nyata.
+- [ ] Audit setiap dokumen proyek individual dan putuskan apakah relevan dengan dunia ECOS.
+- [ ] Tetapkan fungsi fiksional setiap sistem yang dipertahankan dalam lore.
+- [ ] Catat keterbatasan, biaya, dampak sosial, dan skenario kegagalan secara spesifik.
+- [ ] Pastikan tidak ada klaim integrasi nyata tanpa bukti yang dapat diperiksa.
+- [ ] Selaraskan teknologi dengan sejarah, ekonomi, pemerintahan, dan alur protagonis.
