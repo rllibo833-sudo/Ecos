@@ -8,8 +8,8 @@
 - Wilayah ECOS mencakup **kawasan-kawasan terpisah**, bukan satu hamparan yang seluruhnya harus bersambung.
 - ECOS memiliki provinsi dan beberapa kota; nama, jumlah, batas, dan struktur administratif lengkapnya belum ditetapkan.
 - **Juailin adalah kota kecil** dan ecosentral dengan arus informasi sangat cepat.
-- **Kawasan masjid seluas 1.000 hektare berada di dalam kota Juailin**, sekaligus berada di dalam negara ECOS.
-- Protagonis menjalani peran sebagai peternak dan pekebun di kawasan masjid, yang menjadi ruang utama pembelajarannya.
+- **Kawasan masjid seluas 1.000 hektare menggabungkan beberapa kota kecil dan permukiman; Juailin adalah salah satunya**.
+- Masjid menjadi titik sentral kawasan; dalam rancangan peta berbentuk kotak, kawasan ini berada di sisi kanan bawah dan Juailin berada terpencil di salah satu sudutnya. Protagonis menjalani peran sebagai peternak dan pekebun di kawasan tersebut.
 - Skala 10.000 hektare dipertahankan sebagai target rancangan offline awal. Pengembangan lebih jauh dapat memperluas dunia, bergantung pada kebutuhan desain dan kelayakan teknis.
 - Cyberpunk bukan arah genre atau estetika ECOS.
 - Kebebasan pemain untuk memodifikasi peta adalah visi desain, bukan bukti bahwa editor peta sudah tersedia.
@@ -34,4 +34,4 @@
 
 ## Aturan pengembangan
 
-Jangan mengarang jenis kawasan terpisah, koordinat, bentuk perbatasan, jarak tempuh, nama provinsi/distrik, sungai, gunung, pantai, gurun, atau lokasi 25 legenda seolah sudah canon. Mulai dari hubungan dan kebutuhan ruang; detail kartografi baru dibuat setelah fondasi disepakati.
+Jangan mengarang jenis kawasan terpisah, koordinat, bentuk perbatasan, jarak tempuh, nama provinsi/distrik, sungai, gunung, pantai, gurun, atau lokasi 25 legenda seolah sudah canon. Arah peta kanan bawah dan posisi relatif Juailin adalah panduan konseptual, bukan peta berskala final. Mulai dari hubungan dan kebutuhan ruang; detail kartografi baru dibuat setelah fondasi disepakati.
