@@ -2,26 +2,26 @@
 
 ## Tujuan jangka pendek
 
-Setelah menghadapi perubahan yang tidak ia pahami, protagonis ingin mengetahui apa yang sebenarnya terjadi dan menentukan langkah praktis untuk mengatasi dampak langsungnya. Tujuan ini sengaja umum sampai peristiwa pemicu spesifik disahkan.
+Protagonis perlu belajar menyesuaikan diri dengan kehidupan sehari-hari di kawasan masjid seluas **1.000 hektare**, tempat ia menjalani peran sebagai peternak dan pekebun. Ia berusaha memahami informasi dan teknologi yang berkaitan dengan aktivitasnya, sambil belajar membedakan informasi yang berguna dari informasi yang membingungkan atau menyesatkan. Masalah konkret pertama yang mendorong tujuan ini masih menunggu keputusan tentang peristiwa pemicu.
 
 ## Tujuan jangka panjang
 
-Perjalanan yang lebih luas adalah menjadi pribadi yang mampu memahami sistem yang memengaruhi kehidupannya, menilai informasi dengan lebih baik, dan bertindak secara mandiri serta bertanggung jawab dalam komunitas. Ini tidak berarti ia harus menjadi programmer atau ahli dalam semua teknologi.
+Perjalanan protagonis adalah berkembang dari pemuda asal **Juailin** yang kesulitan menghadapi arus informasi cepat menjadi seseorang yang lebih mandiri dalam memahami teknologi, menilai informasi, mengelola tanggung jawab sebagai peternak dan pekebun, serta mengambil keputusan yang mempertimbangkan masyarakat di sekitarnya.
+
+Ia tidak harus berubah menjadi programmer atau ahli dalam seluruh teknologi. Kemajuan terlihat dari cara ia belajar, bertanya, menguji informasi, mengelola pekerjaannya, dan mengambil keputusan.
 
 ## Tujuan dapat berkembang
 
-Tujuan dapat berubah ketika protagonis:
-- memperoleh bukti yang mengoreksi dugaan awal;
-- mengetahui bahwa masalah pribadi juga memengaruhi orang lain;
-- menemukan keterbatasan suatu sistem atau sumber informasi;
-- membangun kepercayaan, kehilangan kepercayaan, atau menerima tanggung jawab baru.
+Tujuan dapat berkembang ketika protagonis:
+- memperoleh pengetahuan baru dari kegiatan beternak dan berkebun;
+- menemukan perbedaan antara informasi digital dan kondisi yang ia amati;
+- menerima bantuan atau perspektif dari orang lain;
+- memahami bahwa keputusan pribadinya juga dapat berdampak pada komunitas.
 
-## Ukuran perkembangan naratif
-
-Perkembangan sebaiknya terlihat dari cara ia bertanya, membandingkan sumber, mengakui ketidakpastian, menjelaskan keputusan, dan mempertimbangkan akibatnya—bukan hanya dari level, perangkat, atau dialog yang menyatakan bahwa ia sudah pintar.
+Situasi spesifik dan konsekuensi gameplay tetap harus dirancang, bukan dianggap sudah diimplementasikan.
 
 ## Checklist
 
-- [x] Tujuan jangka pendek dirumuskan sebagai memahami masalah langsung dan memilih tindakan.
-- [x] Tujuan jangka panjang menghubungkan kemandirian, pemahaman teknologi, dan tanggung jawab sosial.
-- [x] Perubahan tujuan dan indikator perkembangan dicatat tanpa menetapkan alur final.
+- [x] Tujuan jangka pendek dihubungkan dengan adaptasi dan kehidupan sebagai peternak/pekebun.
+- [x] Tujuan jangka panjang menghubungkan kemandirian, literasi informasi, pekerjaan, dan tanggung jawab sosial.
+- [x] Perkembangan tujuan ditulis tanpa mengarang peristiwa pemicu atau misi final.
