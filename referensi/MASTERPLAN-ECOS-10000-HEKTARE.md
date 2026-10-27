@@ -31,7 +31,7 @@ Kawasan masjid adalah jantung budaya dan orientasi dunia, bukan satu-satunya tem
 | Z05 | Kesehatan dan pelayanan publik | 200 | 2% | Rumah sakit, klinik, layanan darurat |
 | Z06 | Jalan dan utilitas | 500 | 5% | Koridor transportasi, air, energi, drainase |
 | Z07 | Pertanian dan pangan | 1.000 | 10% | Ladang, kebun, peternakan terbatas, irigasi |
-| Z08 | Hutan tropis dan lahan basah | 2.300 | 23% | Hutan, sungai, rawa, air terjun, habitat |
+| Z08 | Hutan tropis dan lahan basah | 1.800 | 18% | Hutan, sungai, rawa, air terjun, habitat |
 | Z09 | Pegunungan dan dataran tinggi | 1.700 | 17% | Punggung gunung, lembah, hutan pegunungan |
 | Z10 | Pesisir dan pantai | 900 | 9% | Pantai, tebing, desa nelayan, dermaga |
 | Z11 | Gurun dan wilayah kering | 700 | 7% | Bukit pasir/batuan, oasis, jalur ekspedisi |
@@ -39,7 +39,7 @@ Kawasan masjid adalah jantung budaya dan orientasi dunia, bukan satu-satunya tem
 | Z13 | Koridor dan utilitas regional | 500 | 5% | Terminal, depo, distribusi dan layanan infrastruktur |
 | **TOTAL** | | **10.000** | **100%** | |
 
-Catatan: Z06 dan Z13 adalah dua fungsi berbeda dalam baseline ini. Z06 mencakup jaringan dan utilitas yang melekat pada kawasan; Z13 mencakup simpul transportasi/distribusi dan fasilitas regional. Saat pemetaan geometri, jalur yang melewati zona lain tidak boleh membuat hektare dihitung dua kali. Jika pengukuran menunjukkan tumpang tindih, revisi tabel luas sebelum menetapkan peta final.
+Catatan: Z06 dan Z13 adalah dua fungsi berbeda dalam baseline ini. Z06 mencakup jaringan dan utilitas yang melekat pada kawasan; Z13 mencakup simpul transportasi/distribusi dan fasilitas regional. Untuk menjaga total 10.000 ha, alokasi hutan tropis ditetapkan 1.800 ha. Saat pemetaan geometri, jalur yang melewati zona lain tidak boleh membuat hektare dihitung dua kali. Jika pengukuran menunjukkan tumpang tindih, revisi tabel luas sebelum menetapkan peta final.
 
 ## 4. Distrik fungsional
 
@@ -49,7 +49,7 @@ Catatan: Z06 dan Z13 adalah dua fungsi berbeda dalam baseline ini. Z06 mencakup 
 4. Pasar dan Ekonomi — 300 ha: pasar, toko, bengkel, gudang, pertukaran barang.
 5. Pelayanan Warga — 200 ha: kesehatan, pemadam, layanan darurat, administrasi.
 6. Sabuk Pangan — 1.000 ha: pertanian, kebun, irigasi, produksi dan rantai pasokan.
-7. Hutan Tropis — 2.300 ha: sungai, rawa, air terjun, jalur hutan, konservasi.
+7. Hutan Tropis — 1.800 ha: sungai, rawa, air terjun, jalur hutan, konservasi.
 8. Pegunungan — 1.700 ha: lembah, punggung gunung, jalur pendakian dan titik pandang.
 9. Pesisir — 900 ha: pantai, desa nelayan, tebing, dermaga, konservasi pantai.
 10. Gurun dan Oasis — 700 ha: wilayah kering, oasis, pos persinggahan, jalur navigasi.
