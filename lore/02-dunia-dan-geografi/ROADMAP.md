@@ -13,20 +13,25 @@
 - [x] [Bioma, iklim, air, dan tanah](./05-bioma-iklim-air-tanah.md)
 - [x] [Peta, orientasi, dan kebebasan modifikasi](./06-peta-dan-modifikasi.md)
 
-## Tahapan kerja
+## Keputusan yang telah dicatat
 
-- [x] Tegaskan skala konseptual ECOS 10.000 hektare.
-- [x] Tegaskan kawasan masjid 1.000 hektare berada di dalam ECOS.
-- [x] Bedakan fakta geografis dari kategori ruang sementara.
-- [x] Catat Juailin dan kawasan masjid tanpa mengarang jarak atau koordinat.
-- [x] Catat bioma lama sebagai kandidat, bukan keputusan final.
-- [x] Bedakan visi modifikasi peta dari implementasi teknis.
-- [ ] Tetapkan bentuk batas wilayah dan posisi relatif kawasan.
-- [ ] Putuskan pembagian zona dan apakah kategori saling eksklusif.
+- [x] ECOS adalah negara fiksi dengan skala konseptual awal 10.000 hektare.
+- [x] Wilayah ECOS mencakup kawasan-kawasan terpisah.
+- [x] ECOS memiliki provinsi dan beberapa kota; rincian administrasi belum ditentukan.
+- [x] Juailin adalah kota kecil dan ecosentral dengan arus informasi cepat.
+- [x] Kawasan masjid seluas 1.000 hektare berada di dalam Juailin.
+- [x] Skala 10.000 hektare dipertahankan sebagai target offline awal; ekspansi lebih luas dapat dipertimbangkan di tahap lebih jauh.
+
+## Tahapan kerja berikutnya
+
+- [ ] Tentukan arti geografis “kawasan terpisah” tanpa berasumsi bahwa semuanya pulau atau enklave.
+- [ ] Susun kerangka hubungan negara, provinsi, kota, dan kawasan di dalam kota.
+- [ ] Selaraskan definisi “kota kecil” Juailin dengan kawasan masjid 1.000 hektare yang berada di dalamnya.
+- [ ] Tentukan jumlah dan batas provinsi serta kota setelah struktur administrasi disepakati.
 - [ ] Evaluasi empat bioma lama berdasarkan geografi yang dipilih.
 - [ ] Tentukan kondisi iklim, air, tanah, dan topografi yang saling konsisten.
-- [ ] Tinjau kebutuhan peta modifikasi terhadap konsistensi dunia.
+- [ ] Tinjau kebutuhan peta modifikasi dan ekspansi terhadap konsistensi dunia.
 
 ## Ketergantungan dan batas
 
-Jangan menetapkan koordinat, jarak perjalanan, waktu tempuh, luas Juailin, luas tiap zona, bentuk sungai atau gunung, atau jumlah kawasan sebelum ada keputusan. Luas kawasan masjid tidak boleh ditambahkan di atas total 10.000 hektare. Empat bioma lama belum disahkan. Detail baru harus konsisten dengan [domain utama Visi dan Narasi](../01-visi-dan-narasi/ROADMAP.md).
+Kawasan masjid 1.000 hektare termasuk di dalam wilayah ECOS 10.000 hektare dan berada di dalam Juailin; jangan menghitungnya sebagai wilayah tambahan di luar negara. Luas Juailin sendiri belum ditentukan. Jangan menetapkan koordinat, jarak perjalanan, waktu tempuh, bentuk bentang alam, atau nama wilayah yang belum disepakati. Detail baru harus konsisten dengan [domain utama Visi dan Narasi](../01-visi-dan-narasi/ROADMAP.md).
