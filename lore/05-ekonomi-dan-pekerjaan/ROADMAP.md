@@ -1,18 +1,20 @@
 # Roadmap — Ekonomi dan Pekerjaan
 
-Roadmap domain **Ekonomi dan Pekerjaan** dalam lore ECOS. Kerjakan satu item pada satu waktu dan catat ketergantungan bila ada.
+**Status:** kerangka ekonomi nasional dan kehidupan kerja kawasan masjid tersedia. Angka pendapatan dan mekanik ekonomi belum menjadi implementasi.
 
-> Status awal: **Belum dirancang / belum diverifikasi**. Checklist ini adalah roadmap, bukan klaim bahwa isi atau fitur telah selesai. Centang setelah hasilnya ditulis dan ditinjau.
+## Dokumen
 
-## Roadmap
+- [x] [Ekonomi dan Kehidupan Kerja ECOS](./01-ekonomi-dan-kehidupan-kerja.md)
 
-- [ ] Definisikan gambaran ekonomi dunia.
-- [ ] Daftarkan pekerjaan yang relevan dengan lore.
-- [ ] Tentukan tugas dan tanggung jawab pekerjaan.
-- [ ] Jelaskan sumber pendapatan dan penggunaan uang.
-- [ ] Petakan produksi, distribusi, dan konsumsi.
-- [ ] Definisikan kelangkaan dan dampaknya.
-- [ ] Catat akses pendidikan dan layanan.
-- [ ] Rancang contoh gangguan ekonomi.
-- [ ] Tandai angka ilustratif agar tidak dianggap canon.
-- [ ] Pastikan ekonomi mendukung konflik cerita.
+## Checklist
+
+- [x] Definisikan ekonomi campuran tingkat nasional.
+- [x] Hubungkan peran provinsi dengan produksi dan perdagangan.
+- [x] Pertahankan kepemilikan pribadi serta alat berat bersama di kawasan masjid.
+- [x] Tetapkan kerja komunitas berbasis kebutuhan, kesepakatan, dan bagi hasil.
+- [x] Rancang contoh konflik ekonomi yang mendukung cerita.
+- [x] Bedakan keputusan lore dari simulasi ekonomi terimplementasi.
+- [ ] Tetapkan aturan rinci bantuan, audit dana, dan mekanisme keberatan.
+- [ ] Definisikan pekerjaan utama per kota dan rantai pasok.
+- [ ] Tetapkan angka harga/pendapatan hanya setelah kebutuhan cerita dan skala wilayah dipastikan.
+- [ ] Audit konsistensi ekonomi dengan transportasi, bioma, dan pemerintahan.
