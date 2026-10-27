@@ -6,7 +6,7 @@
 
 - **ECOS adalah negara fiksi** dengan skala konseptual awal 10.000 hektare.
 - Wilayah ECOS mencakup **kawasan-kawasan terpisah**, bukan satu hamparan yang seluruhnya harus bersambung.
-- ECOS memiliki provinsi dan beberapa kota; nama, jumlah, batas, dan struktur administratif lengkapnya belum ditetapkan.
+- Atlas administratif mencatat empat provinsi rancangan awal: Arunika, Wanasera, Tirta Nusa, dan Giriwana. Kawasan khusus masjid berada seluruhnya di Provinsi Arunika; batas rinci masih terbuka.
 - **Juailin adalah kota kecil** dan ecosentral dengan arus informasi sangat cepat.
 - **Kawasan masjid seluas 1.000 hektare menggabungkan beberapa kota kecil dan permukiman; Juailin adalah salah satunya**.
 - Masjid menjadi titik sentral kawasan; dalam rancangan peta berbentuk kotak, kawasan ini berada di sisi kanan bawah dan Juailin berada terpencil di salah satu sudutnya. Protagonis menjalani peran sebagai peternak dan pekebun di kawasan tersebut.
@@ -14,6 +14,7 @@
 - Cyberpunk bukan arah genre atau estetika ECOS.
 - Kebebasan pemain untuk memodifikasi peta adalah visi desain, bukan bukti bahwa editor peta sudah tersedia.
 - Empat bioma yang pernah disebut sebelumnya belum diputuskan untuk dipertahankan atau dihapus.
+- Nama dan pembagian wilayah mengikuti [Atlas Administratif Negara ECOS](./08-atlas-administratif-negara-ecos.md).
 
 - Prinsip sosial kawasan masjid: masjid menjadi pusat ekonomi berbasis agama dan membantu warga yang kekurangan dana; lahan pribadi, alat berat bersama, kerja komunitas berbasis kebutuhan dan bagi hasil, serta mediasi di Ruang Komunitas. Rincian pelaksanaan masih terbuka.
 
