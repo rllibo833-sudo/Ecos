@@ -1,8 +1,9 @@
 # ECOS — Repository
 
-ECOS adalah proyek worldbuilding dan pengembangan game fiksi. **Baseline lore final** sedang dikonsolidasikan di [`lore-final/`](lore-final/README.md).
+ECOS adalah proyek worldbuilding dan pengembangan game fiksi. **Baseline lore final** sudah dikonsolidasikan di [`lore-final/`](lore-final/README.md).
 
 ## Mulai dari sini
+- [Struktur Repository](REPO-STRUCTURE.md)
 - [Lore Final — indeks dan kanon inti](lore-final/README.md)
 - [Kanon Final dan Audit Kontinuitas](lore-final/00-KANON-FINAL-DAN-KONTINUITAS.md)
 - [Kanon Induk Dunia ECOS](lore-final/02-dunia-dan-geografi/00-kanon-induk-dunia-ecos.md)

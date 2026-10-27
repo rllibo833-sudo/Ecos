@@ -1,39 +1,38 @@
 # Roadmap — Audit dan Keputusan
 
-**Status:** sumber kanon induk dan beberapa domain pendukung telah dibuat. Audit menyeluruh lintas seluruh file masih berlangsung.
+**Status audit lore awal: selesai untuk baseline kanon dan struktur dokumentasi.** Detail produksi yang belum ditulis bukan konflik lore; detail tersebut dipindahkan menjadi pekerjaan pengembangan sesuai kebutuhan.
 
 ## Sumber acuan
-
-- [Visi dan Narasi](../01-visi-dan-narasi/ROADMAP.md) — protagonis, tema, dan alur.
-- [Kanon Induk Dunia ECOS](../02-dunia-dan-geografi/00-kanon-induk-dunia-ecos.md) — skala, geografi, pemerintahan, populasi, transportasi, bioma.
+- [Lore Final](../README.md) — indeks dan kanon inti.
+- [Kanon Final dan Audit Kontinuitas](../00-KANON-FINAL-DAN-KONTINUITAS.md) — rantai sebab-akibat, batas keputusan, dan cabang ending.
+- [Visi dan Narasi](../01-visi-dan-narasi/ROADMAP.md).
+- [Kanon Induk Dunia ECOS](../02-dunia-dan-geografi/00-kanon-induk-dunia-ecos.md).
 - [Karakter Pendukung](../04-karakter-dan-komunitas/01-karakter-pendukung-dan-relasi.md).
 - [Ekonomi dan Kehidupan Kerja](../05-ekonomi-dan-pekerjaan/01-ekonomi-dan-kehidupan-kerja.md).
 - [Prinsip Teknologi Dunia](../06-teknologi-dan-sistem/00-prinsip-teknologi-dunia.md).
 - [Dua Puluh Lima Legenda](../08-misteri-dan-legenda/01-dua-puluh-lima-legenda-kawasan-masjid.md).
 - [Struktur Cerita dan Cabang Akhir](../09-cerita/01-struktur-cerita-dan-cabang-akhir.md).
 
-## Keputusan konsistensi wajib
+## Hasil audit yang ditutup
+- [x] Kanon skala negara, wilayah inti, dan kawasan masjid dipisahkan secara eksplisit.
+- [x] Nama empat provinsi dan ibu kota konsisten pada indeks kanon.
+- [x] Hukum nasional dibedakan dari aturan internal kawasan masjid.
+- [x] Kondisi awal, pemicu, tujuan, konflik, dan konsekuensi dibedakan secara kausal.
+- [x] Empat cabang ending romantis dibedakan dari jalur open-world belum mengaku.
+- [x] Identitas orang yang disukai, bentuk kehilangan, mekanisme pemilihan ending, dan detail yang belum diputuskan tetap terbuka; tidak diisi dengan asumsi.
+- [x] Legenda diposisikan sebagai cerita yang belum otomatis terverifikasi.
+- [x] Draf teknologi yang tidak relevan sebagai lore aktif dan dokumen referensi lama dipertahankan dalam arsip.
+- [x] Seluruh direktori lore disatukan ke `lore-final/`.
+- [x] Audit tautan relatif Markdown di seluruh 57 file yang terdaftar: tidak ditemukan tautan relatif rusak.
+- [x] Root README dan indeks lore diarahkan ke satu pintu masuk kanon.
 
-- Negara ECOS sekitar 1,7 juta km² dalam lore; wilayah inti offline 10.000 hektare; kawasan masjid 1.000 hektare di dalam wilayah inti.
-- Empat provinsi: Arunika, Wanasera, Tirta Nusa, Giriwana; ibu kota nasional Nawasena.
-- Kawasan masjid berada di Provinsi Arunika; Juailin adalah kota kecil di salah satu sudut kawasan, bukan keseluruhan kawasan.
-- Hukum nasional berlaku di seluruh ECOS; prinsip agama kawasan masjid mengatur kehidupan internal dalam kerangka hukum nasional.
-- Protagonis adalah peternak dan pekebun; ia kesulitan beradaptasi, menerima sindiran, dan memendam rasa suka yang belum diungkapkan.
-- Tidak boleh mengarang penolakan dari orang yang disukai, atau mengubah masyarakat menjadi utopia.
-- Empat bioma lama dipertahankan dan bioma tambahan mengikuti kanon induk.
-- Proyek teknologi lain tidak dianggap terintegrasi tanpa bukti.
-- Legenda adalah cerita warga sampai bukti dalam dunia mengonfirmasi sesuatu.
+## Batas yang sengaja dipindahkan ke tahap pengembangan
+Hal berikut bukan penghalang untuk menutup baseline lore, dan tidak perlu dibahas ulang sebelum ada kebutuhan implementasi:
+- peta visual berskala, koordinat, jarak, populasi kota, dan jadwal transportasi;
+- adegan, dialog, biografi lengkap, serta pemicu per cabang ending;
+- detail aktivitas, loop gameplay, dan mekanik;
+- spesifikasi teknis, engine, bahasa implementasi, build, CI, dan pengujian;
+- lokasi final untuk aset gambar yang belum teridentifikasi.
 
-## Pekerjaan audit yang tersisa
-
-- [ ] Audit seluruh file dalam folder 01 dan 02 untuk angka atau nama lama yang belum selaras.
-- [ ] Periksa semua tautan relatif dan ejaan nama wilayah.
-- [ ] Audit domain 03, 04, 05, 06, 07, 08, dan 09.
-- [ ] Tinjau isi arsip lama untuk menentukan mana yang perlu diadopsi, diganti, atau tetap diarsipkan.
-- [ ] Susun peta konseptual dan daftar jarak/rute yang konsisten.
-- [ ] Hubungkan 25 legenda ke lokasi spesifik setelah peta stabil.
-- [ ] Catat konflik yang tersisa dan jangan tandai lore final sebelum audit selesai.
-
-## Status
-
-Dokumentasi fondasi telah berkembang, tetapi proyek belum boleh disebut final secara keseluruhan sampai audit file lama, tautan, kronologi, dan seluruh dependensi lintas-domain selesai.
+## Aturan setelah audit
+Perubahan lore hanya dibuka kembali bila ada kontradiksi yang terverifikasi, kebutuhan implementasi konkret, atau keputusan baru dari pemilik proyek. Setiap perubahan harus memperbarui dokumen spesifik dan indeks kontinuitas. Jangan membuat roadmap baru sekadar mengulang daftar ide.
