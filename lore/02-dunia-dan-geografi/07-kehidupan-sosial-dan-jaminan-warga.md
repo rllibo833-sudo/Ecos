@@ -1,8 +1,8 @@
 # Kehidupan Sosial dan Jaminan Warga Kawasan Masjid
 
-**Status: prinsip inti ditetapkan; rincian operasional dan aturan agama masih terbuka.**
+**Status: prinsip inti ditetapkan; rincian operasional masih terbuka.**
 
-Dokumen ini mencatat keputusan pemilik proyek tentang kehidupan sosial kawasan masjid seluas 1.000 hektare. Masjid menjadi sentral spiritual dan pusat ekonomi berbasis agama. Kawasan ini mencakup beberapa kota kecil dan permukiman, termasuk Juailin.
+Dokumen ini mencatat keputusan pemilik proyek tentang kehidupan sosial kawasan masjid seluas 1.000 hektare. ECOS adalah negara, sehingga hukum negara ECOS berlaku sebagai kerangka hukum negara. Di dalam kawasan masjid, kehidupan dan pengelolaan kawasan juga berlandaskan agama; masjid menjadi sentral spiritual dan pusat ekonomi berbasis agama. Prinsip kawasan masjid ini tidak berarti seluruh negara ECOS otomatis menerapkan aturan kawasan tersebut. Kawasan ini mencakup beberapa kota kecil dan permukiman, termasuk Juailin.
 
 ## 1. Ekonomi dan bantuan masjid
 
@@ -13,7 +13,7 @@ Hal yang sudah ditetapkan:
 - [x] Masjid menjadi pusat ekonomi berbasis agama.
 - [x] Warga yang kekurangan dana dapat memperoleh bantuan masjid.
 
-Hal yang belum ditetapkan: sumber dana, syarat dan proses pengajuan bantuan, siapa yang mengambil keputusan, transparansi pengelolaan, serta batas dan bentuk bantuan.
+Hal operasional yang belum ditetapkan: sumber dana, syarat dan proses pengajuan bantuan, siapa yang mengambil keputusan, transparansi pengelolaan, serta batas dan bentuk bantuan.
 
 ## 2. Akses belajar dan beradaptasi
 
@@ -32,7 +32,7 @@ Rincian kepemilikan alat, jadwal penggunaan, cara menghitung bagi hasil, penyele
 
 ## 4. Konflik, mediasi, dan dinamika sosial
 
-Konflik warga dimediasi di **Ruang Komunitas**. Sumber agama menjadi acuan atau data netral dalam proses mediasi. Nama dan fungsi Ruang Komunitas serta peran sumber agama ini ditetapkan sebagai prinsip lore; prosedur terperinci, pihak mediator, dan cara menangani perbedaan tafsir belum ditentukan.
+Konflik warga di kawasan masjid dimediasi di **Ruang Komunitas**, dengan sumber agama sebagai acuan netral. Mediasi dan tata kehidupan kawasan tetap berada dalam kerangka hukum negara ECOS, sementara prinsip dan aturan internal kawasan berlandaskan agama. Prosedur terperinci dan pihak mediator belum ditentukan.
 
 Sindiran, komentar julid, dan drama sosial dibiarkan sebagai bagian dari dinamika kehidupan kota. Itu tidak berarti perundungan atau konflik otomatis disetujui; respons sosial dan batas yang berlaku masih perlu ditentukan bila diperlukan oleh cerita.
 
@@ -56,6 +56,8 @@ Ia tidak otomatis menjadi kaya, langsung mahir, atau bebas dari sindiran dan keg
 
 ## Keputusan yang telah ditetapkan
 
+- [x] Hukum negara ECOS berlaku pada tingkat negara.
+- [x] Kawasan masjid tetap berlandaskan agama dalam kehidupan dan pengelolaan internalnya.
 - [x] Masjid menjadi sentral spiritual dan pusat ekonomi berbasis agama.
 - [x] Tidak ada batasan untuk menjadi kaya ataupun miskin.
 - [x] Masjid membantu warga yang kekurangan dana.
@@ -75,7 +77,7 @@ Ia tidak otomatis menjadi kaya, langsung mahir, atau bebas dari sindiran dan keg
 - [ ] Siapa yang menentukan kelayakan dan bentuk bantuan?
 - [ ] Apa saja fasilitas kawasan yang dapat diakses untuk belajar?
 - [ ] Bagaimana kesepakatan penggunaan alat berat dan pembagian hasil dibuat?
-- [ ] Siapa yang memediasi di Ruang Komunitas dan bagaimana perbedaan tafsir ditangani?
+- [ ] Siapa yang memediasi di Ruang Komunitas dan bagaimana prosedur mediasi dijalankan?
 - [ ] Apa batas perlakuan sosial yang dapat diterima tanpa menghapus dinamika alami warga?
 
-Rincian yang belum disepakati tidak boleh ditulis sebagai fakta final. Prinsip di atas adalah fondasi lore, bukan klaim bahwa sistem atau fasilitas tersebut telah diimplementasikan dalam game.
+Rincian operasional yang belum disepakati tidak boleh ditulis sebagai fakta final. Prinsip di atas adalah fondasi lore, bukan klaim bahwa sistem atau fasilitas tersebut telah diimplementasikan dalam game.
