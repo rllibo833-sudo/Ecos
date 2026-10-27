@@ -1,83 +1,68 @@
 # Kehidupan Sosial dan Jaminan Warga Kawasan Masjid
 
-**Status: prinsip inti ditetapkan; rincian operasional masih terbuka.**
+**Status:** prinsip inti ditetapkan; rincian operasional masih terbuka. Rujukan makro: [Kanon Induk Dunia ECOS](./00-kanon-induk-dunia-ecos.md).
 
-Dokumen ini mencatat keputusan pemilik proyek tentang kehidupan sosial kawasan masjid seluas 1.000 hektare. ECOS adalah negara, sehingga hukum negara ECOS berlaku sebagai kerangka hukum negara. Di dalam kawasan masjid, kehidupan dan pengelolaan kawasan juga berlandaskan agama; masjid menjadi sentral spiritual dan pusat ekonomi berbasis agama. Prinsip kawasan masjid ini tidak berarti seluruh negara ECOS otomatis menerapkan aturan kawasan tersebut. Kawasan ini mencakup beberapa kota kecil dan permukiman, termasuk Juailin.
+## 1. Letak dan kerangka hukum
 
-## 1. Ekonomi dan bantuan masjid
+Kawasan masjid seluas **1.000 hektare** berada seluruhnya di Provinsi Arunika dan di dalam wilayah inti offline 10.000 hektare. Kawasan ini menggabungkan beberapa kota kecil dan permukiman, termasuk Juailin. Masjid menjadi titik sentral kawasan; Juailin berada terpencil di salah satu sudutnya.
 
-Warga bebas memiliki keadaan ekonomi yang berbeda: tidak ada batasan untuk menjadi kaya ataupun miskin. Sentralitas masjid tidak berarti seluruh harta atau usaha warga menjadi milik bersama. Warga yang kekurangan dana dapat dibantu oleh masjid, sehingga masjid juga menjadi pusat bantuan dan ekonomi berbasis agama.
+**Hukum negara ECOS berlaku secara nasional.** Di kawasan masjid, kehidupan dan pengelolaan internal juga berlandaskan agama. Prinsip internal kawasan ini tidak otomatis menjadi aturan bagi seluruh negara. Mediasi komunitas tidak menggantikan hukum nasional, perlindungan hak warga, atau akses ke pengadilan.
 
-Hal yang sudah ditetapkan:
-- [x] Warga dapat memiliki tingkat kekayaan yang berbeda.
+## 2. Ekonomi dan bantuan masjid
+
+Warga bebas memiliki keadaan ekonomi berbeda; tidak ada larangan untuk menjadi kaya ataupun miskin. Masjid menjadi pusat ekonomi berbasis agama dan membantu warga yang kekurangan dana. Bantuan tidak berarti seluruh harta atau usaha warga menjadi milik bersama.
+
+Yang sudah ditetapkan:
 - [x] Masjid menjadi pusat ekonomi berbasis agama.
-- [x] Warga yang kekurangan dana dapat memperoleh bantuan masjid.
+- [x] Warga yang kekurangan dana dapat dibantu.
+- [x] Kepemilikan rumah, kendaraan, lahan, dan usaha pribadi tetap diperbolehkan.
 
-Hal operasional yang belum ditetapkan: sumber dana, syarat dan proses pengajuan bantuan, siapa yang mengambil keputusan, transparansi pengelolaan, serta batas dan bentuk bantuan.
+Yang belum ditetapkan: sumber dana, syarat bantuan, siapa yang mengambil keputusan, transparansi, audit, bentuk bantuan, dan mekanisme keberatan.
 
-## 2. Akses belajar dan beradaptasi
+## 3. Akses belajar dan beradaptasi
 
-Tokoh utama bebas mengakses hal-hal yang disediakan kawasan masjid. Akses ini membuka kesempatan baginya untuk belajar, mencoba keterampilan, dan menyesuaikan diri dengan lingkungan baru.
+Protagonis dapat mengakses hal-hal yang disediakan kawasan masjid untuk belajar, berlatih, dan menyesuaikan diri. Ia tetap harus berusaha dan dapat melakukan kesalahan; bantuan tidak otomatis menjadikannya mahir atau menghapus seluruh kesulitan.
 
-Rincian fasilitas, layanan, jam akses, tanggung jawab pengguna, dan bentuk pembelajaran belum ditetapkan. Jangan menganggap setiap fasilitas tertentu sudah ada sebelum diputuskan dalam lore.
+Fasilitas, jam akses, pengelola, dan aturan penggunaan belum ditentukan dan tidak boleh dianggap sudah tersedia secara rinci.
 
-## 3. Pertanian, peternakan, dan kerja komunitas
+## 4. Pertanian, peternakan, dan kerja komunitas
 
-- **Lahan milik pribadi.** Lahan pertanian atau peternakan bukan otomatis milik bersama.
-- **Alat berat dimiliki bersama.** Alat tersebut dapat digunakan untuk kebutuhan yang disepakati komunitas.
-- **Tenaga komunitas dipanggil saat dibutuhkan.** Kerja sama berlangsung karena warga saling membutuhkan, bukan karena diperintah secara paksa.
-- **Sistem bagi hasil.** Imbalan atau hasil kerja dibagikan berdasarkan kesepakatan yang relevan dengan pekerjaan tersebut.
+- **Lahan pertanian/peternakan adalah milik pribadi.**
+- **Alat berat dimiliki bersama.**
+- Tenaga komunitas dipanggil ketika dibutuhkan, berdasarkan saling membutuhkan dan kesepakatan, bukan paksaan.
+- Kerja bersama menggunakan sistem bagi hasil yang disepakati.
+- Penggunaan alat, perawatan, tanggung jawab kerusakan, pembagian hasil, dan penyelesaian sengketa masih perlu prosedur yang dirancang.
 
-Rincian kepemilikan alat, jadwal penggunaan, cara menghitung bagi hasil, penyelesaian sengketa, dan tanggung jawab jika alat rusak masih terbuka.
+## 5. Konflik dan mediasi
 
-## 4. Konflik, mediasi, dan dinamika sosial
+Konflik warga dapat dimediasi di **Ruang Komunitas**, dengan sumber agama sebagai rujukan netral. Prosedur, pihak mediator, dokumentasi, dan mekanisme banding belum ditetapkan. Perkara pidana berat atau sengketa hak dasar tidak boleh dianggap selesai hanya karena mediasi informal berlangsung.
 
-Konflik warga di kawasan masjid dimediasi di **Ruang Komunitas**, dengan sumber agama sebagai acuan netral. Mediasi dan tata kehidupan kawasan tetap berada dalam kerangka hukum negara ECOS, sementara prinsip dan aturan internal kawasan berlandaskan agama. Prosedur terperinci dan pihak mediator belum ditentukan.
+Sindiran, komentar julid, drama sosial, dan perselisihan tetap menjadi bagian dinamika warga. Keberadaan prinsip saling membantu tidak menjadikan semua orang baik atau menghapus konflik.
 
-Sindiran, komentar julid, dan drama sosial dibiarkan sebagai bagian dari dinamika kehidupan kota. Itu tidak berarti perundungan atau konflik otomatis disetujui; respons sosial dan batas yang berlaku masih perlu ditentukan bila diperlukan oleh cerita.
+## 6. Martabat dan kehidupan yang tidak sempurna
 
-## 5. Martabat, kepemilikan pribadi, dan kehidupan yang tidak sempurna
+Warga tetap memiliki ruang untuk menentukan hidupnya dan memiliki aset sendiri. Kawasan tidak utopis. Ekonomi dapat naik turun; bantuan bisa terlambat atau kurang tepat; orang dapat keliru, lalai, berprasangka, atau gagal memenuhi nilai yang mereka anut. Bahaya alam juga tetap ada.
 
-Warga tetap dapat memiliki rumah, kendaraan, dan usaha sendiri. Bantuan masjid dan kerja komunitas tidak berarti semua aspek kehidupan warga dikontrol secara total.
-
-Kawasan ini tidak utopis. Kehidupan masih dapat menghadapi:
-- perubahan kondisi ekonomi dan usaha yang naik turun;
-- drama sosial, sindiran, dan perselisihan;
-- bahaya alam;
-- kesalahan, kegagalan, dan keterbatasan manusia.
-
-Karena itu, bantuan sosial memberi warga kesempatan untuk bertahan dan berkembang, tetapi tidak menghapus semua kesulitan atau menjamin semua orang selalu berhasil.
-
-## 6. Hubungan dengan perjalanan tokoh utama
-
-Tokoh utama dapat memanfaatkan akses belajar yang disediakan kawasan, bantuan saat benar-benar kekurangan dana, dan kerja sama komunitas dalam kegiatan pertanian atau peternakan. Ia tetap memiliki ruang untuk menentukan pilihan serta membangun kehidupan dan kemandiriannya sendiri.
-
-Ia tidak otomatis menjadi kaya, langsung mahir, atau bebas dari sindiran dan kegagalan. Perkembangannya perlu muncul melalui pengalaman, pengetahuan, keputusan, hubungan sosial, serta keberhasilan dan kesalahan yang masuk akal.
+Protagonis tidak otomatis kaya, langsung mahir, atau bebas dari sindiran. Pertumbuhannya berasal dari pengalaman, pembelajaran, keputusan, relasi, serta keberhasilan dan kegagalan yang masuk akal.
 
 ## Keputusan yang telah ditetapkan
 
-- [x] Hukum negara ECOS berlaku pada tingkat negara.
-- [x] Kawasan masjid tetap berlandaskan agama dalam kehidupan dan pengelolaan internalnya.
+- [x] Hukum ECOS berlaku secara nasional; prinsip agama kawasan masjid berlaku untuk kehidupan internalnya.
 - [x] Masjid menjadi sentral spiritual dan pusat ekonomi berbasis agama.
-- [x] Tidak ada batasan untuk menjadi kaya ataupun miskin.
-- [x] Masjid membantu warga yang kekurangan dana.
-- [x] Tokoh utama bebas mengakses hal-hal yang disediakan kawasan masjid.
-- [x] Lahan pertanian/peternakan adalah milik pribadi.
-- [x] Alat berat dimiliki bersama.
-- [x] Tenaga komunitas dapat dipanggil saat dibutuhkan; kerja sama didorong oleh saling membutuhkan, bukan paksaan.
-- [x] Kerja sama menggunakan sistem bagi hasil.
-- [x] Konflik dimediasi di Ruang Komunitas dengan sumber agama sebagai acuan/data netral.
-- [x] Sindiran dan drama sosial merupakan bagian dari dinamika kota.
-- [x] Warga dapat memiliki rumah, kendaraan, dan usaha sendiri; tidak semua kehidupan dikontrol total.
-- [x] Masalah tetap ada, termasuk ekonomi yang naik turun dan bahaya alam.
+- [x] Warga yang kekurangan dana dapat dibantu.
+- [x] Warga dapat kaya atau miskin dan memiliki rumah, kendaraan, lahan, serta usaha sendiri.
+- [x] Lahan pertanian/peternakan milik pribadi; alat berat dimiliki bersama.
+- [x] Kerja komunitas berbasis kebutuhan, kesepakatan, dan bagi hasil, bukan paksaan.
+- [x] Konflik dimediasi di Ruang Komunitas dengan sumber agama sebagai rujukan netral.
+- [x] Sindiran, drama sosial, perubahan ekonomi, kegagalan manusia, dan bahaya alam tetap mungkin.
 
 ## Pertanyaan terbuka
 
-- [ ] Bagaimana dana bantuan masjid dikumpulkan, dikelola, dan diaudit?
-- [ ] Siapa yang menentukan kelayakan dan bentuk bantuan?
-- [ ] Apa saja fasilitas kawasan yang dapat diakses untuk belajar?
-- [ ] Bagaimana kesepakatan penggunaan alat berat dan pembagian hasil dibuat?
-- [ ] Siapa yang memediasi di Ruang Komunitas dan bagaimana prosedur mediasi dijalankan?
-- [ ] Apa batas perlakuan sosial yang dapat diterima tanpa menghapus dinamika alami warga?
+- [ ] Bagaimana dana bantuan dikumpulkan, dikelola, dan diaudit?
+- [ ] Siapa yang menentukan bentuk bantuan dan bagaimana warga mengajukan keberatan?
+- [ ] Fasilitas apa yang tersedia untuk belajar dan beradaptasi?
+- [ ] Bagaimana jadwal alat berat dan kesepakatan bagi hasil dicatat?
+- [ ] Siapa mediator dan bagaimana proses mediasi didokumentasikan?
+- [ ] Bagaimana warga mengakses perlindungan hukum nasional ketika mediasi gagal?
 
-Rincian operasional yang belum disepakati tidak boleh ditulis sebagai fakta final. Prinsip di atas adalah fondasi lore, bukan klaim bahwa sistem atau fasilitas tersebut telah diimplementasikan dalam game.
+Prinsip di atas adalah fondasi lore, bukan klaim bahwa fasilitas atau sistem tersebut telah diimplementasikan dalam game.
