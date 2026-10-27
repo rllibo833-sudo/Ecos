@@ -1,34 +1,53 @@
-# Bioma, Iklim, Air, dan Tanah
+# Bioma, Iklim, Air, dan Tanah ECOS
 
-**Status: belum diputuskan.** Dokumen ini sengaja tidak memilih bioma atau kondisi alam tanpa dasar.
+**Status: kerangka bioma ditetapkan dalam kanon.** Geometri tepat, koordinat, dan rincian spesies masih menjadi pekerjaan kartografi/natural history.
 
-## Bioma lama
+## Bioma yang dipertahankan dan ditambahkan
 
-Empat bioma pernah disebut dalam bahan lama: **tropis, pegunungan, pesisir, dan gurun**. Statusnya masih perlu dievaluasi. Belum ada keputusan untuk mempertahankan semuanya, menghapusnya, atau mengubahnya.
+Empat bioma lama **tetap dipertahankan**:
+1. Tropis.
+2. Pegunungan.
+3. Pesisir.
+4. Gurun.
 
-Jangan memperlakukan daftar ini sebagai peta final. Keberadaan tiap bioma harus diuji terhadap bentuk wilayah, iklim, jarak, ketinggian, curah hujan, sumber air, dan kebutuhan dunia yang nantinya disepakati.
+Bioma tambahan:
+5. Hutan sedang.
+6. Padang rumput dan sabana.
+7. Lahan basah, rawa, dan dataran banjir.
+8. Kawasan alpin bersalju dan tundra pegunungan.
+9. Sistem sungai, danau, dan cekungan air tawar sebagai koridor ekologis.
 
-## Hal yang perlu saling cocok
+Bioma-bioma ini tersebar di wilayah nasional ECOS yang luas dan terpisah; tidak semuanya harus ada di wilayah inti offline 100 km².
 
-- **Iklim:** suhu, musim, pola hujan, dan variasi lokal.
-- **Air:** sungai, danau, air tanah, sumber air, drainase, serta risiko kekeringan atau banjir.
-- **Tanah:** kesesuaian lahan untuk tanaman, padang rumput, bangunan, dan ekosistem.
-- **Topografi:** dataran, lereng, ketinggian, lembah, dan hubungan antarbentang alam.
-- **Ekologi:** habitat, vegetasi, hewan, ketersediaan pangan, dan dampak kegiatan manusia.
-- **Kehidupan:** bagaimana kondisi alam memengaruhi peternakan, kebun, perjalanan, permukiman, dan ekonomi.
+## Logika iklim
 
-Ini adalah daftar pemeriksaan, bukan bukti bahwa semua unsur tersebut sudah ada di ECOS.
+- **Tropis:** dataran hangat dengan musim hujan/kering atau hujan tinggi, mendukung kebun, hutan, dan pertanian.
+- **Pegunungan:** suhu turun seiring ketinggian; lembah dapat menjadi jalur permukiman dan transportasi.
+- **Pesisir:** dipengaruhi angin laut, badai, pasang-surut, abrasi, pelabuhan, dan perikanan.
+- **Gurun:** wilayah kering yang dijelaskan oleh pola sirkulasi atmosfer, jarak dari laut, atau bayangan hujan pegunungan; memiliki oasis dan jalur air terbatas.
+- **Hutan sedang:** musim lebih jelas, tanah dan vegetasi berubah sepanjang tahun.
+- **Sabana/padang rumput:** musim kering dan basah memengaruhi penggembalaan, kebakaran, serta ketersediaan air.
+- **Lahan basah:** berada di dataran rendah, delta, atau cekungan drainase; rentan banjir tetapi produktif.
+- **Alpin bersalju/tundra pegunungan:** berada pada ketinggian atau lintang dingin; salju tidak diletakkan berdampingan dengan gurun panas tanpa penjelasan geografis.
+- **Sungai dan danau:** menghubungkan habitat, pertanian, perikanan, transportasi lokal, dan perdagangan.
 
-## Pertanyaan terbuka
+## Aturan konsistensi alam
 
-1. Apakah keempat bioma lama benar-benar dibutuhkan dalam wilayah konseptual 10.000 hektare?
-2. Jika beberapa bioma dipertahankan, apakah transisi di antaranya masuk akal untuk bentuk dan iklim wilayah yang dipilih?
-3. Apa kondisi air dan tanah yang dibutuhkan agar peran peternak dan pekebun protagonis masuk akal?
-4. Apakah peta harus memprioritaskan konsistensi geografis, kebebasan eksplorasi, atau kompromi desain yang jelas?
+1. Sungai mengalir dari daerah tinggi ke daerah rendah menuju danau, laut, atau cekungan tertutup.
+2. Pegunungan memengaruhi curah hujan, suhu, rute perjalanan, dan kemungkinan terbentuknya wilayah kering di sisi bayangan hujan.
+3. Salju permanen atau musiman harus masuk akal berdasarkan ketinggian dan iklim.
+4. Pantai, teluk, pelabuhan, dan pulau harus konsisten dengan peta pesisir serta rute kapal.
+5. Peternakan dan kebun protagonis harus memiliki sumber air, tanah, dan musim yang cukup masuk akal.
+6. Bencana alam dapat terjadi dan memengaruhi kehidupan warga; lingkungan bukan dekorasi tanpa konsekuensi.
+
+## Hubungan dengan atlas
+
+Geografi nasional skala besar ditetapkan dalam [Kanon Induk Dunia ECOS](./00-kanon-induk-dunia-ecos.md). Nama provinsi, kota, dan pusat administratif mengacu pada [Atlas Administratif](./08-atlas-administratif-negara-ecos.md). Dokumen ini tidak menetapkan koordinat atau peta berskala final.
 
 ## Checklist
 
-- [x] Empat bioma lama dicatat sebagai kandidat yang belum disahkan.
-- [x] Faktor iklim, air, tanah, topografi, dan ekologi didaftar sebagai dependensi.
-- [ ] Putuskan bioma setelah bentuk wilayah dan kebutuhan lahan disepakati.
-- [ ] Pastikan kondisi alam mendukung kehidupan dan pekerjaan yang ditetapkan.
+- [x] Tropis, pegunungan, pesisir, dan gurun dipertahankan.
+- [x] Bioma tambahan meliputi hutan sedang, sabana/padang rumput, lahan basah, kawasan alpin bersalju/tundra pegunungan, serta sistem air tawar.
+- [x] Hubungan dasar iklim, air, tanah, topografi, dan transportasi dinyatakan.
+- [ ] Gambar garis pantai, sungai, pegunungan, batas bioma, dan koordinat peta final.
+- [ ] Tentukan flora/fauna spesifik setelah peta dan iklim lokal dibuat.
