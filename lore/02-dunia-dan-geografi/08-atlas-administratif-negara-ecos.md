@@ -37,7 +37,7 @@ Dalam rancangan administratif ini, Juailin ditempatkan di Provinsi Arunika. Pene
 
 Kawasan masjid seluas **1.000 hektare** adalah kawasan gabungan yang mencakup beberapa kota kecil dan permukiman. Kawasan ini berada pada sisi kanan bawah peta konseptual berbentuk kotak; masjid menjadi titik sentralnya; Juailin berada terpencil di salah satu sudut kawasan.
 
-Untuk menghindari konflik administrasi, kawasan masjid diperlakukan sebagai **kawasan khusus lintas-permukiman**, bukan sebagai provinsi baru atau sinonim bagi Juailin. Hubungan formal kawasan ini dengan batas provinsi masih merupakan keputusan administratif yang dapat disempurnakan saat peta wilayah dirancang. Untuk sementara, daftar kota di kawasan masjid harus mengacu pada dokumen geografi utama dan tidak ditambah sembarangan.
+Untuk menghindari konflik administrasi, kawasan masjid ditetapkan sebagai **kawasan khusus yang seluruhnya berada di Provinsi Arunika**. Kawasan ini mencakup beberapa kota kecil dan permukiman, termasuk Juailin; kawasan khusus tersebut bukan provinsi baru, bukan sinonim bagi Juailin, dan tidak berarti seluruh Provinsi Arunika termasuk kawasan masjid. Nama tempat di dalam kawasan harus mengacu pada atlas ini dan dokumen geografi terkait, bukan ditambah sembarangan.
 
 ### Prinsip kehidupan kawasan masjid
 
