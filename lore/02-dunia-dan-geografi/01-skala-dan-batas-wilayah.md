@@ -1,39 +1,33 @@
 # Skala dan Batas Wilayah ECOS
 
-**Status: keputusan pemilik proyek tercatat; detail peta masih dikembangkan.**
+**Sumber utama:** [Kanon Induk Dunia ECOS](./00-kanon-induk-dunia-ecos.md).
 
-## Keputusan yang berlaku
+## Dua skala yang berbeda
 
-- **ECOS adalah sebuah negara fiksi**, bukan hanya satu kota atau satu kawasan.
-- Skala konseptual yang saat ini ditetapkan untuk wilayah ECOS adalah **10.000 hektare**.
-- Wilayah ECOS mencakup **kawasan-kawasan yang terpisah**, bukan satu hamparan geografis tunggal yang semuanya harus saling bersambung.
-- **Juailin adalah kota kecil** di dalam ECOS. Kota ini merupakan ecosentral dengan arus informasi sangat cepat dan tempat asal protagonis.
-- **Kawasan masjid seluas 1.000 hektare merupakan gabungan beberapa kota kecil dan permukiman; Juailin adalah salah satunya**. Kawasan ini berada di dalam negara ECOS, tetapi tidak sama dengan satu kota tunggal.
-- ECOS memiliki empat provinsi rancangan awal yang tercatat dalam Atlas Administratif Negara ECOS. Kawasan khusus masjid 1.000 hektare ditempatkan seluruhnya di Provinsi Arunika; batas dan luas rinci provinsi serta kota masih terbuka.
-- Untuk rancangan permainan **offline**, skala 10.000 hektare menjadi target yang dipertahankan. Jika pengembangan diperluas lebih jauh, dunia permainan dapat diperluas melebihi skala awal sesuai kebutuhan dan kelayakan desain/teknis.
+ECOS adalah negara fiksi dengan luas naratif sekitar **1,7 juta km²**, kira-kira sepersepuluh luas Rusia. Wilayah nasionalnya terdiri dari beberapa kawasan terpisah; tidak semua wilayah harus tersambung menjadi satu daratan.
 
-## Cara membaca angka
+Untuk rancangan permainan offline awal, wilayah inti yang menjadi target adalah **10.000 hektare (100 km²)**. Angka ini bukan luas total negara dalam lore. **Kawasan masjid 1.000 hektare (10 km²)** berada di dalam wilayah inti offline dan di dalam Negara ECOS, bukan tambahan di luarnya.
 
-Angka 10.000 hektare adalah skala konseptual negara ECOS dalam rancangan saat ini. Karena wilayahnya mencakup kawasan terpisah, angka tersebut tidak boleh ditafsirkan sebagai satu bidang tanah berkesinambungan. Belum ditetapkan apakah semua kawasan terpisah itu merupakan wilayah daratan yang terpisah, pulau, enklave, atau kategori lain; jangan memilih salah satunya tanpa keputusan.
+Pemisahan skala ini menyelesaikan perbedaan antara dunia nasional yang luas dan area awal yang dapat dirancang secara terukur. Wilayah inti dapat mewakili satu bagian penting ECOS tanpa menampilkan seluruh negara sekaligus.
 
-Kawasan masjid 1.000 hektare termasuk dalam skala 10.000 hektare. Angka sisa 9.000 hektare hanya hasil pengurangan aritmetika dan **bukan** pembagian otomatis untuk kota, provinsi, atau kawasan lain. Luas kota Juailin juga belum ditetapkan, dan kawasan masjid tidak boleh disamakan dengan seluruh luas kota.
+## Struktur wilayah
 
-## Pertanyaan yang masih terbuka
+Rancangan administratif memakai empat provinsi: Arunika, Wanasera, Tirta Nusa, dan Giriwana. Karena wilayah nasional tersebar, satu provinsi bisa memiliki beberapa kawasan terpisah. Batas detail dan koordinat harus mengikuti kanon induk serta atlas administratif.
 
-- Bagaimana batas geografis provinsi, kota, dan kawasan-kawasan terpisah digambar secara konsisten?
-- Bagaimana kawasan khusus masjid di Provinsi Arunika berbatasan dengan wilayah di sekitarnya?
-- Berapa luas tiap provinsi dan kota setelah peta konseptual dirancang?
-- Apakah wilayah terpisah itu berupa pulau, wilayah yang dipisahkan oleh batas lain, atau bentuk geografis yang berbeda?
-- Jika dunia diperluas di atas skala offline awal, apa yang tetap menjadi wilayah inti dan apa yang ditambahkan?
+Kawasan masjid berada seluruhnya di Provinsi Arunika. Kawasan tersebut mencakup beberapa kota kecil/permukiman termasuk Juailin. Pada peta konseptual berbentuk kotak, kawasan masjid di sisi kanan bawah, masjid di pusatnya, dan Juailin di salah satu sudut terpencilnya.
 
-## Checklist
+## Angka yang tidak boleh dicampur
 
-- [x] ECOS ditetapkan sebagai negara fiksi.
-- [x] Skala konseptual ECOS ditetapkan 10.000 hektare.
-- [x] Wilayah ECOS mencakup kawasan-kawasan terpisah.
-- [x] Juailin ditetapkan sebagai kota kecil.
-- [x] Kawasan masjid 1.000 hektare ditetapkan sebagai kawasan gabungan beberapa kota kecil/permukiman, termasuk Juailin.
-- [x] Skala offline dipertahankan sebagai target awal, dengan kemungkinan perluasan pada tahap pengembangan lebih jauh.
-- [x] Struktur awal empat provinsi dan penempatan kawasan masjid di Provinsi Arunika dicatat dalam atlas administratif.
-- [ ] Tetapkan jenis wilayah terpisah dan batas administratif terperinci.
-- [ ] Tetapkan cara angka skala diterjemahkan ke ukuran peta permainan setelah kebutuhan desain dan teknis diperiksa.
+- 1,7 juta km²: perkiraan luas nasional ECOS untuk lore.
+- 10.000 ha: wilayah inti untuk rancangan offline awal.
+- 1.000 ha: kawasan masjid di dalam wilayah inti.
+- 9.000 ha: sisa aritmetis wilayah inti di luar kawasan masjid; bukan pembagian otomatis untuk kota atau provinsi.
+- Luas Juailin dan populasi kawasan masjid belum dihitung sebagai angka mandiri dalam dokumen ini.
+
+## Yang masih perlu pemetaan
+
+- Koordinat, garis pantai, sungai, pegunungan, gurun, kawasan salju, dan batas provinsi.
+- Letak pasti kota-kota dalam wilayah inti dan wilayah nasional yang terpisah.
+- Jarak tempuh final dan lokasi fasilitas setelah jaringan transportasi ditetapkan.
+
+Detail makro dan baseline populasi/luas terdapat di [Kanon Induk Dunia ECOS](./00-kanon-induk-dunia-ecos.md).
