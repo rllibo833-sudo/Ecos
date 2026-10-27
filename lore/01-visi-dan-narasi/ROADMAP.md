@@ -4,7 +4,7 @@
 
 Domain ini menjadi rujukan utama selama pengembangan lore. Domain lain tidak boleh mengubah keputusan di sini tanpa pembaruan yang disengaja dan pemeriksaan dampak. Checklist menandakan dokumentasi konseptual telah ditulis, bukan bahwa game atau fiturnya sudah dibuat.
 
-> Status: **10/10 dokumen konseptual tersedia**. Audit lintas dokumen menemukan satu masalah konsistensi lama pada Premis Dunia: status peristiwa pemicu sebelumnya masih disebut belum ditetapkan. Premis telah diperbarui agar selaras dengan dokumen 06–08.
+> Status: **11/11 dokumen konseptual tersedia**. Audit lintas dokumen menemukan satu masalah konsistensi lama pada Premis Dunia: status peristiwa pemicu sebelumnya masih disebut belum ditetapkan. Premis telah diperbarui agar selaras dengan dokumen 06–08.
 
 ## Roadmap utama
 
@@ -18,6 +18,7 @@ Domain ini menjadi rujukan utama selama pengembangan lore. Domain lain tidak bol
 - [x] Konflik Utama — [buka dokumen](./08-konflik-utama.md)
 - [x] Aturan Konsistensi Narasi — [buka dokumen](./09-aturan-konsistensi.md)
 - [x] Kesinambungan Domain Universal — [buka dokumen](./10-kesinambungan-domain.md)
+- [x] Alur Cerita Utama — [buka dokumen](./11-alur-cerita-utama.md)
 
 ## Putusan kanon yang harus dijaga
 
@@ -29,6 +30,10 @@ Domain ini menjadi rujukan utama selama pengembangan lore. Domain lain tidak bol
 - Genre open-world, sci-fi, teknologi; cyberpunk dilarang sebagai genre dan estetika.
 - Pemain boleh mengabaikan cerita utama dan menjelajah sesuai visi desain; hal ini bukan klaim fitur terimplementasi.
 - Identitas orang yang disukai, bentuk wilayah, detail bioma, dan 25 legenda tetap terbuka sampai diputuskan.
+
+## Alur cerita
+
+Dokumen [Alur Cerita Utama](./11-alur-cerita-utama.md) menyatukan kondisi awal, pemicu, tujuan, konflik, perkembangan, dan kemungkinan akhir menjadi urutan yang dapat diikuti. Dokumen itu adalah kerangka cerita konseptual; adegan rinci dan implementasi game belum diklaim tersedia.
 
 ## Cara mengelola perubahan
 
