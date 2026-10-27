@@ -1,18 +1,22 @@
 # Roadmap — Karakter dan Komunitas
 
-Roadmap domain **Karakter dan Komunitas** dalam lore ECOS. Kerjakan satu item pada satu waktu dan catat ketergantungan bila ada.
+**Status:** kerangka karakter pendukung dan prinsip relasi tersedia. Nama, biografi rinci, dan adegan belum seluruhnya ditetapkan.
 
-> Status awal: **Belum dirancang / belum diverifikasi**. Checklist ini adalah roadmap, bukan klaim bahwa isi atau fitur telah selesai. Centang setelah hasilnya ditulis dan ditinjau.
+## Dokumen
 
-## Roadmap
+- [x] [Karakter Pendukung dan Relasi ECOS](./01-karakter-pendukung-dan-relasi.md)
 
-- [ ] Tetapkan profil protagonis dan pengetahuan awal.
-- [ ] Definisikan kebutuhan dan motivasi tokoh utama.
-- [ ] Buat format standar profil karakter.
-- [ ] Petakan relasi antar tokoh.
-- [ ] Definisikan komunitas dan identitas lokal.
-- [ ] Rancang rutinitas sosial sebagai konsep.
-- [ ] Bedakan kepercayaan dan reputasi.
-- [ ] Catat perubahan karakter akibat peristiwa.
-- [ ] Berikan tujuan mandiri kepada karakter pendukung.
-- [ ] Audit konsistensi sejarah dan motivasi.
+## Checklist
+
+- [x] Definisikan fungsi karakter pendukung tanpa menjadikan mereka alat misi.
+- [x] Bedakan dukungan praktis dan emosional.
+- [x] Tetapkan prinsip bahwa karakter memiliki motivasi dan kekurangan.
+- [x] Lindungi kanon orang yang disukai protagonis: identitas dan tanggapannya belum ditentukan; tidak ada penolakan yang diasumsikan.
+- [ ] Tetapkan nama dan profil individu yang benar-benar diperlukan oleh adegan.
+- [ ] Petakan hubungan karakter dan perubahan kepercayaan sepanjang cerita.
+- [ ] Definisikan komunitas lokal dan rutinitas sosial per wilayah.
+- [ ] Audit karakter terhadap sejarah, ekonomi, teknologi, dan alur utama.
+
+## Aturan
+
+Tidak semua warga baik atau jahat secara mutlak. Sindiran dan konflik tetap ada; protagonis tidak harus memperoleh permintaan maaf dari semua orang. Dokumen ini menetapkan konsep, bukan NPC atau sistem relasi yang sudah terimplementasi.
