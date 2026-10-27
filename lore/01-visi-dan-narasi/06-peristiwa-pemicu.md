@@ -1,11 +1,26 @@
 # Peristiwa Pemicu
 
-Menentukan kejadian yang membuat kehidupan biasa protagonis mulai berubah.
+**Status:** rancangan arah pemicu, belum ditetapkan sebagai kejadian canon.
 
-> Status: **Belum dikerjakan / belum diverifikasi**. Checklist ini memecah satu item roadmap menjadi tiga langkah kecil. Centang setelah hasilnya benar-benar ditulis dan ditinjau.
+## Arah peristiwa
 
-## Checklist turunan
+Pemicu sebaiknya berupa perubahan layanan, informasi, atau teknologi yang menyentuh kebutuhan sehari-hari protagonis atau komunitasnya. Peristiwa harus memaksanya mencari pemahaman, bukan sekadar memamerkan nama sistem atau memperkenalkan semua proyek teknologi sekaligus.
 
-- [ ] Rancang peristiwa yang dekat dengan kehidupan sehari-hari dan berkaitan dengan perubahan layanan, teknologi, atau arus informasi.
-- [ ] Pastikan peristiwa memberi protagonis alasan pribadi untuk bertindak dan tidak sekadar memperkenalkan nama sistem teknologi.
-- [ ] Tulis urutan sebab-akibat awal serta beberapa respons yang masuk akal tanpa menetapkan pilihan pemain sebelum desainnya disepakati.
+## Urutan sebab-akibat awal (opsi desain)
+
+1. Protagonis menerima atau mengalami informasi tentang perubahan yang berdampak pada rutinitas.
+2. Informasi yang tersedia belum cukup jelas atau berbeda dari keterangan orang lain.
+3. Ia perlu memutuskan apakah akan bertindak segera, bertanya, atau memeriksa sumber lain.
+4. Tindakannya membuka pertanyaan baru dan memberi alasan untuk menjelajahi dunia serta memahami sistem.
+
+Ini adalah kerangka contoh; layanan spesifik, akibat nyata, dan pilihan pemain belum diputuskan.
+
+## Prinsip pilihan
+
+Pemain sebaiknya memiliki lebih dari satu respons yang masuk akal: bertanya pada warga/petugas, mencari pengumuman, memeriksa bukti yang tersedia, atau menunda tindakan. Tiap pilihan dapat mengubah pengetahuan dan relasi, tetapi konsekuensi spesifik baru ditulis setelah misi dirancang.
+
+## Checklist
+
+- [x] Pemicu diarahkan pada masalah sehari-hari yang berhubungan dengan teknologi atau arus informasi.
+- [x] Pemicu memberi alasan pribadi untuk bertindak, bukan sekadar memajang nama sistem.
+- [x] Kerangka sebab-akibat dan beberapa respons dicatat sebagai opsi, bukan pilihan pemain yang sudah dikunci.
