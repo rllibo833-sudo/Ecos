@@ -13,6 +13,7 @@
 - [x] [Bioma, iklim, air, dan tanah](./05-bioma-iklim-air-tanah.md)
 - [x] [Peta, orientasi, dan kebebasan modifikasi](./06-peta-dan-modifikasi.md)
 - [x] [Kehidupan sosial dan jaminan warga kawasan masjid](./07-kehidupan-sosial-dan-jaminan-warga.md)
+- [x] [Atlas administratif Negara ECOS](./08-atlas-administratif-negara-ecos.md)
 
 ## Keputusan yang telah dicatat
 
