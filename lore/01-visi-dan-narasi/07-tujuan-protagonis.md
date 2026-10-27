@@ -1,27 +1,57 @@
-# Tujuan Jangka Pendek dan Panjang
+# Tujuan Protagonis
 
-## Tujuan jangka pendek
+**Status:** tujuan emosional utama ditetapkan; hasil akhirnya bercabang dan belum ditentukan sebagai satu ending tunggal.
 
-Protagonis perlu belajar menyesuaikan diri dengan kehidupan sehari-hari di kawasan masjid seluas **1.000 hektare**, tempat ia menjalani peran sebagai peternak dan pekebun. Ia berusaha memahami informasi dan teknologi yang berkaitan dengan aktivitasnya, sambil belajar membedakan informasi yang berguna dari informasi yang membingungkan atau menyesatkan. Masalah konkret pertama yang mendorong tujuan ini masih menunggu keputusan tentang peristiwa pemicu.
+## Tujuan terdalam
 
-## Tujuan jangka panjang
+Di balik perjalanan menjelajahi ECOS dan usahanya menjadi diri sendiri, protagonis menyimpan satu tujuan pribadi: **ia ingin mengungkapkan perasaannya kepada orang yang ia sukai**.
 
-Perjalanan protagonis adalah berkembang dari pemuda asal **Juailin** yang kesulitan menghadapi arus informasi cepat menjadi seseorang yang lebih mandiri dalam memahami teknologi, menilai informasi, mengelola tanggung jawab sebagai peternak dan pekebun, serta mengambil keputusan yang mempertimbangkan masyarakat di sekitarnya.
+Ia telah menyukai seseorang yang ia pandang lebih tinggi darinya, tetapi selama ini menyimpan perasaan itu dan tidak pernah mengungkapkannya. Keinginan untuk berbicara jujur tentang perasaannya menjadi tujuan emosional yang dapat menemaninya sepanjang perjalanan.
 
-Ia tidak harus berubah menjadi programmer atau ahli dalam seluruh teknologi. Kemajuan terlihat dari cara ia belajar, bertanya, menguji informasi, mengelola pekerjaannya, dan mengambil keputusan.
+Mengungkapkan perasaan bukan jaminan bahwa ia akan mendapatkan orang tersebut. Tujuannya adalah mengambil keputusan yang selama ini tidak sanggup ia ambil, sambil belajar menerima bahwa orang lain memiliki perasaan, pilihan, dan kehidupannya sendiri.
 
-## Tujuan dapat berkembang
+## Hubungan dengan perjalanan ECOS
 
-Tujuan dapat berkembang ketika protagonis:
-- memperoleh pengetahuan baru dari kegiatan beternak dan berkebun;
-- menemukan perbedaan antara informasi digital dan kondisi yang ia amati;
-- menerima bantuan atau perspektif dari orang lain;
-- memahami bahwa keputusan pribadinya juga dapat berdampak pada komunitas.
+Perjalanan protagonis tidak harus menjadi rangkaian tugas yang hanya bertujuan mendekatkannya kepada orang yang disukai. Pengalaman di ECOS memberi ruang baginya untuk mengenali dirinya, menghadapi rasa takut dan kehilangan, belajar dari orang lain, serta membangun keberanian untuk memilih kapan dan bagaimana ia akan berbicara jujur.
 
-Situasi spesifik dan konsekuensi gameplay tetap harus dirancang, bukan dianggap sudah diimplementasikan.
+Pertumbuhan diri dan tujuan romantis saling berkaitan, tetapi keduanya tidak identik. Protagonis tetap memiliki kehidupan, tanggung jawab, pekerjaan, dan hubungan dengan masyarakat di luar perasaannya. Ia tidak harus menjadi sempurna atau merasa sepenuhnya siap sebelum dapat mengambil keputusan.
+
+## Kemungkinan ending bercabang
+
+Pengungkapan perasaan dapat menjadi salah satu titik akhir utama cerita. Setelah protagonis menyampaikan perasaannya, alur dapat bercabang ke beberapa hasil yang berbeda:
+
+1. **Bahagia dan diterima** — orang yang ia sukai membalas perasaannya, dan mereka memilih untuk menjajaki hubungan bersama.
+2. **Tidak sesuai ekspektasi** — respons atau keadaan yang terjadi berbeda dari bayangan protagonis; hasil emosionalnya bergantung pada detail cerita yang kelak ditetapkan.
+3. **Menyaksikan orang yang disukai bersama orang lain** — protagonis mengetahui atau melihat bahwa orang tersebut menjalin hubungan dengan orang lain. Ia harus menghadapi kenyataan itu tanpa kehilangan harga dirinya.
+4. **Lega setelah mengungkapkan** — perasaannya mungkin tidak terbalas atau hasilnya tidak seperti harapan, tetapi ia merasa lega karena akhirnya berkata jujur dan tidak lagi menyimpan semuanya sendirian.
+
+Daftar ini merupakan kemungkinan naratif berdasarkan arahan pemilik proyek, bukan keputusan bahwa semua ending sudah dirancang atau tersedia dalam game. Cabang-cabang tersebut juga belum harus dianggap saling eksklusif sampai struktur cerita final ditetapkan.
+
+## Prinsip untuk semua cabang
+
+- Respons orang yang disukai tidak boleh dianggap sebagai hadiah yang wajib diberikan kepada protagonis.
+- Tidak mendapatkan hubungan romantis bukan berarti protagonis gagal sebagai manusia.
+- Ending bahagia tidak boleh menghapus proses belajar dan pertumbuhan protagonis.
+- Ending sedih atau mengecewakan tetap dapat memberi makna, kelegaan, atau pemahaman baru.
+- Keputusan dan keadaan yang mengarah ke setiap cabang perlu dibangun melalui cerita, bukan ditentukan oleh satu ukuran sederhana tentang nilai diri protagonis.
+- Pemain harus dapat memahami bahwa keberanian mengungkapkan perasaan adalah pilihan protagonis; hasilnya tidak sepenuhnya berada dalam kendalinya.
+
+## Hal yang masih terbuka
+
+- Nama, identitas, latar belakang, dan hubungan orang yang disukai dengan protagonis.
+- Alasan protagonis memandang orang tersebut lebih tinggi darinya.
+- Kapan, di mana, dan dengan cara apa perasaan itu akhirnya diungkapkan.
+- Apakah keputusan pemain atau perkembangan cerita menentukan cabang ending.
+- Apakah terdapat ending tambahan, urutan ending, atau kemungkinan tidak mengungkapkan perasaan sama sekali.
+- Detail spesifik dari masing-masing ending dan konsekuensinya bagi kehidupan protagonis setelah itu.
+
+Detail tersebut tidak ditetapkan sebagai canon sebelum diputuskan lebih lanjut.
 
 ## Checklist
 
-- [x] Tujuan jangka pendek dihubungkan dengan adaptasi dan kehidupan sebagai peternak/pekebun.
-- [x] Tujuan jangka panjang menghubungkan kemandirian, literasi informasi, pekerjaan, dan tanggung jawab sosial.
-- [x] Perkembangan tujuan ditulis tanpa mengarang peristiwa pemicu atau misi final.
+- [x] Keinginan mengungkapkan perasaan kepada orang yang disukai ditetapkan sebagai tujuan emosional utama.
+- [x] Pengungkapan perasaan ditetapkan sebagai kemungkinan titik akhir cerita.
+- [x] Empat kemungkinan hasil dicatat: bahagia, tidak sesuai ekspektasi, melihat orang yang disukai bersama orang lain, dan merasa lega setelah mengungkapkan.
+- [x] Setiap kemungkinan diperlakukan sebagai arah ending, bukan fitur game yang diklaim sudah tersedia.
+- [x] Pertumbuhan diri protagonis dipisahkan dari kewajiban untuk mendapatkan cinta.
+- [x] Detail hubungan, adegan pengungkapan, dan mekanisme pemilihan ending tetap terbuka.
