@@ -1,20 +1,20 @@
 # Teknologi dan Sistem ECOS
 
-**Sumber prinsip dunia:** [Prinsip Teknologi Dunia ECOS](./00-prinsip-teknologi-dunia.md).
+**Sumber kanon aktif:** [Prinsip Teknologi Dunia ECOS](./00-prinsip-teknologi-dunia.md).
 
-Dokumen dalam folder ini membahas konsep sistem dan proyek teknologi yang mungkin relevan. Keberadaan dokumen, nama sistem, atau repositori lain tidak membuktikan bahwa sistem itu telah terintegrasi dengan ECOS atau menjadi fitur game.
+ECOS menggunakan teknologi sci-fi yang membumi, bukan cyberpunk. Teknologi hadir di komunikasi, pertanian, transportasi, layanan publik, kesehatan, pendidikan, energi, manufaktur, arsip, dan riset. Sistem memiliki manfaat sekaligus batas, biaya, kegagalan, dan dampak sosial.
 
-## Dokumen
+## Cakupan aktif
 
-- [x] [Prinsip Teknologi Dunia ECOS](./00-prinsip-teknologi-dunia.md)
-- [ ] Bahasa .cuk — audit relevansi dan peran fiksional bila dipakai.
-- [ ] Core dan Cuk Reality Engine — bedakan konsep dari kemampuan yang benar-benar diuji.
-- [ ] lynOS, PusingCuk, Mnemos-RLI, Steadfast, FounderOS, dan sistem lain — jangan menyatakan integrasi tanpa bukti.
-- [ ] Digital Forensic dan Graph Knowledge Living Shared — tentukan relevansi cerita, privasi, dan batas penggunaan.
-- [ ] Audit konsistensi istilah, tingkat teknologi, biaya, akses, dan kegagalan.
+- [x] Prinsip teknologi dunia dan batasan naratif.
+- [x] Arus informasi cepat di Juailin dan risiko rumor/informasi salah.
+- [x] Keterbatasan, privasi, akses, serta kebutuhan verifikasi data.
+- [x] Pemisahan antara konsep fiksional dan implementasi nyata.
 
-## Prinsip
+## Dokumen yang dipindahkan
 
-Teknologi ECOS membumi, memiliki manfaat dan keterbatasan, serta bukan cyberpunk. Informasi cepat di Juailin dapat mempercepat belajar maupun menyebarkan rumor. Sistem harus memiliki risiko, batas, dan mekanisme koreksi. Tidak ada sistem yang selalu benar.
+Draf placeholder Bahasa Cuk, Core, Cuk Reality Engine, Digital Forensic, FounderOS, Graph Knowledge Living Shared, LynOS, Mnemos-RLI, PusingCuk AI, dan Steadfast sudah dipindahkan ke [arsip draf teknologi](../99-arsip/README.md). Dokumen tersebut tidak lagi tampil sebagai roadmap aktif karena belum memiliki fungsi fiksional yang ditetapkan.
 
-Semua item belum dicentang berarti perlu audit lebih lanjut; jangan menganggapnya telah selesai hanya karena disebut dalam lore.
+## Aturan
+
+Nama proyek atau repositori di luar lore tidak membuktikan bahwa sistem tersebut menjadi bagian dari ECOS. Sistem tertentu hanya boleh dimasukkan kembali jika fungsi fiksional, batas, konsekuensi sosial, dan relevansinya pada cerita sudah jelas.
