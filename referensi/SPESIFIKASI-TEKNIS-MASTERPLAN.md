@@ -158,7 +158,7 @@ Kriteria uji:
 
 ## 9. Kriteria penerimaan (acceptance criteria)
 
-- [ ] Total luas target 10.000 ha, dengan 12 zona dan ID unik.
+- [ ] Total luas target 10.000 ha, dengan 13 zona dan ID unik.
 - [ ] Sistem koordinat terdokumentasi dan konsisten.
 - [ ] Grid 20 × 20 terdefinisi sebagai alat authoring, bukan batas distrik.
 - [ ] Layer terrain, hidrologi, bioma, distrik, jalan, POI, gameplay dan streaming terpisah.
