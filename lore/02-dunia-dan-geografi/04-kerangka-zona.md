@@ -7,12 +7,12 @@ ECOS adalah negara fiksi dengan skala konseptual 10.000 hektare yang mencakup ka
 ## Tingkatan ruang yang sudah diketahui
 
 1. **Negara ECOS:** kerangka wilayah terbesar yang menjadi latar dunia; skala konseptual 10.000 hektare pada rancangan offline awal.
-2. **Provinsi:** ECOS memiliki provinsi, tetapi jumlah, nama, batas, dan hubungan administratifnya belum ditetapkan.
+2. **Provinsi:** rancangan awal ECOS menggunakan empat provinsi—Arunika, Wanasera, Tirta Nusa, dan Giriwana—sesuai Atlas Administratif Negara ECOS. Batas dan luas rinci masih terbuka.
 3. **Kota dan permukiman:** ECOS memiliki beberapa kota dan permukiman. Juailin adalah salah satu kota kecil/permukiman dan berfungsi sebagai ecosentral.
 4. **Kawasan masjid:** kawasan gabungan seluas 1.000 hektare yang mencakup beberapa kota kecil dan permukiman, termasuk Juailin. Masjid menjadi titik sentral kawasan.
 5. **Kawasan geografis terpisah:** wilayah ECOS tidak semuanya berkesinambungan; bentuk dan status administratif masing-masing belum diputuskan.
 
-Tingkatan administratif tepat antara provinsi, kota, permukiman, dan kawasan masjid belum diputuskan. Jangan memaksakan kawasan masjid menjadi kota atau provinsi tersendiri tanpa keputusan baru.
+Kawasan khusus masjid ditempatkan seluruhnya di Provinsi Arunika dan mencakup beberapa kota kecil serta permukiman, termasuk Juailin. Kawasan ini bukan kota atau provinsi tersendiri. Batas rinci dan tata kelola administratifnya masih dapat diperjelas tanpa mengubah penempatan dasar tersebut.
 
 ## Orientasi peta konseptual
 
@@ -50,6 +50,7 @@ Rancangan awal offline mempertahankan skala konseptual 10.000 hektare. Pengemban
 - [x] Masjid ditetapkan sebagai titik sentral kawasan.
 - [x] Kawasan masjid ditempatkan di sisi kanan bawah peta kotak; Juailin terpencil di salah satu sudut.
 - [x] Kawasan terpisah diakui tanpa mengarang jenis geografisnya.
-- [ ] Tetapkan jumlah dan batas provinsi serta kota.
+- [x] Nama empat provinsi dan penempatan kawasan masjid di Provinsi Arunika mengikuti atlas administratif.
+- [ ] Tetapkan batas rinci provinsi serta kota.
 - [ ] Tetapkan bentuk kawasan terpisah dan hubungan transportasinya.
 - [ ] Rancang hubungan fungsi ibadah, peternakan, kebun, tempat tinggal, layanan, dan kegiatan warga.
