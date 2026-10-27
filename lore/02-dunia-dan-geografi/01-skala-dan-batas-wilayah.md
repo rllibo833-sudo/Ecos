@@ -9,7 +9,7 @@
 - Wilayah ECOS mencakup **kawasan-kawasan yang terpisah**, bukan satu hamparan geografis tunggal yang semuanya harus saling bersambung.
 - **Juailin adalah kota kecil** di dalam ECOS. Kota ini merupakan ecosentral dengan arus informasi sangat cepat dan tempat asal protagonis.
 - **Kawasan masjid seluas 1.000 hektare merupakan gabungan beberapa kota kecil dan permukiman; Juailin adalah salah satunya**. Kawasan ini berada di dalam negara ECOS, tetapi tidak sama dengan satu kota tunggal.
-- ECOS juga memiliki kota-kota lain serta provinsi. Nama, jumlah, luas, batas, dan hubungan administratifnya belum ditetapkan.
+- ECOS memiliki empat provinsi rancangan awal yang tercatat dalam Atlas Administratif Negara ECOS. Kawasan khusus masjid 1.000 hektare ditempatkan seluruhnya di Provinsi Arunika; batas dan luas rinci provinsi serta kota masih terbuka.
 - Untuk rancangan permainan **offline**, skala 10.000 hektare menjadi target yang dipertahankan. Jika pengembangan diperluas lebih jauh, dunia permainan dapat diperluas melebihi skala awal sesuai kebutuhan dan kelayakan desain/teknis.
 
 ## Cara membaca angka
@@ -20,9 +20,9 @@ Kawasan masjid 1.000 hektare termasuk dalam skala 10.000 hektare. Angka sisa 9.0
 
 ## Pertanyaan yang masih terbuka
 
-- Apa hubungan administratif dan geografis antara negara ECOS, provinsi, kota-kota lain, dan kawasan terpisah?
-- Berapa jumlah provinsi dan kota, serta apa nama-namanya?
-- Bagaimana batas kawasan gabungan masjid dan hubungan administratifnya dengan Juailin, kota-kota kecil lain, serta provinsi?
+- Bagaimana batas geografis provinsi, kota, dan kawasan-kawasan terpisah digambar secara konsisten?
+- Bagaimana kawasan khusus masjid di Provinsi Arunika berbatasan dengan wilayah di sekitarnya?
+- Berapa luas tiap provinsi dan kota setelah peta konseptual dirancang?
 - Apakah wilayah terpisah itu berupa pulau, wilayah yang dipisahkan oleh batas lain, atau bentuk geografis yang berbeda?
 - Jika dunia diperluas di atas skala offline awal, apa yang tetap menjadi wilayah inti dan apa yang ditambahkan?
 
@@ -34,5 +34,6 @@ Kawasan masjid 1.000 hektare termasuk dalam skala 10.000 hektare. Angka sisa 9.0
 - [x] Juailin ditetapkan sebagai kota kecil.
 - [x] Kawasan masjid 1.000 hektare ditetapkan sebagai kawasan gabungan beberapa kota kecil/permukiman, termasuk Juailin.
 - [x] Skala offline dipertahankan sebagai target awal, dengan kemungkinan perluasan pada tahap pengembangan lebih jauh.
-- [ ] Tetapkan jenis wilayah terpisah, struktur provinsi, dan batas administratif.
+- [x] Struktur awal empat provinsi dan penempatan kawasan masjid di Provinsi Arunika dicatat dalam atlas administratif.
+- [ ] Tetapkan jenis wilayah terpisah dan batas administratif terperinci.
 - [ ] Tetapkan cara angka skala diterjemahkan ke ukuran peta permainan setelah kebutuhan desain dan teknis diperiksa.
