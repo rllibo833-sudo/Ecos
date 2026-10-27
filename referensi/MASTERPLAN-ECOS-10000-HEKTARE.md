@@ -50,7 +50,7 @@ Catatan: Z06 dan Z13 adalah dua fungsi berbeda dalam baseline ini. Z06 mencakup 
 5. Pelayanan Warga — 200 ha: kesehatan, pemadam, layanan darurat, administrasi.
 6. Infrastruktur dan Utilitas — 500 ha: jaringan jalan, drainase, air, energi, dan layanan kawasan; koridor yang melintas zona lain tidak dihitung ganda dalam alokasi lahan.
 7. Sabuk Pangan — 1.000 ha: pertanian, kebun, irigasi, produksi dan rantai pasokan.
-7. Hutan Tropis — 1.800 ha: sungai, rawa, air terjun, jalur hutan, konservasi.
+8. Hutan Tropis — 1.800 ha: sungai, rawa, air terjun, jalur hutan, konservasi.
 9. Pegunungan — 1.700 ha: lembah, punggung gunung, jalur pendakian dan titik pandang.
 10. Pesisir — 900 ha: pantai, desa nelayan, tebing, dermaga, konservasi pantai.
 11. Gurun dan Oasis — 700 ha: wilayah kering, oasis, pos persinggahan, jalur navigasi.
