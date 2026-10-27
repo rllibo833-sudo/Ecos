@@ -1,40 +1,40 @@
 # Roadmap — Visi dan Narasi
 
-**DOMAIN UTAMA ECOS — ACUAN CANON DAN DESAIN UNTUK SELURUH LORE.**
+**DOMAIN UTAMA ECOS — ACUAN PROTAGONIS, TEMA, DAN ALUR CERITA.**
 
-Domain ini menjadi rujukan utama selama pengembangan lore. Domain lain tidak boleh mengubah keputusan di sini tanpa pembaruan yang disengaja dan pemeriksaan dampak. Checklist menandakan dokumentasi konseptual telah ditulis, bukan bahwa game atau fiturnya sudah dibuat.
+Dokumen ini menetapkan fondasi cerita dan protagonis. Detail negara, wilayah, populasi, pemerintahan, bioma, dan transportasi mengikuti [Kanon Induk Dunia ECOS](../02-dunia-dan-geografi/00-kanon-induk-dunia-ecos.md). Checklist berarti dokumentasi konseptual tersedia, bukan game telah dibuat.
 
-> Status: **11/11 dokumen konseptual tersedia**. Audit lintas dokumen menemukan satu masalah konsistensi lama pada Premis Dunia: status peristiwa pemicu sebelumnya masih disebut belum ditetapkan. Premis telah diperbarui agar selaras dengan dokumen 06–08.
+> Status: **11/11 dokumen konseptual tersedia dan diselaraskan dengan geografi makro.** Adegan lengkap, dialog, dan implementasi masih pekerjaan berikutnya.
 
-## Roadmap utama
+## Dokumen utama
 
-- [x] Premis Dunia — [buka dokumen](./01-premis-dunia.md)
-- [x] Genre Utama dan Pendukung — [buka dokumen](./02-genre.md)
-- [x] Tema dan Pertanyaan Moral — [buka dokumen](./03-tema-dan-pertanyaan-moral.md)
-- [x] Nada dan Sudut Pandang Cerita — [buka dokumen](./04-nada-dan-sudut-pandang.md)
-- [x] Kondisi Awal Protagonis — [buka dokumen](./05-kondisi-awal-protagonis.md)
-- [x] Peristiwa Pemicu — [buka dokumen](./06-peristiwa-pemicu.md)
-- [x] Tujuan Protagonis — [buka dokumen](./07-tujuan-protagonis.md)
-- [x] Konflik Utama — [buka dokumen](./08-konflik-utama.md)
-- [x] Aturan Konsistensi Narasi — [buka dokumen](./09-aturan-konsistensi.md)
-- [x] Kesinambungan Domain Universal — [buka dokumen](./10-kesinambungan-domain.md)
-- [x] Alur Cerita Utama — [buka dokumen](./11-alur-cerita-utama.md)
+- [x] [Premis Dunia](./01-premis-dunia.md)
+- [x] [Genre Utama dan Pendukung](./02-genre.md)
+- [x] [Tema dan Pertanyaan Moral](./03-tema-dan-pertanyaan-moral.md)
+- [x] [Nada dan Sudut Pandang Cerita](./04-nada-dan-sudut-pandang.md)
+- [x] [Kondisi Awal Protagonis](./05-kondisi-awal-protagonis.md)
+- [x] [Peristiwa Pemicu](./06-peristiwa-pemicu.md)
+- [x] [Tujuan Protagonis](./07-tujuan-protagonis.md)
+- [x] [Konflik Utama](./08-konflik-utama.md)
+- [x] [Aturan Konsistensi Narasi](./09-aturan-konsistensi.md)
+- [x] [Kesinambungan Domain Universal](./10-kesinambungan-domain.md)
+- [x] [Alur Cerita Utama](./11-alur-cerita-utama.md)
 
-## Putusan kanon yang harus dijaga
+## Kanon protagonis dan cerita
 
-- Protagonis berasal dari Juailin, ecosentral dengan arus informasi sangat cepat, dan kesulitan beradaptasi.
-- Ia menjalani peran peternak dan pekebun di kawasan masjid 1.000 hektare, yang berada di dalam wilayah konseptual ECOS 10.000 hektare.
-- Pemicu adalah kehilangan dan rasa suka yang dipendam kepada seseorang yang dianggap lebih tinggi; tidak ada pengakuan atau penolakan yang sudah terjadi.
-- Ia menghadapi sindiran, minimnya dukungan, dan keraguan diri, tetapi tidak digambarkan bodoh atau malas.
-- Tujuan emosionalnya termasuk membangun keberanian untuk mengungkapkan perasaan; hasilnya tidak dijamin bahagia.
-- Genre open-world, sci-fi, teknologi; cyberpunk dilarang sebagai genre dan estetika.
-- Pemain boleh mengabaikan cerita utama dan menjelajah sesuai visi desain; hal ini bukan klaim fitur terimplementasi.
-- Identitas orang yang disukai, bentuk wilayah, detail bioma, dan 25 legenda tetap terbuka sampai diputuskan.
+- Protagonis berasal dari Juailin, kota kecil/ecosentral dengan arus informasi sangat cepat; ia sendiri kesulitan beradaptasi.
+- Ia peternak dan pekebun di kawasan masjid 1.000 hektare yang berada di Provinsi Arunika, di dalam wilayah inti offline 10.000 hektare.
+- ECOS secara nasional jauh lebih luas: sekitar 1,7 juta km² dalam kanon dunia; jangan menyamakan wilayah inti dengan seluruh negara.
+- Pemicu cerita adalah kehilangan dan rasa suka yang dipendam kepada seseorang yang ia anggap lebih tinggi; tidak ada penolakan yang sudah terjadi.
+- Sindiran dan minim dukungan memengaruhi kepercayaan diri, tetapi protagonis tidak digambarkan bodoh atau malas.
+- Perjalanan berpusat pada adaptasi, pembelajaran, harga diri, pilihan, dan keputusan untuk mengungkapkan perasaan; hasil romantis tidak dijamin bahagia.
+- Genre open-world sci-fi/teknologi, membumi dan manusiawi; cyberpunk dilarang sebagai genre dan estetika.
+- Pemain boleh menunda cerita utama dan menjelajah sebagai arah desain, bukan klaim fitur terimplementasi.
 
 ## Alur cerita
 
-Dokumen [Alur Cerita Utama](./11-alur-cerita-utama.md) menyatukan kondisi awal, pemicu, tujuan, konflik, perkembangan, dan kemungkinan akhir menjadi urutan yang dapat diikuti. Dokumen itu adalah kerangka cerita konseptual; adegan rinci dan implementasi game belum diklaim tersedia.
+[Alur Cerita Utama](./11-alur-cerita-utama.md) menyusun prolog, pemicu, pembelajaran, ujian harga diri, keputusan pengakuan, dan kemungkinan akhir. Identitas orang yang disukai dan detail kehilangan belum ditetapkan, sehingga dokumen tidak boleh mengarang penolakan, kematian, atau penghinaan dari orang tersebut.
 
-## Cara mengelola perubahan
+## Aturan perubahan
 
-Jika dokumen lain memerlukan perubahan yang memengaruhi premis, protagonis, genre, atau aturan konsistensi, catat konflik dan alasannya terlebih dahulu. Jangan mengubah kanon secara diam-diam. Domain berikutnya yang aktif adalah [Dunia dan Geografi](../02-dunia-dan-geografi/README.md).
+Perubahan pada protagonis, pemicu, tema, genre, atau ending harus diperiksa lintas dokumen. Perubahan geografi mengikuti kanon induk dan harus diselaraskan kembali ke premis jika memengaruhi alur.
