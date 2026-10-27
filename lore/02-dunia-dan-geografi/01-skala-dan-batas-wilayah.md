@@ -8,7 +8,7 @@
 - Skala konseptual yang saat ini ditetapkan untuk wilayah ECOS adalah **10.000 hektare**.
 - Wilayah ECOS mencakup **kawasan-kawasan yang terpisah**, bukan satu hamparan geografis tunggal yang semuanya harus saling bersambung.
 - **Juailin adalah kota kecil** di dalam ECOS. Kota ini merupakan ecosentral dengan arus informasi sangat cepat dan tempat asal protagonis.
-- **Kawasan masjid seluas 1.000 hektare berada di dalam kota Juailin**. Dengan demikian, kawasan masjid berada di dalam kota Juailin dan juga di dalam negara ECOS.
+- **Kawasan masjid seluas 1.000 hektare merupakan gabungan beberapa kota kecil dan permukiman; Juailin adalah salah satunya**. Kawasan ini berada di dalam negara ECOS, tetapi tidak sama dengan satu kota tunggal.
 - ECOS juga memiliki kota-kota lain serta provinsi. Nama, jumlah, luas, batas, dan hubungan administratifnya belum ditetapkan.
 - Untuk rancangan permainan **offline**, skala 10.000 hektare menjadi target yang dipertahankan. Jika pengembangan diperluas lebih jauh, dunia permainan dapat diperluas melebihi skala awal sesuai kebutuhan dan kelayakan desain/teknis.
 
@@ -22,7 +22,7 @@ Kawasan masjid 1.000 hektare termasuk dalam skala 10.000 hektare. Angka sisa 9.0
 
 - Apa hubungan administratif dan geografis antara negara ECOS, provinsi, kota-kota lain, dan kawasan terpisah?
 - Berapa jumlah provinsi dan kota, serta apa nama-namanya?
-- Bagaimana batas kota Juailin dan letak kawasan masjid di dalamnya?
+- Bagaimana batas kawasan gabungan masjid dan hubungan administratifnya dengan Juailin, kota-kota kecil lain, serta provinsi?
 - Apakah wilayah terpisah itu berupa pulau, wilayah yang dipisahkan oleh batas lain, atau bentuk geografis yang berbeda?
 - Jika dunia diperluas di atas skala offline awal, apa yang tetap menjadi wilayah inti dan apa yang ditambahkan?
 
@@ -32,7 +32,7 @@ Kawasan masjid 1.000 hektare termasuk dalam skala 10.000 hektare. Angka sisa 9.0
 - [x] Skala konseptual ECOS ditetapkan 10.000 hektare.
 - [x] Wilayah ECOS mencakup kawasan-kawasan terpisah.
 - [x] Juailin ditetapkan sebagai kota kecil.
-- [x] Kawasan masjid 1.000 hektare ditetapkan berada di dalam kota Juailin.
+- [x] Kawasan masjid 1.000 hektare ditetapkan sebagai kawasan gabungan beberapa kota kecil/permukiman, termasuk Juailin.
 - [x] Skala offline dipertahankan sebagai target awal, dengan kemungkinan perluasan pada tahap pengembangan lebih jauh.
 - [ ] Tetapkan jenis wilayah terpisah, struktur provinsi, dan batas administratif.
 - [ ] Tetapkan cara angka skala diterjemahkan ke ukuran peta permainan setelah kebutuhan desain dan teknis diperiksa.
