@@ -25,31 +25,35 @@ Arah dan posisi ini merupakan panduan tata letak konseptual, bukan peta berskala
 Kawasan ini merupakan ruang utama protagonis belajar beradaptasi sambil menjalani peran sebagai peternak dan pekebun. Cara fungsi ibadah, peternakan, kebun, tempat tinggal, layanan, dan kegiatan warga saling berbagi ruang masih perlu dirancang; jangan menganggap seluruh fungsi tersebar merata atau sudah memiliki zona tertentu.
 
 
-## Prinsip hukum dan kehidupan sosial
+## Prinsip hukum, solidaritas, dan jaminan kebutuhan warga
 
-**Keputusan pemilik proyek:** seluruh wilayah kawasan masjid menerapkan hukum berbasis agama. Masjid menjadi sentral kawasan. Arah sosial masyarakat ini disebut pemilik proyek sebagai **“sosialis”**.
+**Keputusan pemilik proyek:** seluruh wilayah kawasan masjid menerapkan hukum berbasis agama. Masjid menjadi sentral kawasan. Arah sosial yang dimaksud pemilik proyek menekankan **kewajiban saling membantu dan jaminan kebutuhan warga**.
 
-Catatan ini merekam visi dunia fiksi; rincian sistemnya belum ditentukan. Jangan langsung menyamakannya dengan sistem politik atau negara nyata tertentu. Hal-hal yang masih perlu dirancang meliputi:
-- agama dan tradisi penafsiran yang menjadi dasar hukum;
-- lembaga atau proses yang membuat keputusan, menyelesaikan sengketa, dan menerapkan aturan;
-- hak warga, perlindungan kelompok rentan, dan cara menangani perbedaan pendapat;
-- arti “sosialis” dalam konteks kawasan: misalnya solidaritas, kerja kolektif, pengelolaan sumber daya untuk kepentingan warga, pemerataan, atau jaminan kebutuhan dasar;
-- pengelolaan lahan, hasil peternakan dan kebun, usaha, upah, perdagangan, serta layanan warga.
+Prinsip ini bukan sekadar slogan atau latar dekoratif. Inilah salah satu alasan utama protagonis dapat belajar dan beradaptasi di lingkungan kawasan masjid. Ia tidak harus menghadapi setiap kesulitan sendirian: masyarakat memiliki tanggung jawab untuk membantu warga yang membutuhkan, dan kebutuhan dasar warga menjadi perhatian bersama.
 
-Belum diputuskan bahwa semua aset dimiliki bersama, semua usaha dikelola negara, atau seluruh keputusan berada di tangan satu pemimpin. Begitu pula, aturan agama yang spesifik tidak akan ditambahkan sebagai canon sebelum ditentukan.
+### Makna dalam kehidupan sehari-hari
 
-Prinsip ini perlu terlihat dalam keseharian warga—ibadah, kerja, saling membantu, produksi pangan, perdagangan, pendidikan, pertemuan, dan penyelesaian konflik—bukan hanya menjadi slogan. Lore boleh mengeksplorasi jarak antara nilai yang diajarkan dan perilaku nyata tanpa menganggap semua warga selalu baik atau selalu buruk.
+- **Saling membantu:** warga saling mendukung ketika seseorang kesulitan, membutuhkan pengetahuan, menghadapi masalah pekerjaan, atau sedang berusaha pulih dari kegagalan.
+- **Jaminan kebutuhan:** kawasan memiliki prinsip bahwa kebutuhan warga harus diperhatikan dan warga yang sedang kesulitan tidak dibiarkan tanpa bantuan. Bentuk, cakupan, dan cara menjaminnya masih perlu dirancang.
+- **Belajar dan beradaptasi:** protagonis dapat memperoleh bimbingan, kesempatan berlatih, pengetahuan praktis, dan bantuan untuk menjalankan peran sebagai peternak dan pekebun. Dukungan tidak harus berarti semua pekerjaan diselesaikan untuknya; warga dapat membantunya sampai ia makin mampu berdiri sendiri.
+- **Martabat dan tanggung jawab:** menerima bantuan tidak membuat protagonis dianggap rendah. Ia tetap memiliki kesempatan untuk berkontribusi, belajar, dan kelak membantu orang lain sesuai kemampuannya.
+- **Kehidupan bersama:** masjid menjadi pusat kawasan, sedangkan kehidupan sosial juga berlangsung di permukiman, kebun, peternakan, tempat kerja, dan ruang pertemuan warga.
+
+### Batas yang belum diputuskan
+
+Belum ditetapkan kebutuhan apa saja yang dijamin, siapa yang mengelola bantuan, bagaimana sumber daya dikumpulkan dan dibagikan, atau bagaimana warga meminta bantuan. Rincian agama, lembaga yang menafsirkan dan menerapkan hukum, proses penyelesaian sengketa, serta perlindungan hak warga juga tetap terbuka.
+
+Jangan menyimpulkan bahwa semua aset dimiliki bersama, semua usaha dikelola negara, atau setiap warga selalu bersikap baik. Sistem sosial ini menetapkan kewajiban dan tujuan bersama, tetapi manusia tetap dapat berbeda pendapat, keliru, lalai, atau gagal memenuhi nilai yang mereka anut. Konflik semacam itu dapat menjadi bagian dari lore apabila dikembangkan secara konsisten, bukan dianggap sebagai fakta yang sudah terjadi.
 
 ## Fungsi kehidupan kawasan yang perlu dikembangkan
 
 - **Ibadah dan pembinaan:** masjid sebagai sentral spiritual dan sosial.
 - **Peternakan dan kebun:** pekerjaan, pangan, perawatan hewan, serta pengetahuan praktis.
 - **Tempat tinggal:** beberapa kota kecil dan permukiman, termasuk Juailin yang terpencil.
-- **Layanan dan kebutuhan bersama:** jenis fasilitas dan cara pengelolaannya masih terbuka.
-- **Kegiatan warga dan ekonomi:** kerja, pertukaran hasil, perdagangan, pendidikan, pertemuan, dan bantuan sosial sebagai kemungkinan desain, belum sebagai fasilitas yang sudah dipastikan.
+- **Layanan dan kebutuhan bersama:** bentuk layanan yang menopang kebutuhan warga; rincian fasilitas dan pengelolaannya masih terbuka.
+- **Kegiatan warga dan ekonomi:** kerja, pertukaran hasil, perdagangan, pendidikan, pertemuan, dan bantuan sosial sebagai kerangka desain yang perlu dikembangkan.
 
 Daftar ini adalah kerangka untuk pengembangan lore, bukan zonasi final atau klaim bahwa seluruh fasilitas sudah tersedia.
-
 ## Tingkatan wilayah yang sudah diketahui
 
 **Negara ECOS → wilayah-wilayahnya yang dapat terpisah → provinsi dan kota/permukiman → kawasan masjid 1.000 hektare yang mencakup beberapa kota kecil dan permukiman.**
