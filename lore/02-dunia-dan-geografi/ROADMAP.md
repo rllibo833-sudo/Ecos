@@ -12,6 +12,7 @@
 - [x] [Kerangka zona dan hubungan antarkawasan](./04-kerangka-zona.md)
 - [x] [Bioma, iklim, air, dan tanah](./05-bioma-iklim-air-tanah.md)
 - [x] [Peta, orientasi, dan kebebasan modifikasi](./06-peta-dan-modifikasi.md)
+- [x] [Kehidupan sosial dan jaminan warga kawasan masjid](./07-kehidupan-sosial-dan-jaminan-warga.md)
 
 ## Keputusan yang telah dicatat
 
@@ -21,6 +22,9 @@
 - [x] Juailin adalah kota kecil dan ecosentral dengan arus informasi cepat.
 - [x] Kawasan masjid 1.000 hektare mencakup beberapa kota kecil dan permukiman, termasuk Juailin.
 - [x] Skala 10.000 hektare dipertahankan sebagai target offline awal; ekspansi lebih luas dapat dipertimbangkan di tahap lebih jauh.
+- [x] Masjid menjadi pusat ekonomi berbasis agama dan membantu warga yang kekurangan dana.
+- [x] Lahan tani/ternak milik pribadi; alat berat dimiliki bersama; tenaga komunitas berdasarkan kebutuhan dengan sistem bagi hasil.
+- [x] Konflik dimediasi di Ruang Komunitas dengan sumber agama sebagai acuan/data netral; dinamika sosial tetap ada.
 
 ## Tahapan kerja berikutnya
 
