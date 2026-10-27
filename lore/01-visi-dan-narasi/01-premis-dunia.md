@@ -32,6 +32,10 @@ Dunia memadukan kehidupan perkotaan, pedesaan, komunitas, alam, teknologi, ekono
 - Identitas orang yang disukai, detail peristiwa kehilangan, serta rincian biografi protagonis belum ditetapkan.
 - Kebebasan modifikasi peta dan ekspansi dunia belum membuktikan adanya fitur yang sudah terimplementasi.
 
+## Acuan wilayah
+
+Nama provinsi, kota, dan permukiman mengikuti satu sumber kanon: [Atlas Administratif Negara ECOS](../02-dunia-dan-geografi/08-atlas-administratif-negara-ecos.md). Nama tambahan harus diperiksa terhadap atlas tersebut agar tidak membuat pembagian wilayah yang bertentangan.
+
 ## Acuan
 
 Premis ini menyatukan keputusan yang tercatat pada dokumen turunan Visi dan Narasi dan keputusan geografis terbaru. Detail yang tidak diberikan tidak dikarang.
