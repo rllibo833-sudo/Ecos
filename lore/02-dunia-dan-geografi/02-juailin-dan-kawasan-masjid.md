@@ -1,6 +1,6 @@
 # Juailin dan Kawasan Masjid
 
-**Status: hubungan inti ditetapkan; nama wilayah lain dan detail peta masih terbuka.**
+**Status: hubungan inti ditetapkan; susunan nama dan wilayah mengikuti Atlas Administratif Negara ECOS.**
 
 ## Juailin
 
@@ -55,13 +55,13 @@ Jangan menyimpulkan bahwa semua aset dimiliki bersama, semua usaha dikelola nega
 - **Kegiatan warga dan ekonomi:** kerja, pertukaran hasil, perdagangan, pendidikan, pertemuan, dan bantuan sosial sebagai kerangka desain yang perlu dikembangkan.
 
 Daftar ini adalah kerangka untuk pengembangan lore, bukan zonasi final atau klaim bahwa seluruh fasilitas sudah tersedia.
-## Tingkatan wilayah yang sudah diketahui
+## Tingkatan wilayah yang digunakan
 
-**Negara ECOS → wilayah-wilayahnya yang dapat terpisah → provinsi dan kota/permukiman → kawasan masjid 1.000 hektare yang mencakup beberapa kota kecil dan permukiman.**
+**Negara ECOS → Provinsi Arunika → kawasan khusus masjid 1.000 hektare → beberapa kota kecil dan permukiman, termasuk Juailin.** Ini adalah susunan kerja administratif yang dipakai untuk menjaga konsistensi lore.
 
-Kawasan masjid adalah kawasan gabungan, bukan nama lain untuk Juailin dan bukan provinsi tersendiri. Susunan administrasi tepat antara provinsi, kota, permukiman, dan kawasan masjid masih perlu diselaraskan; hubungan spasial yang sudah pasti adalah bahwa Juailin berada di dalam kawasan masjid.
+Kawasan masjid sepenuhnya berada di Provinsi Arunika, tetapi tidak mencakup seluruh provinsi. Kawasan ini bukan provinsi tersendiri dan bukan nama lain untuk Juailin. Juailin tetap merupakan kota kecil yang terpencil di salah satu sudut kawasan tersebut.
 
-ECOS memiliki kota-kota dan provinsi lain di luar kawasan ini, tetapi nama serta karakternya belum ditentukan. Nama baru tidak akan dianggap sebagai kanon sampai dipilih atau disetujui.
+Nama dan pembagian wilayah lainnya mengikuti [Atlas Administratif Negara ECOS](08-atlas-administratif-negara-ecos.md). Detail batas, luas tiap kota, populasi, serta geometri peta masih terbuka; keterbukaan detail tersebut tidak membatalkan penempatan administratif dasar di atas.
 
 ## Peran naratif
 
@@ -83,7 +83,7 @@ Juailin menjadi latar asal protagonis dan tempat ia mengalami arus informasi yan
 
 ## Hal yang masih terbuka
 
-- [ ] Menetapkan hubungan administratif kawasan masjid dengan provinsi dan kota-kota tanpa mengubah keputusan spasial di atas.
+- [x] Kawasan khusus masjid ditempatkan seluruhnya di Provinsi Arunika; kawasan ini mencakup beberapa kota kecil/permukiman, termasuk Juailin.
 - [ ] Merancang hubungan fungsi ibadah, peternakan, kebun, tempat tinggal, layanan, dan kegiatan warga.
-- [ ] Menentukan nama serta karakter kota-kota lain dan provinsi ECOS.
+- [x] Nama awal provinsi, kota, dan permukiman dicatat dalam Atlas Administratif Negara ECOS.
 - [ ] Menentukan jarak, jalan, batas, topografi, dan rincian peta setelah kerangka wilayah disepakati.
