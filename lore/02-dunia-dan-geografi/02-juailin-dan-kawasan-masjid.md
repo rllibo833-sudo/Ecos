@@ -1,34 +1,42 @@
 # Juailin dan Kawasan Masjid
 
-**Status: hubungan naratif ditetapkan; hubungan spasial rinci masih terbuka.**
+**Status: hubungan inti ditetapkan; detail tata kota dan peta belum final.**
 
 ## Juailin
 
-Juailin adalah kota asal protagonis dan sebuah **ecosentral**: pusat yang ditandai oleh sistem serta arus informasi yang bergerak sangat cepat. Protagonis kesulitan mengikuti laju tersebut. Ini adalah pengalaman personalnya, bukan bukti bahwa semua warga Juailin memahami teknologi dengan sama baiknya atau bahwa kota itu buruk bagi semua orang.
+Juailin adalah **kota kecil di negara ECOS** dan kota asal protagonis. Kota ini merupakan sebuah **ecosentral**: pusat yang ditandai oleh sistem dan arus informasi yang sangat cepat. Protagonis kesulitan mengikuti laju tersebut. Ini menggambarkan pengalaman protagonis, bukan bukti bahwa semua warga Juailin memiliki kemampuan atau pengalaman yang sama.
 
-Juailin sudah menjadi nama canon. Namun, letak koordinat, ukuran kota, tata distrik, arsitektur, populasi, sejarah, sistem pemerintahan, dan batas wilayahnya belum ditetapkan dalam dokumen ini.
+Ukuran luas kota, jumlah penduduk, nama distrik, arsitektur, sejarah, sistem pemerintahan kota, dan batas administratifnya belum ditetapkan.
 
 ## Kawasan masjid
 
-Kawasan masjid seluas **1.000 hektare** berada di dalam wilayah konseptual ECOS seluas **10.000 hektare**. Kawasan ini merupakan ruang utama protagonis belajar beradaptasi sambil menjalani peran sebagai peternak dan pekebun.
+Kawasan masjid seluas **1.000 hektare berada di dalam kota Juailin**. Kawasan ini juga berada di dalam negara ECOS yang memiliki skala konseptual 10.000 hektare dan mencakup wilayah-wilayah terpisah.
 
-Penyebutan kawasan masjid tidak dengan sendirinya menentukan denah bangunan masjid, tata kelola, demografi, fungsi setiap bidang tanah, atau hubungan administratifnya dengan kawasan lain. Detail tersebut perlu dikembangkan hati-hati, tanpa menganggap seluruh 1.000 hektare sebagai bangunan masjid.
+Kawasan masjid merupakan ruang utama protagonis belajar beradaptasi sambil menjalani peran sebagai peternak dan pekebun. Luas kawasan ini tidak berarti seluruh 1.000 hektare dipenuhi bangunan masjid. Bentuk kawasan, pemanfaatan lahannya, jumlah bangunan, tata kelola, dan kegiatan masyarakat di dalamnya masih perlu dirancang.
 
-## Hubungan keduanya
+## Tingkatan wilayah yang sudah diketahui
 
-Yang telah dipastikan adalah hubungan cerita: protagonis berasal dari Juailin dan menjalani kehidupan pembelajaran di kawasan masjid. **Jarak, rute, urutan perjalanan, dan hubungan geografis tepat antara keduanya belum diputuskan.** Jangan menyebut Juailin bersebelahan, jauh, atau terhubung oleh moda transportasi tertentu sampai ada keputusan.
+**Negara ECOS → salah satu kota kecilnya, Juailin → kawasan masjid di dalam Juailin.**
+
+ECOS juga memiliki provinsi dan kota-kota lain, tetapi struktur administrasi lengkapnya belum ditentukan. Jangan menganggap kawasan masjid sebagai provinsi terpisah atau sebagai keseluruhan kota.
+
+## Peran naratif
+
+Juailin menjadi latar asal protagonis dan tempat ia mengalami arus informasi yang cepat. Kawasan masjid adalah ruang utama pembelajaran dan kehidupan sehari-harinya sebagai peternak dan pekebun. Hubungan ini sudah ditetapkan secara naratif, sedangkan rute, jarak, waktu perjalanan, dan tata letak rinci masih terbuka.
 
 ## Pertanyaan terbuka
 
-- Mengapa dan melalui peristiwa apa protagonis tinggal atau bekerja di kawasan masjid?
-- Apakah Juailin berada di wilayah yang sama secara langsung, atau terhubung melalui perjalanan?
-- Bagaimana kawasan masjid digunakan oleh peternak, pekebun, warga, pengunjung, dan pengelola?
-- Apa nama dan karakter kawasan yang berada di antara Juailin dan kawasan masjid, jika memang ada?
+- Bagaimana kawasan masjid dapat memiliki luas 1.000 hektare di dalam kota kecil Juailin—apakah batas kota mencakup kawasan luas dengan fungsi campuran, atau “kota kecil” lebih merujuk pada pusat permukimannya? Ini perlu diselaraskan saat menggambar peta.
+- Di bagian mana Juailin kawasan masjid berada relatif terhadap pusat kota dan kawasan tempat tinggal?
+- Bagaimana kawasan masjid menggabungkan fungsi ibadah, peternakan, kebun, tempat tinggal, layanan, dan kegiatan warga?
+- Apa nama dan karakter kota-kota lain serta provinsi di ECOS?
 
 ## Checklist
 
-- [x] Fungsi naratif Juailin dicatat tanpa mengarang detail geografis.
-- [x] Fungsi kawasan masjid sebagai ruang pembelajaran dicatat.
-- [x] Luas 1.000 ha dan 10.000 ha konsisten.
-- [x] Hubungan cerita dibedakan dari hubungan spasial yang belum ditetapkan.
-- [ ] Tentukan hubungan geografis setelah pertanyaan terbuka mendapat keputusan.
+- [x] Juailin ditetapkan sebagai kota kecil di ECOS.
+- [x] Juailin ditetapkan sebagai ecosentral dengan arus informasi cepat.
+- [x] Kawasan masjid 1.000 hektare ditetapkan berada di dalam Juailin.
+- [x] Peran protagonis sebagai peternak dan pekebun dicatat.
+- [x] Negara, kota, dan kawasan masjid dibedakan sebagai tingkatan ruang.
+- [ ] Selaraskan pengertian “kota kecil” dengan luas kawasan masjid saat menyusun tata ruang.
+- [ ] Tetapkan batas dan tata letak geografis setelah kebutuhan dunia dibahas.
