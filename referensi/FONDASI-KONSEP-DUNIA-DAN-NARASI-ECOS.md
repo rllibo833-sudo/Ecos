@@ -42,7 +42,7 @@ Fiksi ilmiah ECOS muncul melalui dampak teknologi terhadap kehidupan, informasi,
 
 ## 3. Premis naratif inti
 
-Cerita mengikuti **seorang pemuda yang tidak mengerti teknologi**. Ia hidup di tengah kemajuan teknologi dan arus informasi yang bergerak begitu cepat sehingga cara lama memahami kehidupan tidak lagi cukup. Ia harus beradaptasi, belajar membedakan informasi yang berguna dari yang menyesatkan, memahami sistem yang memengaruhi kesehariannya, dan menemukan cara menentukan sikap di dunia yang semakin kompleks.
+Cerita mengikuti **seorang pemuda yang tidak mengerti teknologi** dan berasal dari **Juailin**, sebuah ecosentral tempat sistem informasi bergerak sangat cepat. Meski berasal dari lingkungan dengan arus informasi yang deras, ia sangat kesulitan beradaptasi dengan teknologi dan memahami informasi yang datang kepadanya. Untuk belajar beradaptasi, ia menjalani kehidupan sebagai **peternak dan pekebun** di kawasan masjid seluas **1.000 hektare**. Kawasan ini menjadi ruang utama pembelajaran melalui pekerjaan, interaksi dengan masyarakat, pengamatan, percobaan, kegagalan, dan keputusan sehari-hari. Kawasan masjid merupakan bagian dari target wilayah ECOS seluas **10.000 hektare**, bukan keseluruhan wilayah. Peristiwa pemicu spesifik, detail biografi, serta peta rinci tetap belum diputuskan.
 
 Tokoh utama tidak harus langsung menjadi ahli. Ketidaktahuannya adalah titik awal pengalaman pemain. Kemampuan dan pemahamannya tumbuh melalui pengamatan, interaksi, percobaan, kegagalan, bantuan orang lain, serta keputusan yang ia ambil.
 
@@ -118,7 +118,7 @@ Pendekatan tersebut dapat mengajarkan bahwa teknologi memperluas kemampuan seseo
 
 1. Apakah semua empat bioma tetap menjadi bioma utama, atau beberapa menjadi wilayah/lingkungan sekunder?
 2. Seberapa jauh tingkat kemajuan teknologi dalam kehidupan sehari-hari, dan teknologi apa yang benar-benar tampak oleh pemain?
-3. Bagaimana pemuda memulai cerita: dari kampung, pinggiran kota, atau perpindahan di antara keduanya?
+3. Bagaimana hubungan spasial Juailin dengan kawasan masjid 1.000 ha ditata pada peta, dan bagaimana protagonis memulai kehidupannya sebagai peternak dan pekebun?
 4. Apakah tujuan utama cerita adalah memahami teknologi, menyelidiki peristiwa, membantu komunitas, atau kombinasi yang berkembang?
 5. Apa bentuk kebebasan pemain yang paling penting: eksplorasi, pekerjaan, hubungan sosial, investigasi, pembangunan, atau pilihan cerita?
 6. Bagaimana setiap proyek sumber berkontribusi secara konkret setelah isi repositorinya diperiksa?
@@ -138,3 +138,4 @@ Pendekatan tersebut dapat mengajarkan bahwa teknologi memperluas kemampuan seseo
 ## 11. Riwayat perubahan
 
 - 0.2 — Fondasi konsep diperjelas berdasarkan arahan pemilik proyek: skala kawasan masjid 1.000 ha dalam wilayah ECOS 10.000 ha, genre open-world sci-fi/teknologi, latar pedesaan-perkotaan, dan premis pemuda yang beradaptasi dengan kemajuan teknologi serta arus informasi.
+- 0.3 — Putusan pemilik proyek menetapkan Juailin sebagai asal protagonis, ecosentral dengan arus informasi sangat cepat; kawasan masjid 1.000 ha sebagai ruang utama belajar beradaptasi; dan peran protagonis sebagai peternak serta pekebun. Peristiwa pemicu dan peta rinci tetap terbuka.
