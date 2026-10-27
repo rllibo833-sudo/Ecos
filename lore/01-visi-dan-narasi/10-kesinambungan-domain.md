@@ -1,33 +1,39 @@
 # Kesinambungan dengan Domain Lain
 
-## Pemeriksaan lintas domain
+## Putusan yang menjadi acuan narasi
 
 ### Dunia dan geografi
-Premis memerlukan wilayah ECOS dengan target konseptual 10.000 ha dan kawasan masjid 1.000 ha di dalamnya. Geometri, pembagian zona, posisi kota/kampung, dan bioma belum final. Dokumen lama yang menyebut kawasan masjid 500 ha atau jumlah zona berbeda harus direkonsiliasi sebelum masterplan dikunci.
+- **Juailin** adalah asal kota protagonis dan sebuah ecosentral dengan sistem informasi yang bergerak sangat cepat.
+- Kawasan masjid seluas **1.000 hektare** menjadi ruang utama protagonis belajar beradaptasi melalui peran sebagai peternak dan pekebun.
+- Kawasan masjid adalah bagian dari target wilayah ECOS seluas **10.000 hektare**.
+- Geometri peta, pembagian zona, posisi relatif Juailin dan kawasan masjid, serta keputusan tentang empat bioma lama masih perlu dirancang.
+
+Dokumen masterplan lama yang menyebut kawasan masjid 500 ha atau jumlah zona yang berbeda harus direkonsiliasi sebelum peta rinci dikunci.
 
 ### Karakter dan komunitas
-Protagonis adalah pemuda yang belum memahami teknologi, tetapi bukan orang bodoh. Komunitas perlu menjadi sumber pengalaman, pengetahuan, perbedaan pendapat, dan hubungan sosial. Nama, keluarga, pekerjaan, dan karakter pendukung belum ditetapkan.
+Protagonis kesulitan beradaptasi dengan arus informasi cepat di Juailin. Kegiatan beternak dan berkebun memberi konteks kehidupan nyata untuk belajar. Nama, keluarga, alasan perpindahan, jenis ternak/tanaman, dan karakter pendukung belum ditetapkan.
 
 ### Ekonomi dan pekerjaan
-Pekerjaan, layanan, perdagangan, pendidikan, perjalanan, dan kebutuhan sehari-hari dapat menunjukkan dampak teknologi. Sistem ekonomi dan pekerjaan final belum ditetapkan dalam dokumen ini.
+Peternakan dan perkebunan menjadi peran awal protagonis. Jenis ternak, tanaman, sistem produksi, distribusi, nilai ekonomi, dan mekanik pekerjaan belum diputuskan; jangan mengklaim fitur simulasi telah dibangun.
 
 ### Teknologi dan proyek terkait
-PusingCuk AI, Cuk Reality Engine, Bahasa Cuk, Steadfast, LynOS, Mnemos-RLI, Digital Forensic, dan Graph Living Shared dicatat sebagai konsep yang perlu dipetakan fungsinya. Penyebutan ini tidak menyatakan bahwa kode, produk, atau integrasi telah selesai.
+PusingCuk AI, Cuk Reality Engine, Bahasa Cuk, Steadfast, LynOS, Mnemos-RLI, Digital Forensic, dan Graph Living Shared tetap berupa konsep yang perlu dipetakan fungsinya. Penyebutan ini tidak menyatakan bahwa kode, produk, atau integrasi telah selesai.
 
 ### Misteri, legenda, dan cerita
-Cerita dapat menggunakan informasi yang hilang atau bertentangan sebagai sumber investigasi. Namun nama dan isi 25 legenda, serta kaitannya dengan premis utama, harus diambil dari sumber yang benar dan tidak boleh dikarang.
+Nama serta isi 25 legenda belum ditambahkan karena harus bersumber dari materi yang benar. Hubungan legenda dengan Juailin atau kawasan masjid juga belum diputuskan.
 
 ## Ketergantungan yang belum selesai
 
-- Peta dan alokasi lahan 10.000 ha.
-- Rekonsiliasi angka dan jumlah zona pada dokumen masterplan lama.
-- Biografi dan lokasi awal protagonis.
-- Peristiwa pemicu dan misi spesifik.
-- Audit sumber tiap proyek teknologi.
-- Inventarisasi 25 legenda yang terverifikasi.
+- Peta rinci dan alokasi lahan 10.000 ha.
+- Posisi spasial Juailin terhadap kawasan masjid.
+- Rekonsiliasi angka dan jumlah zona pada masterplan lama.
+- Peristiwa pemicu spesifik.
+- Jenis ternak, tanaman, dan detail kegiatan peternakan/perkebunan.
+- Evaluasi empat bioma lama.
+- Audit sumber proyek teknologi dan inventaris 25 legenda.
 
 ## Checklist
 
-- [x] Skala dunia dan kawasan masjid dibandingkan dengan roadmap geografi serta konflik dokumen lama dicatat.
-- [x] Hubungan dengan karakter, komunitas, ekonomi, dan cerita dipetakan beserta ketergantungannya.
-- [x] Proyek teknologi ditandai sebagai konsep sampai diverifikasi; tidak ada klaim integrasi nyata.
+- [x] Putusan Juailin, kawasan masjid 1.000 ha, dan target wilayah 10.000 ha diselaraskan dalam dokumen lintas domain.
+- [x] Peran peternak dan pekebun dihubungkan dengan karakter serta domain ekonomi, sambil menandai detail yang belum diputuskan.
+- [x] Proyek teknologi, bioma, dan 25 legenda tetap berstatus perlu verifikasi; tidak ada klaim integrasi nyata.
