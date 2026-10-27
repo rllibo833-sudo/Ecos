@@ -48,13 +48,14 @@ Catatan: Z06 dan Z13 adalah dua fungsi berbeda dalam baseline ini. Z06 mencakup 
 3. Kampung Kehidupan — 900 ha: beberapa permukiman dengan karakter dan rutinitas NPC berbeda.
 4. Pasar dan Ekonomi — 300 ha: pasar, toko, bengkel, gudang, pertukaran barang.
 5. Pelayanan Warga — 200 ha: kesehatan, pemadam, layanan darurat, administrasi.
-6. Sabuk Pangan — 1.000 ha: pertanian, kebun, irigasi, produksi dan rantai pasokan.
+6. Infrastruktur dan Utilitas — 500 ha: jaringan jalan, drainase, air, energi, dan layanan kawasan; koridor yang melintas zona lain tidak dihitung ganda dalam alokasi lahan.
+7. Sabuk Pangan — 1.000 ha: pertanian, kebun, irigasi, produksi dan rantai pasokan.
 7. Hutan Tropis — 1.800 ha: sungai, rawa, air terjun, jalur hutan, konservasi.
-8. Pegunungan — 1.700 ha: lembah, punggung gunung, jalur pendakian dan titik pandang.
-9. Pesisir — 900 ha: pantai, desa nelayan, tebing, dermaga, konservasi pantai.
-10. Gurun dan Oasis — 700 ha: wilayah kering, oasis, pos persinggahan, jalur navigasi.
-11. Budaya dan Rekreasi — 500 ha: museum, arena olahraga, ruang pertunjukan, taman.
-12. Koridor dan Utilitas Regional — 500 ha: terminal, depo, distribusi dan layanan infrastruktur.
+9. Pegunungan — 1.700 ha: lembah, punggung gunung, jalur pendakian dan titik pandang.
+10. Pesisir — 900 ha: pantai, desa nelayan, tebing, dermaga, konservasi pantai.
+11. Gurun dan Oasis — 700 ha: wilayah kering, oasis, pos persinggahan, jalur navigasi.
+12. Budaya dan Rekreasi — 500 ha: museum, arena olahraga, ruang pertunjukan, taman.
+13. Koridor dan Utilitas Regional — 500 ha: terminal, depo, distribusi dan layanan infrastruktur.
 
 ## 5. Prinsip tata ruang
 
