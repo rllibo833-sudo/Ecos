@@ -1,11 +1,17 @@
 # Premis Dunia
 
-Menetapkan inti ECOS dalam satu paragraf yang konsisten dengan fondasi lore yang sudah ada.
+**Status: Ditetapkan secara konseptual; belum menjadi canon final sampai pemilik proyek meninjau.**
 
-> Status: **Belum dikerjakan / belum diverifikasi**. Checklist ini memecah satu item roadmap menjadi tiga langkah kecil. Centang setelah hasilnya benar-benar ditulis dan ditinjau.
+ECOS adalah game open-world sci-fi dan teknologi yang mengikuti seorang pemuda yang belum memahami teknologi ketika kehidupan di pedesaan dan perkotaan berubah akibat kemajuan teknologi serta arus informasi yang semakin cepat. Ia belajar memahami layanan dan sistem yang memengaruhi kesehariannya, membedakan informasi berguna dari informasi menyesatkan, dan menentukan sikap melalui pengamatan, percakapan, percobaan, kegagalan, bantuan orang lain, serta pilihan yang memiliki konsekuensi. Dunia tetap membumi dan berpusat pada manusia; teknologi maju tidak otomatis membuatnya cyberpunk.
 
-## Checklist turunan
+Kawasan masjid seluas **1.000 hektare** merupakan bagian penting dari target wilayah ECOS seluas **10.000 hektare**, bukan keseluruhan dunia. Angka dan hubungan konseptual ini bersumber dari dokumen fondasi; geometri, pembagian lahan, dan peta belum ditetapkan.
 
-- [ ] Tulis satu paragraf yang menggabungkan pemuda yang belum memahami teknologi, perubahan teknologi cepat, arus informasi, serta kehidupan kota dan desa.
-- [ ] Pastikan kawasan masjid 1.000 hektare diposisikan sebagai bagian dari wilayah ECOS 10.000 hektare, bukan keseluruhan wilayah.
-- [ ] Bandingkan paragraf dengan fondasi lore yang ada; catat konflik atau klaim yang belum punya dasar sebelum menetapkannya sebagai canon.
+## Keputusan dan batas
+
+- [x] Premis satu paragraf menyatukan protagonis, perubahan teknologi, arus informasi, serta latar desa dan kota.
+- [x] Skala kawasan masjid 1.000 ha dibedakan dari target wilayah ECOS 10.000 ha.
+- [x] Premis dibandingkan dengan [Fondasi Konsep Dunia dan Narasi ECOS](../../referensi/FONDASI-KONSEP-DUNIA-DAN-NARASI-ECOS.md); peta, geometri, bioma, dan detail cerita tetap terbuka.
+
+## Hal yang belum diputuskan
+
+Asal kampung/kota protagonis, peristiwa pemicu spesifik, peta final, empat bioma lama, dan lore 25 legenda tidak ditambahkan sebagai fakta karena belum dikonfirmasi.
