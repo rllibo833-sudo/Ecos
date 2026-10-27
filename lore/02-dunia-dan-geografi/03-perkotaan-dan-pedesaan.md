@@ -1,38 +1,45 @@
 # Kawasan Perkotaan dan Pedesaan
 
-**Status: prinsip keberadaan dua konteks ditetapkan; kawasan spesifik belum dipetakan.**
+**Status:** prinsip hubungan urban-rural ditetapkan; geometri dan fasilitas rinci belum dipetakan. Nama kota dan pusat administratif mengikuti [Atlas Administratif Negara ECOS](./08-atlas-administratif-negara-ecos.md).
 
-ECOS memadukan kehidupan perkotaan dan pedesaan. Keduanya harus terasa sebagai bagian dari dunia yang saling bergantung, bukan dua tema yang tidak pernah bersentuhan. Perbedaan kawasan dapat memengaruhi akses informasi, pekerjaan, layanan, hubungan sosial, penggunaan lahan, dan cara orang menjalani kehidupan sehari-hari.
+## Konteks skala
+
+ECOS adalah negara fiksi dengan luas naratif sekitar 1,7 juta km² dan wilayah-wilayah terpisah. Wilayah inti offline 10.000 hektare merupakan area awal yang dirancang lebih dahulu, bukan seluruh negara. Kawasan masjid 1.000 hektare berada di dalam wilayah inti dan mencakup beberapa kota kecil/permukiman.
 
 ## Perkotaan
 
-Juailin adalah satu kota yang sudah ditetapkan dan berfungsi sebagai ecosentral dengan arus informasi cepat. Tidak semua ciri kota lain otomatis berlaku bagi Juailin. Nama distrik, kepadatan, transportasi, bangunan, fasilitas, dan tata kelolanya masih perlu diputuskan.
+- **Nawasena:** ibu kota nasional dan pusat lembaga negara.
+- **Juailin:** kota kecil asal protagonis dan ecosentral dengan arus informasi sangat cepat.
+- **Madiraya:** pusat pertanian dan logistik pangan.
+- **Telukara:** kota pelabuhan dan perdagangan pesisir.
+- **Ranujaya:** kota danau dan air tawar.
+- **Darmawangi:** pusat layanan dataran tinggi.
+
+Peran kota merupakan kerangka worldbuilding yang ditetapkan dalam atlas; luas, populasi, distrik, dan fasilitas spesifik masih perlu dirinci.
+
+Juailin tidak boleh disamakan dengan seluruh kawasan masjid. Juailin berada di salah satu sudut terpencil kawasan khusus 1.000 hektare di Provinsi Arunika, sedangkan masjid menjadi titik sentral kawasan.
 
 ## Pedesaan dan lahan produktif
 
-Peran protagonis sebagai peternak dan pekebun memberi dasar bagi keberadaan pekerjaan berbasis lahan dan kehidupan sehari-hari. Namun, jenis ternak, tanaman, metode pertanian, kepemilikan lahan, pasar, serta lokasi spesifiknya belum ditetapkan.
+- **Lembah Sari:** permukiman pertanian Wanasera.
+- **Puncak Arga:** permukiman dataran tinggi dengan musim dingin berat.
+- Lahan pertanian dan peternakan menopang pangan, pekerjaan, perdagangan, dan kehidupan komunitas.
+- Peran protagonis sebagai peternak dan pekebun ditetapkan; jenis ternak, tanaman, luas lahan, dan penghasilan pribadinya belum ditentukan.
 
-Kawasan masjid menjadi ruang utama pembelajaran protagonis, tetapi belum boleh diasumsikan seluruhnya pedesaan atau seluruhnya lahan pertanian. Pembagian penggunaannya perlu keputusan tersendiri.
+Kawasan masjid tidak boleh dianggap seluruhnya pedesaan atau seluruhnya perkotaan. Kawasan tersebut menggabungkan beberapa kota kecil dan permukiman dengan fungsi yang berbeda.
 
 ## Hubungan antarkawasan
 
-Kota dan pedesaan dapat saling membutuhkan untuk pangan, layanan, pengetahuan, pekerjaan, perdagangan, dan hubungan sosial. Ini adalah prinsip worldbuilding, bukan daftar perdagangan atau rute yang sudah canon.
+Kota dan pedesaan saling membutuhkan untuk pangan, layanan, pengetahuan, pekerjaan, perdagangan, dan relasi sosial. Kereta, bus, jalan raya, kendaraan kerja, pesawat, dan kapal merupakan moda dalam rancangan dunia; rute dan jadwal final belum dipetakan.
 
-Saat mengembangkan hubungan, catat:
-- apa yang bergerak di antara kawasan;
-- siapa yang mengatur atau mengelolanya;
-- siapa yang mendapat manfaat dan siapa yang menanggung biaya;
-- bagaimana informasi berpindah dan dapat berubah;
-- apa yang diketahui warga dan apa yang masih diperdebatkan.
-
-## Batas agar tidak mengarang
-
-Jangan menambahkan nama kota baru, desa, distrik, pasar, jalan raya, pelabuhan, stasiun, atau institusi sebagai canon sebelum disepakati. Contoh di atas adalah kategori yang mungkin diperlukan, bukan klaim bahwa semuanya ada di ECOS.
+Saat mengembangkan suatu hubungan, jelaskan apa yang bergerak antarkawasan, siapa yang mengelola, siapa yang mendapat manfaat, siapa yang menanggung biaya, dan bagaimana informasi dapat berubah selama perjalanan.
 
 ## Checklist
 
-- [x] Perkotaan dan pedesaan ditetapkan sebagai konteks dunia.
-- [x] Juailin ditandai sebagai kota yang sudah bernama.
-- [x] Pekerjaan peternak dan pekebun diakui tanpa mengarang komoditas.
-- [x] Hubungan antarkawasan dijadikan kerangka, bukan fakta rinci.
-- [ ] Tetapkan kawasan spesifik berdasarkan kebutuhan cerita dan peta.
+- [x] Perkotaan dan pedesaan ditetapkan sebagai konteks yang saling bergantung.
+- [x] Nama kota dan permukiman utama diselaraskan dengan atlas.
+- [x] Peran Juailin dan kawasan masjid dibedakan.
+- [x] Pekerjaan protagonis dipertahankan tanpa mengarang pendapatan/aset.
+- [x] Moda transportasi utama ditetapkan sebagai rancangan lore.
+- [ ] Tentukan luas/populasi per kota dan permukiman.
+- [ ] Petakan lokasi fasilitas, jalan, stasiun, pelabuhan, bandara, dan jarak perjalanan.
