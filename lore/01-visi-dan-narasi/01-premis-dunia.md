@@ -1,41 +1,30 @@
 # Premis Dunia
 
-**Status: premis konseptual diperbarui berdasarkan keputusan pemilik proyek; detail yang belum diputuskan tetap terbuka.**
+**Status: premis utama diselaraskan dengan Kanon Induk Dunia ECOS.**
 
-ECOS adalah sebuah **negara fiksi** yang menjadi latar game open-world sci-fi dan teknologi. Pada rancangan awal, wilayah ECOS memiliki skala konseptual **10.000 hektare** dan mencakup kawasan-kawasan terpisah. ECOS memiliki provinsi serta beberapa kota. **Juailin adalah kota kecil dan ecosentral** tempat arus informasi bergerak sangat cepat, tetapi protagonis kesulitan beradaptasi dengan arus informasi dan kemajuan teknologi.
+ECOS adalah negara fiksi dengan luas naratif sekitar **1,7 juta km²**, kira-kira sepersepuluh luas Rusia, yang terdiri dari beberapa wilayah terpisah. **Wilayah inti 10.000 hektare (100 km²)** adalah target rancangan offline awal, bukan ukuran total negara. Empat provinsi dalam rancangan kanon adalah Arunika, Wanasera, Tirta Nusa, dan Giriwana; ibu kota nasional adalah Nawasena. Rincian geografi makro, populasi, pemerintahan, sejarah politik, dan transportasi mengikuti [Kanon Induk Dunia ECOS](../02-dunia-dan-geografi/00-kanon-induk-dunia-ecos.md).
 
-Kawasan masjid seluas **1.000 hektare menggabungkan beberapa kota kecil dan permukiman; Juailin adalah salah satunya**. Pada peta konseptual berbentuk kotak, kawasan ini berada di sisi kanan bawah, masjid menjadi titik sentralnya, dan Juailin terletak terpencil di salah satu sudut kawasan. Protagonis menjalani kehidupan sebagai **peternak dan pekebun** di kawasan tersebut. Pada tingkat nasional, ECOS menggunakan hukum negara ECOS. Di dalam kawasan masjid, kehidupan dan pengelolaan internal berlandaskan agama; masjid menjadi sentral spiritual dan pusat ekonomi berbasis agama, serta membantu warga yang kekurangan dana. Lahan usaha tani/ternak tetap milik pribadi, alat berat dimiliki bersama, dan kerja komunitas berlangsung atas dasar saling membutuhkan dengan sistem bagi hasil. Konflik kawasan dimediasi di Ruang Komunitas dengan sumber agama sebagai acuan netral, tetap dalam kerangka hukum negara ECOS. Warga tetap dapat memiliki rumah, kendaraan, dan usaha sendiri. Kawasan itu menjadi ruang utama pembelajaran melalui pekerjaan, interaksi dengan masyarakat, pengamatan, percobaan, kegagalan, dan keputusan sehari-hari. Luas kawasan masjid termasuk di dalam skala wilayah ECOS, bukan wilayah tambahan di luar negara. Skala 10.000 hektare dipertahankan sebagai target rancangan offline awal; pengembangan lebih jauh dapat memperluas dunia jika kebutuhan desain dan kemampuan teknis memungkinkan.
+**Juailin** adalah kota kecil asal protagonis dan ecosentral dengan arus informasi sangat cepat. Protagonis kesulitan beradaptasi dengan laju informasi dan perkembangan teknologi; itu pengalaman dirinya, bukan sifat semua warga Juailin.
 
-Perjalanan protagonis dipicu oleh kehilangan dan rasa suka yang dipendam kepada seseorang yang ia anggap lebih tinggi darinya. Ia tidak pernah mengungkapkan perasaan tersebut; karena itu, peristiwa ini tidak boleh ditulis sebagai penolakan yang sudah terjadi. Di tengah sindiran, minimnya dukungan, dan kesulitan mengikuti arus informasi, ia berusaha menjelajahi ECOS, mengenali dirinya, menjaga harga diri, dan membangun keberanian untuk mengungkapkan perasaannya. Hasil romantisnya belum harus ditentukan menjadi satu akhir tunggal.
+Kawasan masjid seluas **1.000 hektare** merupakan kawasan khusus yang seluruhnya berada di Provinsi Arunika dan di dalam wilayah inti offline. Kawasan ini menggabungkan beberapa kota kecil dan permukiman, termasuk Juailin. Pada peta konseptual berbentuk kotak, kawasan masjid berada di sisi kanan bawah, masjid menjadi titik sentral, dan Juailin berada terpencil di salah satu sudutnya. Protagonis menjalani peran sebagai **peternak dan pekebun** di kawasan tersebut.
 
-Dunia memadukan kehidupan perkotaan, pedesaan, komunitas, alam, teknologi, ekonomi, politik, sains, moralitas, mitos, dan misteri. Latar tetap membumi dan berpusat pada manusia; **cyberpunk bukan genre maupun arah estetika ECOS**. Pemain pada konsep desainnya boleh mengikuti cerita utama atau memilih menjelajah tanpa menjadikan cerita sebagai kewajiban. Kebebasan modifikasi peta juga merupakan visi desain, bukan klaim fitur yang sudah terimplementasi.
+Hukum negara ECOS berlaku secara nasional. Kehidupan dan pengelolaan internal kawasan masjid berlandaskan agama, tetapi tetap berada dalam kerangka hukum nasional dan perlindungan hak warga. Masjid menjadi sentral spiritual dan pusat ekonomi berbasis agama serta membantu warga yang kekurangan dana. Lahan pertanian/peternakan bersifat pribadi; alat berat dimiliki bersama. Kerja komunitas terjadi berdasarkan kebutuhan dan kesepakatan, bukan paksaan, dengan sistem bagi hasil. Konflik dapat dimediasi di Ruang Komunitas menggunakan sumber agama sebagai rujukan netral. Kepemilikan rumah, kendaraan, lahan, dan usaha pribadi tetap ada; masyarakat tidak utopis.
 
-## Putusan pemilik proyek
+Perjalanan protagonis dipicu oleh kehilangan dan rasa suka yang dipendam kepada seseorang yang ia anggap lebih tinggi darinya. Ia tidak pernah mengungkapkan perasaan itu, sehingga tidak boleh ditulis seolah ia telah ditolak. Di tengah sindiran, minimnya dukungan, dan kesulitan mengikuti arus informasi, ia berusaha menjelajahi ECOS, mengenali dirinya, menjaga harga diri, dan membangun keberanian untuk mengungkapkan perasaannya. Identitas orang tersebut, detail kehilangan, dan jawaban romantis tetap terbuka.
 
-- [x] ECOS ditetapkan sebagai negara fiksi dengan skala konseptual awal 10.000 hektare.
-- [x] Wilayah ECOS mencakup kawasan-kawasan terpisah.
-- [x] Juailin ditetapkan sebagai kota kecil dan ecosentral dengan arus informasi sangat cepat.
-- [x] Kawasan masjid 1.000 hektare ditetapkan sebagai kawasan gabungan beberapa kota kecil/permukiman, termasuk Juailin, dan menjadi ruang utama protagonis belajar sebagai peternak dan pekebun.
-- [x] Hukum negara ECOS berlaku secara nasional; kawasan masjid berlandaskan agama untuk kehidupan dan pengelolaan internal.
-- [x] Masjid menjadi pusat ekonomi berbasis agama dan membantu warga yang kekurangan dana; kepemilikan pribadi tetap ada, alat berat dimiliki bersama, dan kerja komunitas memakai sistem bagi hasil.
-- [x] Skala 10.000 hektare dipertahankan untuk rancangan offline awal, dengan kemungkinan ekspansi pada tahap lebih jauh.
-- [x] Kesulitan adaptasi terhadap teknologi dan arus informasi ditetapkan sebagai bagian utama kondisi protagonis.
-- [x] Peristiwa pemicu berupa kehilangan dan rasa suka yang dipendam ditetapkan; tidak ada penolakan yang diasumsikan.
-- [x] Arah genre open-world, sci-fi, dan teknologi tanpa cyberpunk ditetapkan.
+Dunia memadukan kehidupan perkotaan dan pedesaan, alam, teknologi, ekonomi, politik, sains, moralitas, mitos, dan misteri. Nada cerita membumi, manusiawi, serta mencakup kesedihan, kekecewaan, kebahagiaan, ketakutan, dan rasa ingin tahu. **Cyberpunk bukan genre maupun arah estetika ECOS.** Pemain pada arah desain dapat mengikuti cerita utama atau memilih menjelajah tanpa menjadikan cerita sebagai kewajiban. Kebebasan modifikasi peta dan aktivitas adalah visi desain, bukan bukti implementasi.
 
-## Batas yang masih terbuka
+## Putusan yang diselaraskan
 
-- Struktur dan batas provinsi, kota-kota lain, serta jenis kawasan terpisah belum ditetapkan.
-- Luas dan batas Juailin, nama permukiman lain, serta hubungan administratif kawasan masjid dengan provinsi belum ditetapkan.
-- Empat bioma lama (tropis, pegunungan, pesisir, gurun) masih perlu dievaluasi.
-- Nama dan isi 25 legenda belum ditambahkan karena memerlukan sumber atau keputusan yang benar.
-- Identitas orang yang disukai, detail peristiwa kehilangan, serta rincian biografi protagonis belum ditetapkan.
-- Kebebasan modifikasi peta dan ekspansi dunia belum membuktikan adanya fitur yang sudah terimplementasi.
+- [x] Negara ECOS dan wilayah nasional tersebar.
+- [x] Skala nasional dibedakan dari wilayah inti offline 10.000 hektare.
+- [x] Kawasan masjid 1.000 hektare termasuk di dalam wilayah inti dan Provinsi Arunika.
+- [x] Empat provinsi, ibu kota Nawasena, bioma, pemerintahan, dan transportasi mengikuti kanon induk geografi.
+- [x] Hukum nasional dibedakan dari aturan internal kawasan masjid.
+- [x] Fondasi protagonis, pemicu emosional, konflik, dan tujuan tetap konsisten.
 
-## Acuan wilayah
+## Acuan kanon
 
-Nama provinsi, kota, dan permukiman mengikuti satu sumber kanon: [Atlas Administratif Negara ECOS](../02-dunia-dan-geografi/08-atlas-administratif-negara-ecos.md). Nama tambahan harus diperiksa terhadap atlas tersebut agar tidak membuat pembagian wilayah yang bertentangan.
-
-## Acuan
-
-Premis ini menyatukan keputusan yang tercatat pada dokumen turunan Visi dan Narasi dan keputusan geografis terbaru. Detail yang tidak diberikan tidak dikarang.
+- [Alur Cerita Utama](./11-alur-cerita-utama.md)
+- [Aturan Konsistensi Narasi](./09-aturan-konsistensi.md)
+- [Kanon Induk Dunia ECOS](../02-dunia-dan-geografi/00-kanon-induk-dunia-ecos.md)
