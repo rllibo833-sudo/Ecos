@@ -19,7 +19,7 @@
 
 - [x] ECOS adalah negara fiksi dengan skala konseptual awal 10.000 hektare.
 - [x] Wilayah ECOS mencakup kawasan-kawasan terpisah.
-- [x] ECOS memiliki provinsi dan beberapa kota; rincian administrasi belum ditentukan.
+- [x] Rancangan awal mencatat empat provinsi dalam Atlas Administratif Negara ECOS; batas terperinci masih terbuka.
 - [x] Juailin adalah kota kecil dan ecosentral dengan arus informasi cepat.
 - [x] Kawasan masjid 1.000 hektare mencakup beberapa kota kecil dan permukiman, termasuk Juailin.
 - [x] Skala 10.000 hektare dipertahankan sebagai target offline awal; ekspansi lebih luas dapat dipertimbangkan di tahap lebih jauh.
@@ -30,10 +30,12 @@
 ## Tahapan kerja berikutnya
 
 - [ ] Tentukan arti geografis “kawasan terpisah” tanpa berasumsi bahwa semuanya pulau atau enklave.
-- [ ] Susun kerangka hubungan negara, provinsi, kota, dan kawasan di dalam kota.
+- [x] Susun kerangka awal hubungan negara, provinsi, kota, dan kawasan khusus masjid.
 - [x] Catat orientasi konseptual: kawasan masjid di sisi kanan bawah peta berbentuk kotak, masjid di pusat kawasan, dan Juailin terpencil di salah satu sudut.
-- [ ] Tetapkan hubungan administratif kawasan gabungan dengan provinsi, Juailin, dan permukiman lain.
-- [ ] Tentukan jumlah dan batas provinsi serta kota setelah struktur administrasi disepakati.
+- [x] Kawasan khusus masjid ditempatkan seluruhnya di Provinsi Arunika, mencakup Juailin dan beberapa permukiman lain.
+- [ ] Petakan batas terperinci kawasan khusus masjid dan permukiman di dalamnya.
+- [x] Nama kerja awal empat provinsi dan kota/permukiman tercatat di atlas.
+- [ ] Tentukan batas provinsi dan kota setelah peta konseptual disusun.
 - [ ] Evaluasi empat bioma lama berdasarkan geografi yang dipilih.
 - [ ] Tentukan kondisi iklim, air, tanah, dan topografi yang saling konsisten.
 - [ ] Tinjau kebutuhan peta modifikasi dan ekspansi terhadap konsistensi dunia.
