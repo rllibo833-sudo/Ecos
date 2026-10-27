@@ -1,26 +1,27 @@
 # Peristiwa Pemicu
 
-**Status:** rancangan arah pemicu, belum ditetapkan sebagai kejadian canon.
+**Status:** belum ditetapkan oleh pemilik proyek. Peristiwa pemicu spesifik tidak boleh dianggap canon sebelum diputuskan.
 
-## Arah peristiwa
+## Konteks sebelum pemicu
 
-Pemicu sebaiknya berupa perubahan layanan, informasi, atau teknologi yang menyentuh kebutuhan sehari-hari protagonis atau komunitasnya. Peristiwa harus memaksanya mencari pemahaman, bukan sekadar memamerkan nama sistem atau memperkenalkan semua proyek teknologi sekaligus.
+Protagonis berasal dari **Juailin**, ecosentral tempat sistem informasi bergerak sangat cepat, tetapi ia kesulitan beradaptasi. Dalam perjalanan ceritanya, ia menjalani peran sebagai **peternak dan pekebun** di kawasan masjid seluas **1.000 hektare**, yang menjadi ruang utama untuk belajar melalui kehidupan sehari-hari.
 
-## Urutan sebab-akibat awal (opsi desain)
+Konteks ini memberi dua sumber konflik potensial: arus informasi cepat yang sulit ia pahami dan kebutuhan nyata dalam kegiatan beternak serta berkebun. Namun, belum diputuskan kejadian mana yang pertama kali mendorongnya bertindak.
 
-1. Protagonis menerima atau mengalami informasi tentang perubahan yang berdampak pada rutinitas.
-2. Informasi yang tersedia belum cukup jelas atau berbeda dari keterangan orang lain.
-3. Ia perlu memutuskan apakah akan bertindak segera, bertanya, atau memeriksa sumber lain.
-4. Tindakannya membuka pertanyaan baru dan memberi alasan untuk menjelajahi dunia serta memahami sistem.
+## Kriteria peristiwa pemicu
 
-Ini adalah kerangka contoh; layanan spesifik, akibat nyata, dan pilihan pemain belum diputuskan.
+Peristiwa pemicu yang kelak dipilih sebaiknya:
+1. berkaitan dengan kebutuhan nyata atau rutinitas protagonis;
+2. menghubungkan kesulitan memahami informasi dengan dampak yang dapat ia rasakan;
+3. memberinya alasan pribadi untuk mencari jawaban atau meminta bantuan;
+4. membuka ruang bagi pemain untuk belajar, bukan sekadar memperkenalkan nama sistem teknologi.
 
-## Prinsip pilihan
+## Batas keputusan
 
-Pemain sebaiknya memiliki lebih dari satu respons yang masuk akal: bertanya pada warga/petugas, mencari pengumuman, memeriksa bukti yang tersedia, atau menunda tindakan. Tiap pilihan dapat mengubah pengetahuan dan relasi, tetapi konsekuensi spesifik baru ditulis setelah misi dirancang.
+Tidak ada layanan, penyakit ternak, gagal panen, pesan digital, konflik warga, atau kejadian spesifik yang ditetapkan sebagai pemicu saat ini. Contoh-contoh tersebut tidak boleh ditulis sebagai fakta dunia tanpa persetujuan pemilik proyek.
 
 ## Checklist
 
-- [x] Pemicu diarahkan pada masalah sehari-hari yang berhubungan dengan teknologi atau arus informasi.
-- [x] Pemicu memberi alasan pribadi untuk bertindak, bukan sekadar memajang nama sistem.
-- [x] Kerangka sebab-akibat dan beberapa respons dicatat sebagai opsi, bukan pilihan pemain yang sudah dikunci.
+- [x] Konteks protagonis dari Juailin dan perannya sebagai peternak/pekebun dicatat.
+- [x] Kriteria peristiwa pemicu dirumuskan berdasarkan kehidupan sehari-hari dan kesulitan adaptasi.
+- [x] Peristiwa spesifik tetap ditandai terbuka, tidak dikarang sebagai canon.
