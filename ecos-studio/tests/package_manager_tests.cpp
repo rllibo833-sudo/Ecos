@@ -25,10 +25,18 @@ void write(const fs::path& path, const std::string& contents) {
 }
 void set_dependencies(const fs::path& root, const std::string& dependencies) {
     auto manifest = read(root / "mod.ecos");
-    const auto marker = manifest.find("dependencies=none");
-    if (marker != std::string::npos)
-        manifest.replace(marker, std::string("dependencies=none").size(), "dependencies=" + dependencies);
-    write(root / "mod.ecos", manifest);
+    std::size_t start = 0;
+    while (start < manifest.size()) {
+        const auto end = manifest.find('\n', start);
+        const auto length = (end == std::string::npos ? manifest.size() : end) - start;
+        if (manifest.compare(start, std::string("dependencies=").size(), "dependencies=") == 0) {
+            manifest.replace(start, length, "dependencies=" + dependencies);
+            write(root / "mod.ecos", manifest);
+            return;
+        }
+        if (end == std::string::npos) break;
+        start = end + 1;
+    }
 }
 bool contains(const std::vector<std::string>& values, const std::string& part) {
     for (const auto& value : values) if (value.find(part) != std::string::npos) return true;

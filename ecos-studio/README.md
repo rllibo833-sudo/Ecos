@@ -7,6 +7,7 @@ It is not yet a complete Unreal Engine 5-equivalent product. Implemented capabil
 ## Implemented
 
 - Project and data-only mod scaffold creation/validation CLI, with validated dependency declarations for third-party creators.
+- Deterministic mod dependency resolver with installed-package discovery, missing-dependency diagnostics, cycle detection, and stable dependency-first ordering.
 - Runtime lifecycle, thread-safe logging, typed errors/results, and safe relative-path/filesystem helpers.
 - Scene graph with hierarchical transforms, cycle prevention, subtree removal, versioned serialization, and validation CLI.
 - Asset registry with stable IDs, dependency reference/cycle validation, and SHA-256 content fingerprints.
@@ -26,17 +27,25 @@ It is not yet a complete Unreal Engine 5-equivalent product. Implemented capabil
 
 ## Modding for every creator
 
-ECOS Studio is intended as a general-purpose engine and creator toolkit, not an ECOS-game-only editor. Mod packages use mod.ecos; declare dependencies as dependencies=none or dependencies=com.vendor.base,com.example.content. The validator checks ID syntax, self-dependencies, and duplicate dependencies. Dependency download, version-range resolution, runtime loading, and executable scripts are not implemented yet; mods remain data-only for safety.
+ECOS Studio is intended as a general-purpose engine and creator toolkit, not an ECOS-game-only editor. Mod packages use `mod.ecos`; declare dependencies as `dependencies=none` or a comma-separated list such as `dependencies=com.vendor.base,com.example.content`.
+
+The `mod-resolve` command scans immediate child directories under a mods root, validates each discovered package, reports missing dependencies and dependency cycles, and prints a deterministic dependency-first order:
+
+~~~sh
+ecos-studio mod-resolve ../MyGame/mods
+~~~
+
+Resolution is local-only: packages must already exist on disk. There is no package download, version-range solver, runtime loading, or executable scripting yet. Mods remain data-only for safety.
 
 ## Not implemented yet
 
-No production GPU backend, native desktop window/editor shell, interactive viewport, physics runtime, audio engine, scripting VM, asynchronous disk streaming, or complete material/import pipeline exists yet. Camera math and input state are foundations for those integrations, not proof that a viewport is available.
+No production GPU backend, native desktop window/editor shell, interactive viewport, physics runtime, audio device backend, scripting VM, asynchronous disk streaming, or complete material/import pipeline exists yet. Camera math and input state are foundations for those integrations, not proof that a viewport is available.
 
 ## Build
 
 Requires CMake 3.20+ and a C++20 compiler.
 
-~~~sh
+~~~
 cmake -S ecos-studio -B build
 cmake --build build --config Release
 ctest --test-dir build --output-on-failure
@@ -44,12 +53,13 @@ ctest --test-dir build --output-on-failure
 
 ## CLI
 
-~~~sh
+~~~
 ecos-studio --help
 ecos-studio new ../MyGame "My Game"
 ecos-studio validate ../MyGame
 ecos-studio mod-init ../MyGameMod com.example.my-mod
 ecos-studio mod-validate ../MyGameMod
+ecos-studio mod-resolve ../MyGame/mods
 ecos-studio scene-validate examples/hello-world/scenes/main.ecscene
 ecos-studio world-validate examples/large-world/world.ecworld
 ~~~
