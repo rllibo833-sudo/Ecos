@@ -1,4 +1,5 @@
 #include "ecos_studio/render.hpp"
+#include "ecos_studio/platform.hpp"
 
 #include <algorithm>
 #include <array>
@@ -6,6 +7,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <limits>
+#include <fstream>
+#include <system_error>
 #include <string>
 #include <vector>
 
@@ -110,6 +113,71 @@ Result<std::string> render_scene_to_ppm(
         }
     }
     return render_mesh_to_ppm(combined, width, height);
+}
+
+
+Result<std::string> render_scene_graph_to_ppm(
+    const SceneGraph& scene, const AssetRegistry& assets,
+    const std::filesystem::path& asset_root,
+    std::uint32_t width, std::uint32_t height) {
+    if (asset_root.empty())
+        return Result<std::string>::failure({ErrorCode::invalid_argument, "Asset root must not be empty"});
+    std::error_code ec;
+    const auto root = std::filesystem::canonical(asset_root, ec);
+    if (ec || !std::filesystem::is_directory(root))
+        return Result<std::string>::failure({ErrorCode::io_error, "Cannot resolve asset root"});
+    auto within_root = [](const std::filesystem::path& base, const std::filesystem::path& candidate) {
+        auto a = base.begin(); auto b = candidate.begin();
+        for (; a != base.end(); ++a, ++b) if (b == candidate.end() || *a != *b) return false;
+        return true;
+    };
+    const auto nodes = scene.nodes();
+    std::vector<MeshData> meshes;
+    std::vector<RenderMeshInstance> instances;
+    meshes.reserve(nodes.size());
+    instances.reserve(nodes.size());
+    constexpr std::uintmax_t max_asset_bytes = 16U * 1024U * 1024U;
+    for (const auto& node : nodes) {
+        if (node.mesh_asset_id.empty()) continue;
+        const auto* asset = assets.find(node.mesh_asset_id);
+        if (!asset)
+            return Result<std::string>::failure({ErrorCode::not_found,
+                "Scene node '" + node.name + "' references missing mesh asset '" + node.mesh_asset_id + "'"});
+        if (asset->type != "mesh.obj")
+            return Result<std::string>::failure({ErrorCode::unsupported,
+                "Asset '" + asset->id + "' is not a supported mesh.obj asset"});
+        auto relative = platform::safe_relative_path(asset->path);
+        if (!relative) return Result<std::string>::failure(relative.error());
+        const auto source = std::filesystem::canonical(root / relative.value(), ec);
+        if (ec) return Result<std::string>::failure({ErrorCode::io_error,
+            "Cannot resolve mesh asset '" + asset->id + "': " + ec.message()});
+        if (!within_root(root, source))
+            return Result<std::string>::failure({ErrorCode::path_escape,
+                "Mesh asset resolves outside the configured asset root"});
+        const auto size = std::filesystem::file_size(source, ec);
+        if (ec || size > max_asset_bytes)
+            return Result<std::string>::failure({ErrorCode::invalid_argument,
+                "Mesh asset is unreadable or exceeds the 16 MiB import limit"});
+        std::ifstream input(source, std::ios::binary);
+        if (!input) return Result<std::string>::failure({ErrorCode::io_error,
+            "Cannot open mesh asset: " + asset->id});
+        std::string contents(static_cast<std::size_t>(size), '\0');
+        if (size) input.read(contents.data(), static_cast<std::streamsize>(size));
+        if (!input || input.peek() != std::char_traits<char>::eof())
+            return Result<std::string>::failure({ErrorCode::io_error,
+                "Failed to read complete mesh asset: " + asset->id});
+        auto mesh = import_obj_mesh(contents);
+        if (!mesh) return Result<std::string>::failure({mesh.error().code,
+            "Invalid mesh asset '" + asset->id + "': " + mesh.error().message});
+        auto world = scene.world_matrix(node.id);
+        if (!world) return Result<std::string>::failure(world.error());
+        meshes.push_back(std::move(mesh.value()));
+        instances.push_back(RenderMeshInstance{&meshes.back(), world.value()});
+    }
+    if (instances.empty())
+        return Result<std::string>::failure({ErrorCode::invalid_state,
+            "Scene has no nodes referencing renderable mesh assets"});
+    return render_scene_to_ppm(instances, width, height);
 }
 
 Result<std::string> render_mesh_to_ppm(const MeshData& mesh, std::uint32_t width, std::uint32_t height) {
