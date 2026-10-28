@@ -6,7 +6,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_library(ecos_studio_core
     src/core.cpp src/project.cpp src/result.cpp src/platform.cpp
     src/scene.cpp src/asset_registry.cpp src/world.cpp src/world_manifest.cpp
-    src/mesh.cpp src/render.cpp src/content_hash.cpp src/input.cpp src/camera.cpp src/physics.cpp
+    src/mesh.cpp src/render.cpp src/content_hash.cpp src/input.cpp src/camera.cpp src/physics.cpp src/material.cpp
 )
 target_include_directories(ecos_studio_core PUBLIC include)
 target_compile_features(ecos_studio_core PUBLIC cxx_std_20)
@@ -59,3 +59,7 @@ add_test(NAME camera_view_and_projection_math COMMAND ecos-studio-camera-tests)
 add_executable(ecos-studio-physics-tests tests/physics_tests.cpp)
 target_link_libraries(ecos-studio-physics-tests PRIVATE ecos_studio_core)
 add_test(NAME collision_overlap_and_ray_queries COMMAND ecos-studio-physics-tests)
+
+add_executable(ecos-studio-material-tests tests/material_tests.cpp)
+target_link_libraries(ecos-studio-material-tests PRIVATE ecos_studio_core)
+add_test(NAME wavefront_mtl_material_import COMMAND ecos-studio-material-tests)
