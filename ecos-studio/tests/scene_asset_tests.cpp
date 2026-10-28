@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <string>
 
 namespace {
 int failures = 0;
@@ -54,6 +55,15 @@ void test_asset_registry() {
     check(registry.find("mesh.tree") != nullptr, "looks up assets by stable id");
     registry.clear();
     check(registry.size() == 0, "clears registry");
+
+    AssetRegistry cyclic;
+    check(cyclic.register_asset({"cycle.a", "mesh", "assets/a.mesh", {"cycle.b"}}),
+          "registers first edge in dependency graph");
+    check(cyclic.register_asset({"cycle.b", "material", "assets/b.mat", {"cycle.a"}}),
+          "registers second edge in dependency graph");
+    auto cycle_result = cyclic.validate_dependencies();
+    check(!cycle_result && cycle_result.error().message.find("cycle") != std::string::npos,
+          "detects dependency cycles instead of accepting recursive assets");
 }
 }
 int main() {

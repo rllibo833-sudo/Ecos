@@ -1,6 +1,8 @@
 #include "ecos_studio/asset_registry.hpp"
 #include "ecos_studio/platform.hpp"
 
+#include <functional>
+#include <unordered_map>
 #include <utility>
 
 namespace ecos::studio {
@@ -32,12 +34,41 @@ const AssetRecord* AssetRegistry::find(const std::string& id) const noexcept {
 }
 
 Result<void> AssetRegistry::validate_dependencies() const {
+    // Resolve references before checking graph structure, so a missing ID is not
+    // misreported as a cycle or a traversal failure.
     for (const auto& [id, asset] : assets_) {
         for (const auto& dependency : asset.dependencies) {
             if (assets_.find(dependency) == assets_.end()) {
                 return Result<void>::failure({ErrorCode::not_found,
                     "Asset '" + id + "' depends on missing asset '" + dependency + "'"});
             }
+        }
+    }
+
+    enum class VisitState { unseen, visiting, visited };
+    std::unordered_map<std::string, VisitState> states;
+    states.reserve(assets_.size());
+    std::function<bool(const std::string&)> visit = [&](const std::string& id) {
+        const auto state = states.find(id);
+        if (state != states.end()) {
+            if (state->second == VisitState::visiting) return false;
+            if (state->second == VisitState::visited) return true;
+        }
+        states[id] = VisitState::visiting;
+        const auto asset = assets_.find(id);
+        if (asset != assets_.end()) {
+            for (const auto& dependency : asset->second.dependencies) {
+                if (!visit(dependency)) return false;
+            }
+        }
+        states[id] = VisitState::visited;
+        return true;
+    };
+    for (const auto& [id, asset] : assets_) {
+        (void)asset;
+        if (!visit(id)) {
+            return Result<void>::failure({ErrorCode::invalid_argument,
+                "Asset dependency cycle detected while visiting '" + id + "'"});
         }
     }
     return Result<void>::success();
