@@ -9,12 +9,24 @@
 
 The editor must not be required to run a packaged game. The runtime and editor will share project and asset formats but have separate launch targets.
 
+## Implemented bootstrap and core
+
+The current C++20 implementation includes:
+
+- A command-line project and data-only mod scaffold generator/validator.
+- A minimal runtime lifecycle state machine (cold → ready → stopped).
+- A mutex-protected log writer with debug, info, warning, and error levels.
+- Automated tests for lifecycle and log output.
+
+This is foundational infrastructure, not a complete runtime. It does not yet own a window, render graphics, simulate physics, or output audio.
+
 ## Planned subsystem boundaries
 
 | Subsystem | Responsibility | Status |
 |---|---|---|
+| Runtime lifecycle and logger | Minimal lifecycle and synchronized log output | Implemented |
 | Project and mod manifests | Create/validate project and package metadata | Bootstrap implemented |
-| Platform layer | Filesystem, paths, clocks, jobs, logging | Planned |
+| Platform layer | Filesystem, paths, clocks, jobs, logging adapters | Planned |
 | Renderer | RHI abstraction, frame graph, materials, visibility | Planned |
 | World runtime | Region graph, streaming, LOD, origin rebasing | Planned |
 | Physics | Broadphase, collision, rigid bodies, character controller | Planned |
@@ -32,11 +44,11 @@ A 1.7-million-km² fictional country is a content scale, not a requirement to ke
 - A hierarchical world index: country → region → cell → local scene.
 - Asynchronous cell streaming and deterministic load/unload boundaries.
 - Multiple levels of detail for geometry, vegetation, crowds, and simulation.
-- Region-level simulation for distant populations and economies, with higher fidelity near the player.
+- Region-level simulation for distant regions and higher fidelity near the player.
 - Stable geographic coordinates plus local floating-origin coordinates for rendering and physics.
 - Explicit budgets for memory, active entities, draw calls, streaming bandwidth, and background jobs.
 
-The initial prototype should prove the data model and streaming state transitions before advanced graphics are attempted.
+The initial prototype should prove data formats and streaming transitions before advanced graphics are attempted.
 
 ## Mod security
 

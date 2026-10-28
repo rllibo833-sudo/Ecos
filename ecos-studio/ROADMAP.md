@@ -2,18 +2,21 @@
 
 This roadmap describes product milestones, not guaranteed delivery dates.
 
-## S0 — Repository foundation (current)
+## S0 — Repository foundation
 
 - [x] Dedicated branch and product scope.
 - [x] C++20/CMake bootstrap CLI.
 - [x] Project scaffold creation and manifest validation.
 - [x] Mod scaffold creation and manifest validation.
 - [x] CI build and smoke workflow.
-- [x] Explicit status labels to distinguish shipped bootstrap from planned engine features.
 
-## S1 — Runtime foundations
+## S1 — Runtime foundations (in progress)
 
-- [ ] Logging, diagnostics, platform abstraction, and stable error codes.
+- [x] Minimal runtime lifecycle state machine.
+- [x] Thread-safe log writer with severity levels.
+- [x] Dependency-free automated tests for runtime lifecycle and logging.
+- [ ] Stable error/result type and diagnostic codes.
+- [ ] Platform abstraction for paths, clocks, and system information.
 - [ ] Versioned project/asset schemas and migration utilities.
 - [ ] Asset registry and dependency graph.
 - [ ] Headless world-data validator.
