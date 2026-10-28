@@ -7,9 +7,8 @@
 
 #include <cstddef>
 #include <memory>
-#include <optional>
-#include <unordered_map>
 #include <mutex>
+#include <optional>
 #include <string>
 #include <unordered_map>
 
@@ -24,11 +23,12 @@ struct SceneNodeComponent {
     std::string name;
     Transform local_transform{};
     std::optional<NodeId> parent;
+    std::optional<Entity> parent_entity;
 };
 
 // Owns the manifest-backed world lifecycle and keeps parsed scene graphs resident
 // exactly while their cells are loaded. Worker threads perform file IO/parsing;
-// scene snapshots and cell eviction are synchronized for safe editor/runtime use.
+// scene snapshots and cell eviction are synchronized. Call update() and ECS queries\n// from the owning runtime thread; worker threads only load and parse cell files.
 class WorldContentRuntime {
 public:
     [[nodiscard]] static Result<std::unique_ptr<WorldContentRuntime>> create(
@@ -48,7 +48,6 @@ public:
     [[nodiscard]] std::size_t in_flight_count() const noexcept;
     [[nodiscard]] bool idle() const noexcept;
     [[nodiscard]] const WorldManifest& manifest() const noexcept;
-    [[nodiscard]] WorldRuntime& world() noexcept;
     [[nodiscard]] const WorldRuntime& world() const noexcept;
 
 private:

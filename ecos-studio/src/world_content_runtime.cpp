@@ -58,18 +58,24 @@ Result<void> WorldContentRuntime::materialize_cell_entities(const std::string& c
     if (!scene) return Result<void>::failure(scene.error());
     auto& group = cell_entities_[cell_id];
     try {
-        for (const auto& node : scene.value().nodes()) {
-            const auto entity = entities_.create();
-            try {
-                entities_.emplace<WorldCellEntityComponent>(
-                    entity, WorldCellEntityComponent{cell_id, node.id});
-                entities_.emplace<SceneNodeComponent>(
-                    entity, SceneNodeComponent{node.name, node.local_transform, node.parent});
-                group.emplace(node.id, entity);
-            } catch (...) {
-                (void)entities_.destroy(entity);
-                throw;
+        const auto nodes = scene.value().nodes();
+        // Allocate all handles first so parent links work even when node IDs are
+        // not topologically ordered in the serialized file.
+        for (const auto& node : nodes) group.emplace(node.id, entities_.create());
+        for (const auto& node : nodes) {
+            const auto entity = group.at(node.id);
+            std::optional<Entity> parent_entity;
+            if (node.parent) {
+                const auto parent = group.find(*node.parent);
+                if (parent == group.end()) {
+                    throw std::logic_error("Scene node references a parent missing from its loaded graph");
+                }
+                parent_entity = parent->second;
             }
+            entities_.emplace<WorldCellEntityComponent>(
+                entity, WorldCellEntityComponent{cell_id, node.id});
+            entities_.emplace<SceneNodeComponent>(
+                entity, SceneNodeComponent{node.name, node.local_transform, node.parent, parent_entity});
         }
     } catch (const std::exception& exception) {
         for (const auto& [node_id, entity] : group) {
@@ -141,7 +147,6 @@ const EntityRegistry& WorldContentRuntime::entities() const noexcept { return en
 std::size_t WorldContentRuntime::in_flight_count() const noexcept { return streaming_.in_flight_count(); }
 bool WorldContentRuntime::idle() const noexcept { return streaming_.idle(); }
 const WorldManifest& WorldContentRuntime::manifest() const noexcept { return manifest_; }
-WorldRuntime& WorldContentRuntime::world() noexcept { return world_; }
 const WorldRuntime& WorldContentRuntime::world() const noexcept { return world_; }
 
 } // namespace ecos::studio

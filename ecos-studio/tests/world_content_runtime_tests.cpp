@@ -57,6 +57,9 @@ void test_load_resident_snapshot_unload_and_reload() {
                 const auto* node = runtime->entities().get<SceneNodeComponent>(*spawn_entity);
                 check(tag && tag->cell_id == "origin" && tag->scene_node_id == 1, "tags runtime entities with source cell and node");
                 check(node && node->name == "Spawn", "copies scene node data into ECS component");
+                auto gate_entity = runtime->entity_for_node("origin", 2);
+                const auto* gate = gate_entity ? runtime->entities().get<SceneNodeComponent>(*gate_entity) : nullptr;
+                check(gate && gate->parent_entity == spawn_entity, "resolves scene parent links to runtime entity handles");
             }
             auto scene = runtime->scene_snapshot("origin");
             check(scene && scene.value().size() == 2, "exposes a safe snapshot of the loaded scene");
