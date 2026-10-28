@@ -47,6 +47,71 @@ Result<std::string> render_mesh_to_ppm(
     return render_mesh_to_ppm(transformed, width, height);
 }
 
+Result<std::string> render_scene_to_ppm(
+    const std::vector<RenderMeshInstance>& instances,
+    std::uint32_t width, std::uint32_t height) {
+    if (instances.empty()) {
+        return Result<std::string>::failure({ErrorCode::invalid_argument,
+            "Scene renderer requires at least one mesh instance"});
+    }
+
+    MeshData combined;
+    constexpr std::size_t max_scene_vertices = 4U * 1024U * 1024U;
+    constexpr std::size_t max_scene_indices = 12U * 1024U * 1024U;
+    for (const auto& instance : instances) {
+        if (instance.mesh == nullptr) {
+            return Result<std::string>::failure({ErrorCode::invalid_argument,
+                "Scene contains a null mesh instance"});
+        }
+        const auto& mesh = *instance.mesh;
+        if (mesh.positions.empty() || mesh.indices.empty() || mesh.indices.size() % 3 != 0) {
+            return Result<std::string>::failure({ErrorCode::invalid_argument,
+                "Every scene mesh requires vertices and a triangle index buffer"});
+        }
+        if (mesh.positions.size() > max_scene_vertices - combined.positions.size() ||
+            mesh.indices.size() > max_scene_indices - combined.indices.size() ||
+            combined.positions.size() > std::numeric_limits<std::uint32_t>::max() - mesh.positions.size()) {
+            return Result<std::string>::failure({ErrorCode::invalid_argument,
+                "Scene geometry exceeds renderer limits"});
+        }
+        for (const auto index : mesh.indices) {
+            if (index >= mesh.positions.size()) {
+                return Result<std::string>::failure({ErrorCode::invalid_argument,
+                    "Scene mesh index references a missing vertex"});
+            }
+        }
+        for (const float value : instance.world_transform.values) {
+            if (!std::isfinite(value)) {
+                return Result<std::string>::failure({ErrorCode::invalid_argument,
+                    "Scene mesh transform contains non-finite matrix values"});
+            }
+        }
+
+        const auto vertex_offset = static_cast<std::uint32_t>(combined.positions.size());
+        for (const auto& position : mesh.positions) {
+            const float x = position.x, y = position.y, z = position.z;
+            const Vec3 transformed{
+                instance.world_transform.values[0] * x + instance.world_transform.values[1] * y +
+                    instance.world_transform.values[2] * z + instance.world_transform.values[3],
+                instance.world_transform.values[4] * x + instance.world_transform.values[5] * y +
+                    instance.world_transform.values[6] * z + instance.world_transform.values[7],
+                instance.world_transform.values[8] * x + instance.world_transform.values[9] * y +
+                    instance.world_transform.values[10] * z + instance.world_transform.values[11]
+            };
+            if (!std::isfinite(transformed.x) || !std::isfinite(transformed.y) ||
+                !std::isfinite(transformed.z)) {
+                return Result<std::string>::failure({ErrorCode::invalid_argument,
+                    "Scene transform produced non-finite vertex coordinates"});
+            }
+            combined.positions.push_back(transformed);
+        }
+        for (const auto index : mesh.indices) {
+            combined.indices.push_back(vertex_offset + index);
+        }
+    }
+    return render_mesh_to_ppm(combined, width, height);
+}
+
 Result<std::string> render_mesh_to_ppm(const MeshData& mesh, std::uint32_t width, std::uint32_t height) {
     constexpr std::uint32_t max_dimension = 4096;
     if (width == 0 || height == 0 || width > max_dimension || height > max_dimension) {

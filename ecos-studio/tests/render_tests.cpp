@@ -52,6 +52,31 @@ void test_world_transform_changes_rendered_geometry() {
         "rejects non-finite world transform matrices");
 }
 
+void test_renders_multiple_transformed_instances_in_shared_scene() {
+    using namespace ecos::studio;
+    auto mesh = import_obj_mesh("v -0.4 -0.4 0\\nv 0.4 -0.4 0\\nv 0 0.4 0\\nf 1 2 3\\n");
+    check(static_cast<bool>(mesh), "mesh imports for multi-instance scene");
+    if (!mesh) return;
+    const auto identity = Matrix4::identity();
+    Transform offset;
+    offset.position = {1.5F, 0.0F, 0.0F};
+    const auto translated = compose(offset);
+    auto single = render_scene_to_ppm({RenderMeshInstance{&mesh.value(), identity}}, 96, 64);
+    auto multiple = render_scene_to_ppm({
+        RenderMeshInstance{&mesh.value(), identity},
+        RenderMeshInstance{&mesh.value(), translated}}, 96, 64);
+    check(single && multiple, "renders one and multiple mesh instances");
+    if (single && multiple) check(single.value() != multiple.value(),
+        "second object's world transform changes shared scene output");
+    check(!render_scene_to_ppm({}, 32, 32), "rejects empty render scene");
+    check(!render_scene_to_ppm({RenderMeshInstance{nullptr, identity}}, 32, 32),
+        "rejects null mesh instance");
+    auto invalid = identity;
+    invalid.values[12] = std::numeric_limits<float>::quiet_NaN();
+    check(!render_scene_to_ppm({RenderMeshInstance{&mesh.value(), invalid}}, 32, 32),
+        "rejects non-finite instance transform");
+}
+
 void test_rejects_bad_inputs() {
     using namespace ecos::studio;
     MeshData mesh;
@@ -68,6 +93,7 @@ void test_rejects_bad_inputs() {
 int main() {
     test_renders_triangle();
     test_world_transform_changes_rendered_geometry();
+    test_renders_multiple_transformed_instances_in_shared_scene();
     test_rejects_bad_inputs();
     if (failures) { std::cerr << failures << " test(s) failed.\n"; return 1; }
     std::cout << "ECOS Studio CPU renderer tests passed.\n";
