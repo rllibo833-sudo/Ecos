@@ -26,12 +26,15 @@ void test_round_trip() {
 
     auto serialized = serialize_scene("sample-world", graph);
     check(serialized, "serializes scene");
+    if (!serialized) return;
     auto loaded = deserialize_scene(serialized.value());
+    if (!loaded) std::cerr << "Deserialize diagnostic: " << loaded.error().message << '\n';
     check(loaded, "deserializes scene");
     if (loaded) {
         check(loaded.value().size() == 3, "round trip preserves node count");
         const auto roots = loaded.value().roots();
         check(roots.size() == 1, "round trip preserves root count");
+        if (roots.empty()) return;
         const auto* loaded_root = loaded.value().find(roots.front());
         check(loaded_root && loaded_root->name == "World", "round trip preserves root name");
         if (loaded_root && !loaded_root->children.empty()) {
