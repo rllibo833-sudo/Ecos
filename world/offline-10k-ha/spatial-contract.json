@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "world_id": "ecos.offline_core",
+  "display_name": "Wilayah Inti ECOS",
+  "status": "conceptual_spatial_contract",
+  "area": {
+    "value": 10000,
+    "unit": "hectare",
+    "equivalent_km2": 100,
+    "basis": "lore_canon"
+  },
+  "parent": {
+    "world_id": "ecos.nation",
+    "nation_area_km2_approx": 1700000,
+    "note": "Skala nasional naratif; bukan luas area inti."
+  },
+  "subareas": [
+    {
+      "id": "mosque_area",
+      "path": "masjid-1k-ha",
+      "area_hectare": 1000,
+      "area_km2": 10,
+      "relation": "contained_within_offline_core",
+      "province": "Arunika",
+      "conceptual_position": "lower_right_of_conceptual_box_map",
+      "geometry_status": "not_defined"
+    },
+    {
+      "id": "outside_mosque_area",
+      "path": "buffer-zone-9k-ha",
+      "area_hectare": 9000,
+      "area_km2": 90,
+      "relation": "remainder_of_offline_core_outside_mosque_area",
+      "geometry_status": "not_defined",
+      "internal_partition_status": "not_defined"
+    }
+  ],
+  "places": [
+    {
+      "id": "juailin",
+      "path": "juailin",
+      "place_type": "small_town",
+      "province": "Arunika",
+      "ecosentral": true,
+      "relation": "remote_in_one_corner_of_mosque_area",
+      "exact_corner": null,
+      "coordinates": null,
+      "population": null,
+      "geometry_status": "not_defined"
+    },
+    {
+      "id": "mosque",
+      "place_type": "spiritual_and_economic_center",
+      "relation": "central_within_mosque_area",
+      "coordinates": null,
+      "geometry_status": "not_defined"
+    }
+  ],
+  "constraints": [
+    "Mosque area is inside the 100 km2 offline core, not a separate province.",
+    "Juailin is within the mosque area and is not synonymous with the whole mosque area.",
+    "Do not infer roads, distances, coastlines, borders, biome polygons, or coordinates.",
+    "National law applies throughout ECOS, including the mosque area.",
+    "This conceptual contract is not final map geometry."
+  ],
+  "unknowns": [
+    "offline_core_polygon",
+    "mosque_area_polygon",
+    "roads_and_routes",
+    "exact_juailin_position",
+    "other_settlements",
+    "population_and_density",
+    "biome_boundaries",
+    "facility_locations"
+  ]
+}
