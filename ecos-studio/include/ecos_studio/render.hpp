@@ -1,9 +1,11 @@
 #pragma once
 
 #include "ecos_studio/mesh.hpp"
+#include "ecos_studio/asset_registry.hpp"
 #include "ecos_studio/result.hpp"
 
 #include <cstdint>
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -24,6 +26,11 @@ struct RenderMeshInstance {
     std::uint32_t width, std::uint32_t height);
 [[nodiscard]] Result<std::string> render_scene_to_ppm(
     const std::vector<RenderMeshInstance>& instances,
+    std::uint32_t width, std::uint32_t height);
+
+[[nodiscard]] Result<std::string> render_scene_graph_to_ppm(
+    const SceneGraph& scene, const AssetRegistry& assets,
+    const std::filesystem::path& asset_root,
     std::uint32_t width, std::uint32_t height);
 
 } // namespace ecos::studio
