@@ -117,6 +117,15 @@ Result<void> SceneGraph::rename_node(NodeId node_id, std::string name) {
     return Result<void>::success();
 }
 
+Result<void> SceneGraph::set_mesh_asset(NodeId node_id, std::string asset_id) {
+    if (!asset_id.empty() && asset_id.find_first_of("|\r\n") != std::string::npos)
+        return Result<void>::failure({ErrorCode::invalid_argument, "Mesh asset ID cannot contain pipes or newlines"});
+    auto* node = find(node_id);
+    if (!node) return Result<void>::failure({ErrorCode::not_found, "Scene node does not exist"});
+    node->mesh_asset_id = std::move(asset_id);
+    return Result<void>::success();
+}
+
 Result<void> SceneGraph::restore_subtree(const std::vector<SceneNode>& snapshot) {
     if (snapshot.empty())
         return Result<void>::failure({ErrorCode::invalid_argument, "Cannot restore an empty scene subtree"});
@@ -281,24 +290,32 @@ struct PendingNode {
     std::uint64_t source_id{};
     std::optional<std::uint64_t> source_parent;
     std::string name;
+    std::string mesh_asset_id;
     Transform transform;
 };
 }
 
 Result<std::string> serialize_scene(const std::string& scene_id, const SceneGraph& graph) {
     if (!valid_token(scene_id)) return Result<std::string>::failure({ErrorCode::invalid_argument, "Scene id must be non-empty and cannot contain pipes or newlines"});
+    const auto nodes = graph.nodes();
+    const bool has_mesh_assets = std::any_of(nodes.begin(), nodes.end(),
+        [](const SceneNode& node) { return !node.mesh_asset_id.empty(); });
     std::ostringstream out;
-    out << "format_version=1\nscene_id=" << scene_id << '\n';
-    for (const auto& node : graph.nodes()) {
+    out << "format_version=" << (has_mesh_assets ? 2 : 1) << "\nscene_id=" << scene_id << '\n';
+    for (const auto& node : nodes) {
         if (!valid_token(node.name))
-            return Result<std::string>::failure({ErrorCode::invalid_argument, "Node names cannot contain pipes or newlines in scene format v1"});
+            return Result<std::string>::failure({ErrorCode::invalid_argument, "Node names cannot contain pipes or newlines in scene format"});
+        if (!node.mesh_asset_id.empty() && !valid_token(node.mesh_asset_id))
+            return Result<std::string>::failure({ErrorCode::invalid_argument, "Mesh asset IDs cannot contain pipes or newlines"});
         out << "node=" << node.id << '|';
         if (node.parent) out << *node.parent;
         else out << '-';
         out << '|' << node.name << '|'
             << vec3_text(node.local_transform.position) << '|'
             << vec3_text(node.local_transform.rotation_euler_radians) << '|'
-            << vec3_text(node.local_transform.scale) << '\n';
+            << vec3_text(node.local_transform.scale);
+        if (has_mesh_assets) out << '|' << (node.mesh_asset_id.empty() ? "-" : node.mesh_asset_id);
+        out << '\n';
     }
     return Result<std::string>::success(out.str());
 }
@@ -307,6 +324,7 @@ Result<SceneGraph> deserialize_scene(const std::string& text) {
     bool version_seen = false;
     bool id_seen = false;
     bool has_version_one = false;
+    bool has_version_two = false;
     std::vector<PendingNode> pending;
     std::unordered_set<std::uint64_t> seen_source_ids;
     std::string line;
@@ -324,14 +342,17 @@ Result<SceneGraph> deserialize_scene(const std::string& text) {
             if (version_seen) return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Duplicate scene format_version"});
             version_seen = true;
             has_version_one = value == "1";
-            if (!has_version_one) return Result<SceneGraph>::failure({ErrorCode::unsupported, "Unsupported scene format version"});
+            has_version_two = value == "2";
+            if (!has_version_one && !has_version_two)
+                return Result<SceneGraph>::failure({ErrorCode::unsupported, "Unsupported scene format version"});
         } else if (key == "scene_id") {
             if (id_seen) return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Duplicate scene_id"});
             id_seen = true;
             if (!valid_token(value)) return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Invalid scene_id"});
         } else if (key == "node") {
             const auto fields = split_scene_fields(value, '|');
-            if (fields.size() != 6) return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Scene node record must contain six fields"});
+            if ((has_version_one && fields.size() != 6) || (has_version_two && fields.size() != 7))
+                return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Scene node record has the wrong number of fields for its format version"});
             PendingNode node;
             if (!parse_u64(fields[0], node.source_id) || node.source_id == 0)
                 return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Invalid scene node id"});
@@ -346,6 +367,11 @@ Result<SceneGraph> deserialize_scene(const std::string& text) {
                 !parse_vec3(fields[5], node.transform.scale))
                 return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Invalid scene node name or transform"});
             node.name = fields[2];
+            if (has_version_two && fields[6] != "-") {
+                if (!valid_token(fields[6]))
+                    return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Invalid mesh asset ID"});
+                node.mesh_asset_id = fields[6];
+            }
             if (!seen_source_ids.insert(node.source_id).second)
                 return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Duplicate scene node id"});
             pending.push_back(std::move(node));
@@ -353,7 +379,7 @@ Result<SceneGraph> deserialize_scene(const std::string& text) {
             return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Unknown scene key '" + key + "'"});
         }
     }
-    if (!version_seen || !has_version_one || !id_seen)
+    if (!version_seen || (!has_version_one && !has_version_two) || !id_seen)
         return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Scene requires format_version=1 and scene_id"});
     if (pending.empty()) return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Scene must contain at least one node"});
 
@@ -408,6 +434,7 @@ Result<SceneGraph> deserialize_scene(const std::string& text) {
             SceneNode node;
             node.id = source.source_id;
             node.name = source.name;
+            node.mesh_asset_id = source.mesh_asset_id;
             node.local_transform = source.transform;
             node.parent = source.source_parent;
             snapshot.push_back(std::move(node));
