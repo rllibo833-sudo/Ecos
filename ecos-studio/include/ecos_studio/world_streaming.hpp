@@ -29,6 +29,8 @@ public:
     using Unloader = std::function<Result<void>(const WorldCell&)>;
 
     WorldStreamingService(WorldRuntime& world, JobSystem& jobs, Loader loader, Unloader unloader = {});
+    // Drains in-flight loaders and reconciles their final state before the service goes away.
+    ~WorldStreamingService();
     WorldStreamingService(const WorldStreamingService&) = delete;
     WorldStreamingService& operator=(const WorldStreamingService&) = delete;
 

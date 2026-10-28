@@ -11,6 +11,26 @@ WorldStreamingService::WorldStreamingService(
     WorldRuntime& world, JobSystem& jobs, Loader loader, Unloader unloader)
     : world_(world), jobs_(jobs), loader_(std::move(loader)), unloader_(std::move(unloader)) {}
 
+WorldStreamingService::~WorldStreamingService() {
+    // Futures from JobSystem do not cancel queued work. Drain them explicitly so
+    // the world cannot retain cells in the loading state after this service dies.
+    for (auto& pending : pending_) {
+        bool success = false;
+        std::string error;
+        pending.future.wait();
+        try {
+            auto result = pending.future.get();
+            success = static_cast<bool>(result);
+            if (!success) error = result.error().message;
+        } catch (const std::exception& exception) {
+            error = exception.what();
+        } catch (...) {
+            error = "World cell loader threw a non-standard exception";
+        }
+        (void)world_.complete_load(pending.id, success, std::move(error));
+    }
+}
+
 Result<void> WorldStreamingService::schedule_load(const WorldCell& cell) {
     auto requested = world_.request_load(cell.id);
     if (!requested) return requested;
