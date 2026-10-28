@@ -20,8 +20,8 @@ void test_parent_child_and_live_updates() {
     parent_transform.position = {10.0F, 2.0F, 0.0F};
     Transform child_transform;
     child_transform.position = {3.0F, 4.0F, 1.0F};
-    entities.emplace<SceneNodeComponent>(parent, SceneNodeComponent{"Parent", parent_transform, {}, {}});
-    entities.emplace<SceneNodeComponent>(child, SceneNodeComponent{"Child", child_transform, {}, parent});
+    entities.emplace<SceneNodeComponent>(parent, SceneNodeComponent{"Parent", "", parent_transform, {}, {}});
+    entities.emplace<SceneNodeComponent>(child, SceneNodeComponent{"Child", "", child_transform, {}, parent});
 
     auto updated = WorldTransformSystem::update(entities);
     check(updated && updated.value() == 2, "updates every scene entity transform");
@@ -44,8 +44,8 @@ void test_invalid_hierarchy_does_not_partially_update() {
     EntityRegistry entities;
     const auto a = entities.create();
     const auto b = entities.create();
-    entities.emplace<SceneNodeComponent>(a, SceneNodeComponent{"A", {}, {}, b});
-    entities.emplace<SceneNodeComponent>(b, SceneNodeComponent{"B", {}, {}, a});
+    entities.emplace<SceneNodeComponent>(a, SceneNodeComponent{"A", "", {}, {}, b});
+    entities.emplace<SceneNodeComponent>(b, SceneNodeComponent{"B", "", {}, {}, a});
     auto updated = WorldTransformSystem::update(entities);
     check(!updated, "rejects cyclic entity hierarchy");
     check(!entities.has<WorldTransformComponent>(a) && !entities.has<WorldTransformComponent>(b),
@@ -55,7 +55,7 @@ void test_invalid_hierarchy_does_not_partially_update() {
     const auto child = stale_entities.create();
     const auto stale_parent = stale_entities.create();
     check(stale_entities.destroy(stale_parent), "fixture destroys parent before transform update");
-    stale_entities.emplace<SceneNodeComponent>(child, SceneNodeComponent{"Orphan", {}, {}, stale_parent});
+    stale_entities.emplace<SceneNodeComponent>(child, SceneNodeComponent{"Orphan", "", {}, {}, stale_parent});
     check(!WorldTransformSystem::update(stale_entities), "rejects stale parent entity handles");
 }
 
@@ -64,7 +64,7 @@ void test_missing_scene_node_parent() {
     EntityRegistry entities;
     const auto parent = entities.create();
     const auto child = entities.create();
-    entities.emplace<SceneNodeComponent>(child, SceneNodeComponent{"Child", {}, {}, parent});
+    entities.emplace<SceneNodeComponent>(child, SceneNodeComponent{"Child", "", {}, {}, parent});
     check(!WorldTransformSystem::update(entities), "rejects parent entities without scene-node components");
 }
 }
