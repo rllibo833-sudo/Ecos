@@ -1,6 +1,6 @@
 # Prinsip Teknologi Dunia ECOS
 
-**Status:** prinsip dunia dan batas teknologi; tidak menyatakan proyek perangkat lunak terpisah telah terintegrasi.
+**Status:** prinsip dunia dan batas teknologi. Peran fiksional teknologi utama ditetapkan dalam [Kanon Induk Dunia ECOS](../02-dunia-dan-geografi/00-kanon-induk-dunia-ecos.md#10-teknologi-identitas-ecos); dokumen ini tidak menyatakan repositori nyata telah terintegrasi dengan game.
 
 ## Arah teknologi
 
@@ -16,16 +16,18 @@ Cara warga memeriksa informasi meliputi membandingkan sumber, memeriksa waktu da
 
 ## Teknologi dan masyarakat
 
-- Pertanian: sensor air/cuaca, alat bantu budidaya, pemantauan kesehatan ternak, dan logistik; akses tidak harus merata.
-- Transportasi: sistem jadwal, navigasi, komunikasi kendaraan, kereta, bus, pesawat, dan kapal; kegagalan sistem tetap mungkin.
-- Pemerintahan: layanan digital dan arsip perlu perlindungan privasi, audit, dan jalur koreksi.
-- Kesehatan dan keselamatan: teknologi membantu tenaga ahli tetapi tidak otomatis menggantikan penilaian manusia.
-- Riset dan misteri: alat dapat memberi petunjuk, tetapi data perlu ditafsirkan dan tidak otomatis menjelaskan setiap legenda.
-- Privasi: tidak semua percakapan, lokasi, atau data warga boleh diakses tanpa alasan dan kewenangan yang sah.
+- **Pertanian:** sensor air/cuaca, alat bantu budidaya, pemantauan kesehatan ternak, dan logistik; akses tidak harus merata.
+- **Transportasi:** sistem jadwal, navigasi, komunikasi kendaraan, kereta, bus, pesawat, dan kapal; kegagalan sistem tetap mungkin.
+- **Pemerintahan:** layanan digital dan arsip perlu perlindungan privasi, audit, dan jalur koreksi.
+- **Kesehatan dan keselamatan:** teknologi membantu tenaga ahli tetapi tidak otomatis menggantikan penilaian manusia.
+- **Riset dan misteri:** alat dapat memberi petunjuk, tetapi data perlu ditafsirkan dan tidak otomatis menjelaskan setiap legenda.
+- **Privasi:** tidak semua percakapan, lokasi, atau data warga boleh diakses tanpa alasan dan kewenangan yang sah.
 
 ## Batas kanon
 
-Nama-nama proyek seperti bahasa .cuk, Cuk Reality Engine, lynOS, PusingCuk, Mnemos-RLI, Steadfast, dan lainnya merupakan konsep/proyek yang tercatat terpisah. Keberadaan dokumen atau repositori tidak membuktikan integrasi ke dunia ECOS maupun game. Jika kelak dipakai dalam lore, jelaskan peran fiksionalnya secara terpisah dari status implementasi nyata.
+Peran dasar LynOS, Digital Forensic, Living Shared Knowledge Graph, Bahasa .cuk, PusingCuk AI, Cuk Reality Engine, Mnemos-RLI, dan Steadfast tercatat di kanon induk. Detail yang belum dijelaskan di sana masih terbuka dan tidak boleh diisi melalui asumsi.
+
+Status fiksional dan status perangkat lunak nyata wajib dipisahkan. Repo dapat menginspirasi konsep dunia, tetapi tidak otomatis menjadi komponen game; begitu pula prototipe game tidak otomatis menetapkan fakta baru dalam lore.
 
 ## Aturan naratif
 
