@@ -34,7 +34,7 @@ void test_renders_triangle() {
 
 void test_world_transform_changes_rendered_geometry() {
     using namespace ecos::studio;
-    auto mesh = import_obj_mesh("v -1 -1 0\\nv 1 -1 0\\nv 0 1 0\\nf 1 2 3\\n");
+    auto mesh = import_obj_mesh("v -1 -1 0\nv 1 -1 0\nv 0 1 0\nf 1 2 3\n");
     check(static_cast<bool>(mesh), "mesh imports for world-transform render test");
     if (!mesh) return;
     const auto identity = Matrix4::identity();
