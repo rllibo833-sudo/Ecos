@@ -211,4 +211,5 @@ Result<WorldRuntime> WorldManifest::create_runtime(std::size_t max_loaded_cells)
     }
     return Result<WorldRuntime>::success(std::move(runtime));
 }
-\n} // namespace ecos::studio
+
+} // namespace ecos::studio
