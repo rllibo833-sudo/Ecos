@@ -6,6 +6,7 @@
 #include "ecos_studio/render.hpp"
 #include "ecos_studio/scene.hpp"
 #include "ecos_studio/world_manifest.hpp"
+#include "ecos_studio/world_content.hpp"
 #include <charconv>
 #include <filesystem>
 #include <fstream>
@@ -25,6 +26,7 @@ void print_usage() {
               << "  ecos-studio scene-validate <scene.ecscene>\n"
               << "  ecos-studio world-validate <world.ecworld>\n"
               << "  ecos-studio world-inspect <world.ecworld>\n"
+              << "  ecos-studio world-validate-content <world.ecworld>\n"
               << "  ecos-studio mesh-render <mesh.obj> <output.ppm> [width height]\n";
 }
 int print_result(const ecos::studio::ValidationResult& result) {
@@ -128,6 +130,20 @@ int main(int argc, char** argv) {
                       << cell.coord.x << ',' << cell.coord.y << ',' << cell.coord.z
                       << " -> " << cell.content_path.generic_string() << '\n';
         }
+        return 0;
+    }
+    if (command == "world-validate-content") {
+        if (argc != 3) { print_usage(); return 1; }
+        auto manifest = ecos::studio::load_world_manifest(std::filesystem::path(argv[2]));
+        if (!manifest) { std::cerr << "error: " << manifest.error().message << '\\n'; return 2; }
+        std::size_t nodes = 0;
+        for (const auto& cell : manifest.value().cells) {
+            auto content = ecos::studio::load_world_cell_content(manifest.value(), cell);
+            if (!content) { std::cerr << "error: " << content.error().message << '\\n'; return 2; }
+            nodes += content.value().scene.size();
+            std::cout << "  " << cell.id << ": " << content.value().scene.size() << " scene node(s)\n";
+        }
+        std::cout << "Validated " << manifest.value().cells.size() << " cell(s), " << nodes << " total scene node(s).\n";
         return 0;
     }
     if (command == "mesh-render") {

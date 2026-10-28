@@ -1,0 +1,4 @@
+format_version=1
+scene_id=arunika-east
+node=1|-|Eastern Trail|0,0,0|0,0,0|1,1,1
+node=2|1|Trail Marker|4,0,0|0,0,0|1,1,1

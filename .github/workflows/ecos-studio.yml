@@ -30,6 +30,8 @@ jobs:
         run: build/ecos-studio/ecos-studio world-validate ecos-studio/examples/large-world/world.ecworld
       - name: Instantiate and inspect sample world
         run: build/ecos-studio/ecos-studio world-inspect ecos-studio/examples/large-world/world.ecworld
+      - name: Load and validate every sample world cell
+        run: build/ecos-studio/ecos-studio world-validate-content ecos-studio/examples/large-world/world.ecworld
       - name: Create and validate project scaffold
         run: |
           build/ecos-studio/ecos-studio new /tmp/ecos-studio-sample "ECOS Sample"

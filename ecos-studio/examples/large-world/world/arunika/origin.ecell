@@ -1,0 +1,4 @@
+format_version=1
+scene_id=arunika-origin
+node=1|-|Arunika Spawn|0,0,0|0,0,0|1,1,1
+node=2|1|Arunika Landmark|8,0,3|0,0,0|1,1,1
