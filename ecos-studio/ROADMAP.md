@@ -23,10 +23,11 @@ This roadmap describes product milestones, not guaranteed delivery dates. Checkb
 - [x] Platform-neutral input event/state abstraction.
 - [x] Camera view/projection and world-to-NDC math.
 - [x] AABB/sphere overlap and ray intersection query primitives.
+- [x] Deterministic software PCM mixer with mono/stereo, gain, pan, loops, and voice state.
 - [ ] Native window and OS input adapter.
 - [ ] GPU renderer backend and frame lifecycle.
 - [ ] Mesh/material GPU upload and visible interactive scene viewport.
-- [ ] Basic audio output and spatial audio.
+- [ ] OS audio-device output, decoding/resampling, and spatial audio.
 - [ ] Collision/rigid-body integration.
 - [ ] One small offline game built and packaged by the toolchain.
 

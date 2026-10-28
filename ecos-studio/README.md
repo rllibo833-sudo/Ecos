@@ -18,6 +18,7 @@ It is not yet a complete Unreal Engine 5-equivalent product. Implemented capabil
 - Platform-neutral input event queue/state for keys, mouse buttons, pointer movement, wheel deltas, and focus-loss releases.
 - Camera view, perspective/orthographic projection, and projection of points to NDC with validation.
 - Collision query foundation with AABB/sphere overlap, ray-versus-AABB, and ray-versus-sphere tests.
+- Deterministic software PCM mixer for mono/stereo clips, gain, pan, looping, stopping voices, and output clipping; no device output yet.
 - CMake build, subsystem tests, and GitHub Actions automation.
 
 ## Not implemented yet
