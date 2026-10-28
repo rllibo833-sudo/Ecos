@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ecos_studio/mesh.hpp"
+#include "ecos_studio/project.hpp"
 #include "ecos_studio/result.hpp"
 
 #include <filesystem>
@@ -23,5 +24,9 @@ struct ImportedAsset {
     const std::filesystem::path& project_root,
     const std::filesystem::path& source_path,
     const std::string& asset_id);
+
+// Verifies imported-asset metadata, safe paths, content hashes, and parsed mesh statistics.
+[[nodiscard]] ValidationResult validate_imported_assets(
+    const std::filesystem::path& project_root);
 
 } // namespace ecos::studio

@@ -9,6 +9,7 @@ It is not yet a complete Unreal Engine 5-equivalent product. Implemented capabil
 - Project and data-only mod scaffold creation/validation CLI, with validated dependency declarations for third-party creators.
 - Deterministic mod dependency resolver with installed-package discovery, missing-dependency diagnostics, cycle detection, and stable dependency-first ordering.
 - OBJ asset import into an existing project, with geometry validation, preserved source bytes, SHA-256 content fingerprint, mesh bounds/counts, and a versioned `.ecasset` sidecar.
+- Imported-asset integrity validation: metadata schema, path confinement, source hashes, OBJ re-parsing, and geometry-statistic verification.
 - Runtime lifecycle, thread-safe logging, typed errors/results, and safe relative-path/filesystem helpers.
 - Scene graph with hierarchical transforms, cycle prevention, subtree removal, versioned serialization, and validation CLI.
 - Asset registry with stable IDs, dependency reference/cycle validation, and SHA-256 content fingerprints.
@@ -38,15 +39,16 @@ ecos-studio mod-resolve ../MyGame/mods
 
 Resolution is local-only: packages must already exist on disk. There is no package download, version-range solver, runtime loading, or executable scripting yet. Mods remain data-only for safety.
 
-## Importing assets
+## Importing and validating assets
 
 Import a valid Wavefront OBJ into a project. The importer copies the original file into `assets/imported/` and creates a `.ecasset` metadata file containing the asset ID, type, SHA-256 fingerprint, vertex/triangle counts, and bounds.
 
 ~~~
 ecos-studio asset-import ../MyGame ./models/character.obj character.mesh
+ecos-studio asset-validate ../MyGame
 ~~~
 
-Imports reject malformed geometry, unsafe IDs, invalid projects, and existing output files rather than silently overwriting them. MTL parsing is available as a separate foundation; automatic OBJ-to-MTL linking and texture import are not yet wired into this command.
+Validation re-hashes source bytes, reparses the OBJ, checks stored geometry statistics, and rejects unsafe metadata paths and symlink entries. Imports refuse to overwrite existing files. MTL parsing is available as a separate foundation; automatic OBJ-to-MTL linking and texture import are not yet wired into this command.
 
 ## Not implemented yet
 
@@ -72,6 +74,7 @@ ecos-studio mod-init ../MyGameMod com.example.my-mod
 ecos-studio mod-validate ../MyGameMod
 ecos-studio mod-resolve ../MyGame/mods
 ecos-studio asset-import ../MyGame ./models/character.obj character.mesh
+ecos-studio asset-validate ../MyGame
 ecos-studio scene-validate examples/hello-world/scenes/main.ecscene
 ecos-studio world-validate examples/large-world/world.ecworld
 ~~~

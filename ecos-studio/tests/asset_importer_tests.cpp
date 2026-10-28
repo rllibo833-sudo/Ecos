@@ -55,6 +55,8 @@ int main() {
         check(sidecar.find("type=mesh.obj") != std::string::npos, "writes typed sidecar metadata");
         check(sidecar.find("content_sha256=" + imported.value().content_sha256) != std::string::npos, "sidecar digest matches import");
         check(sidecar.find("triangle_count=1") != std::string::npos, "sidecar stores triangle count");
+        const auto validated = ecos::studio::validate_imported_assets(project_root);
+        check(validated.ok, "validates freshly imported asset and metadata");
     }
 
     auto duplicate = ecos::studio::import_obj_asset(project_root, source_path, "demo.triangle");
@@ -64,6 +66,21 @@ int main() {
     write(source_path, "v 0 0 0\nf 1 2 3\n");
     auto invalid = ecos::studio::import_obj_asset(project_root, source_path, "invalid.mesh");
     check(!invalid, "rejects malformed OBJ without creating an asset");
+
+    const auto stored = project_root / "assets/imported/demo.triangle.obj";
+    write(stored, source + "# tampered\n");
+    const auto tampered = ecos::studio::validate_imported_assets(project_root);
+    check(!tampered.ok, "detects source bytes changed after import");
+    write(stored, source);
+
+    const auto metadata = project_root / "assets/imported/demo.triangle.ecasset";
+    auto sidecar = read(metadata);
+    const auto source_marker = sidecar.find("source=assets/imported/demo.triangle.obj");
+    if (source_marker != std::string::npos)
+        sidecar.replace(source_marker, std::string("source=assets/imported/demo.triangle.obj").size(), "source=../../outside.obj");
+    write(metadata, sidecar);
+    const auto escaped = ecos::studio::validate_imported_assets(project_root);
+    check(!escaped.ok, "rejects metadata path traversal");
 
     auto missing_project = ecos::studio::import_obj_asset(root / "missing-project", source_path, "valid.id");
     check(!missing_project, "rejects destination that is not a valid project");

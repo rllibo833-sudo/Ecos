@@ -21,6 +21,7 @@ void print_usage() {
               << "  ecos-studio mod-validate <mod-directory>\n"
               << "  ecos-studio mod-resolve <mods-root-directory>\n"
               << "  ecos-studio asset-import <project-directory> <source.obj> <asset-id>\n"
+              << "  ecos-studio asset-validate <project-directory>\n"
               << "  ecos-studio scene-validate <scene.ecscene>\n"
               << "  ecos-studio world-validate <world.ecworld>\n"
               << "  ecos-studio mesh-render <mesh.obj> <output.ppm> [width height]\n";
@@ -88,6 +89,16 @@ int main(int argc, char** argv) {
         std::cout << "Imported mesh '" << asset.id << "' to " << asset.relative_path.generic_string()
                   << " (" << asset.vertex_count << " vertices, " << asset.triangle_count
                   << " triangles, SHA-256 " << asset.content_sha256 << ").\n";
+        return 0;
+    }
+    if (command == "asset-validate") {
+        if (argc != 3) { print_usage(); return 1; }
+        const auto result = ecos::studio::validate_imported_assets(std::filesystem::path(argv[2]));
+        if (!result.ok) {
+            for (const auto& message : result.errors) std::cerr << "error: " << message << '\n';
+            return 2;
+        }
+        std::cout << "Imported asset metadata, source hashes, and mesh statistics are valid.\n";
         return 0;
     }
     if (command == "scene-validate") {
