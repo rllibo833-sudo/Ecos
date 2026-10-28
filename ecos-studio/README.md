@@ -16,6 +16,7 @@ It is not yet a complete Unreal Engine 5-equivalent product. Implemented capabil
 - .ecworld manifest validator for schema version, unique cell IDs/coordinates, and safe content paths.
 - Platform-neutral input event queue/state for keys, mouse buttons, pointer movement, wheel deltas, and focus-loss releases.
 - Camera view, perspective/orthographic projection, and projection of points to NDC with validation.
+- Collision query foundation with AABB/sphere overlap, ray-versus-AABB, and ray-versus-sphere tests.
 - CMake build, subsystem tests, and GitHub Actions automation.
 
 ## Not implemented yet

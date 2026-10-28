@@ -21,6 +21,7 @@ This roadmap describes product milestones, not guaranteed delivery dates. Checkb
 - [x] Deterministic CPU reference rasterizer and OBJ-to-PPM CLI path.
 - [x] Platform-neutral input event/state abstraction.
 - [x] Camera view/projection and world-to-NDC math.
+- [x] AABB/sphere overlap and ray intersection query primitives.
 - [ ] Native window and OS input adapter.
 - [ ] GPU renderer backend and frame lifecycle.
 - [ ] Mesh/material GPU upload and visible interactive scene viewport.
