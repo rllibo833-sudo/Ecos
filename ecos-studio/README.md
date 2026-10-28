@@ -21,6 +21,7 @@ It is not yet a complete Unreal Engine 5-equivalent product. Implemented capabil
 - Deterministic software PCM mixer for mono/stereo clips, gain, pan, looping, stopping voices, and output clipping; no device output yet.
 - Backend-neutral input snapshots for keyboard, mouse, cursor delta, scroll, and quit events.
 - Bounded fixed-step frame clock with delta clamping, catch-up limits, and render interpolation alpha.
+- Backend-neutral frame loop integrating fixed updates, stable input snapshots, and one render callback per frame.
 - CMake build, subsystem tests, and GitHub Actions automation.
 
 ## Not implemented yet

@@ -26,6 +26,7 @@ This roadmap describes product milestones, not guaranteed delivery dates. Checkb
 - [x] Deterministic software PCM mixer with mono/stereo, gain, pan, loops, and voice state.
 - [x] Backend-neutral keyboard/mouse input snapshots and per-frame transient reset.
 - [x] Bounded fixed-step frame clock with interpolation alpha.
+- [x] Callback-driven frame loop with fixed updates, shared input snapshot, and render callback.
 - [ ] Native window and OS input adapter.
 - [ ] GPU renderer backend and frame lifecycle.
 - [ ] Mesh/material GPU upload and visible interactive scene viewport.
