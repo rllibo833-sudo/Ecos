@@ -8,7 +8,7 @@ namespace {
 int failures = 0;
 template <typename T>
 void check(const T& condition, const char* message) {
-    if (!static_cast<bool>(condition)) { std::cerr << "FAIL: " << message << '\\n'; ++failures; }
+    if (!static_cast<bool>(condition)) { std::cerr << "FAIL: " << message << '\n'; ++failures; }
 }
 void test_triangle_and_bounds() {
     using namespace ecos::studio;
