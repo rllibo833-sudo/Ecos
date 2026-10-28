@@ -6,6 +6,7 @@
 #include <map>
 #include <sstream>
 #include <system_error>
+#include <unordered_set>
 
 namespace ecos::studio {
 namespace fs = std::filesystem;
@@ -207,12 +208,13 @@ bool create_mod(const fs::path& root, const std::string& id, std::string& error)
     const std::string manifest =
         "# Data-only mod manifest; native code is not executed by this bootstrap.\n"
         "format_version=1\nid=" + id + "\nname=" + id +
-        "\nversion=0.1.0\ntarget_api=1\nentry=README.md\n";
+        "\nversion=0.1.0\ntarget_api=1\ndependencies=none\nentry=README.md\n";
     if (!write_file(root / "mod.ecos", manifest, error)) return false;
     const std::string readme =
         "# Mod package\n\n"
-        "This is a data-only ECOS Studio mod scaffold. Add supported assets and data under assets/ and data/. "
-        "The bootstrap does not execute native code.\n";
+        "This is a data-only ECOS Studio mod scaffold. Add supported assets and data under assets/ and data/.\n\n"
+        "Edit mod.ecos to set package name, version, target API, and dependencies. Use dependencies=none or a comma-separated list of mod IDs. "
+        "Dependencies are syntax-checked but not downloaded or resolved yet. Native code is not executed.\n";
     return write_file(root / "README.md", readme, error);
 }
 
@@ -239,6 +241,28 @@ ValidationResult validate_mod(const fs::path& root) {
     if (!has_value(manifest, "target_api", "1")) {
         result.ok = false;
         result.errors.push_back("Unsupported target_api; this bootstrap supports API version 1.");
+    }
+    const auto dependencies = manifest.find("dependencies");
+    if (dependencies != manifest.end() && dependencies->second != "none") {
+        std::unordered_set<std::string> seen;
+        std::istringstream dependency_stream(dependencies->second);
+        std::string dependency;
+        while (std::getline(dependency_stream, dependency, ',')) {
+            dependency = trim(dependency);
+            if (!valid_mod_id(dependency)) {
+                result.ok = false;
+                result.errors.push_back("Invalid dependency ID '" + dependency + "'; use comma-separated mod IDs or dependencies=none.");
+                continue;
+            }
+            if (id != manifest.end() && dependency == id->second) {
+                result.ok = false;
+                result.errors.push_back("A mod cannot depend on itself: " + dependency);
+            }
+            if (!seen.insert(dependency).second) {
+                result.ok = false;
+                result.errors.push_back("Duplicate mod dependency: " + dependency);
+            }
+        }
     }
     const auto entry = manifest.find("entry");
     if (entry != manifest.end()) {

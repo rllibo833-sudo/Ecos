@@ -6,7 +6,7 @@ It is not yet a complete Unreal Engine 5-equivalent product. Implemented capabil
 
 ## Implemented
 
-- Project and data-only mod scaffold creation/validation CLI.
+- Project and data-only mod scaffold creation/validation CLI, with validated dependency declarations for third-party creators.
 - Runtime lifecycle, thread-safe logging, typed errors/results, and safe relative-path/filesystem helpers.
 - Scene graph with hierarchical transforms, cycle prevention, subtree removal, versioned serialization, and validation CLI.
 - Asset registry with stable IDs, dependency reference/cycle validation, and SHA-256 content fingerprints.
@@ -23,6 +23,10 @@ It is not yet a complete Unreal Engine 5-equivalent product. Implemented capabil
 - Bounded fixed-step frame clock with delta clamping, catch-up limits, and render interpolation alpha.
 - Backend-neutral frame loop integrating fixed updates, stable input snapshots, and one render callback per frame.
 - CMake build, subsystem tests, and GitHub Actions automation.
+
+## Modding for every creator
+
+ECOS Studio is intended as a general-purpose engine and creator toolkit, not an ECOS-game-only editor. Mod packages use mod.ecos; declare dependencies as dependencies=none or dependencies=com.vendor.base,com.example.content. The validator checks ID syntax, self-dependencies, and duplicate dependencies. Dependency download, version-range resolution, runtime loading, and executable scripts are not implemented yet; mods remain data-only for safety.
 
 ## Not implemented yet
 

@@ -75,3 +75,7 @@ add_test(NAME fixed_step_frame_clock COMMAND ecos-studio-time-tests)
 add_executable(ecos-studio-engine-loop-tests tests/engine_loop_tests.cpp)
 target_link_libraries(ecos-studio-engine-loop-tests PRIVATE ecos_studio_core)
 add_test(NAME engine_loop_fixed_updates_and_input COMMAND ecos-studio-engine-loop-tests)
+
+add_executable(ecos-studio-mod-manifest-tests tests/mod_manifest_tests.cpp)
+target_link_libraries(ecos-studio-mod-manifest-tests PRIVATE ecos_studio_core)
+add_test(NAME mod_manifest_dependencies_and_safety COMMAND ecos-studio-mod-manifest-tests)
