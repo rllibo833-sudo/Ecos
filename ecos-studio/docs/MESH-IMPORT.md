@@ -1,9 +1,15 @@
-# Mesh Import Pipeline v1
+# OBJ Mesh Import
 
-The Wavefront OBJ importer supports:
-- Vertex positions (`v x y z`), texture coordinates (`vt u v`), and vertex normals (`vn x y z`).
-- Faces with positive or negative position/UV/normal indices, including `v`, `v/vt`, `v//vn`, and `v/vt/vn` forms.
-- Polygon fan triangulation and vertex expansion at UV/normal seams so each output index addresses one complete attribute tuple.
-- Finite-number and index-range validation, 32-bit output-index capacity checks, and axis-aligned position bounds.
+ECOS Studio imports a practical subset of Wavefront OBJ into an indexed, expanded-vertex mesh.
 
-Output `positions`, `texcoords`, and `normals` are aligned one-to-one. Missing UVs and normals are zero-filled; this version does not generate missing normals. Materials, groups, smoothing rules, tangent generation, content hashes, cache metadata, and glTF remain future work. This is a CPU-side importer, not a full production interchange pipeline.
+Supported:
+- positions (`v`), texture coordinates (`vt`), and normals (`vn`)
+- faces using `v`, `v/vt`, `v//vn`, and `v/vt/vn` corner forms
+- independent position/UV/normal indices, positive and negative indices, and polygon fan triangulation
+- vertex expansion at attribute seams and 32-bit index capacity checks
+- finite numeric validation, face-reference validation, axis-aligned bounds
+- area-weighted generated smooth normals for corners with missing or zero-length normals; explicit non-zero OBJ normals are preserved
+
+Missing texture coordinates are zero-filled. Generated normals smooth across shared expanded vertices; UV seams may therefore produce separate normals at the same geometric position. Polygon fan triangulation assumes convex polygons. Material libraries (`mtllib`/`usemtl`), smoothing-group semantics, tangent generation, robust concave polygon triangulation, and glTF import remain future work.
+
+The CPU reference renderer is deterministic and intended for tests and tooling, not a substitute for a GPU viewport.

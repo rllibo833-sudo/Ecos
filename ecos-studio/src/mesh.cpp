@@ -24,6 +24,7 @@ bool parse_integer(const std::string& text, std::int64_t& value) {
     return parsed.ec == std::errc{} && parsed.ptr == text.data() + text.size() && value != 0;
 }
 bool resolve_index(std::int64_t obj_index, std::size_t count, std::int64_t& resolved) {
+    if (count > static_cast<std::size_t>(std::numeric_limits<std::int64_t>::max())) return false;
     const auto signed_count = static_cast<std::int64_t>(count);
     resolved = obj_index > 0 ? obj_index - 1 : signed_count + obj_index;
     return resolved >= 0 && resolved < signed_count;
@@ -37,6 +38,7 @@ bool parse_corner(const std::string& token, std::size_t positions, std::size_t t
                   std::size_t normals, ObjCorner& corner) {
     const auto first = token.find('/');
     const auto second = first == std::string::npos ? std::string::npos : token.find('/', first + 1);
+    if (second != std::string::npos && token.find('/', second + 1) != std::string::npos) return false;
     const auto p = token.substr(0, first);
     std::int64_t raw{};
     if (!parse_integer(p, raw) || !resolve_index(raw, positions, corner.position)) return false;
@@ -53,6 +55,11 @@ bool parse_corner(const std::string& token, std::size_t positions, std::size_t t
     }
     return true;
 }
+Vec3 subtract(Vec3 a, Vec3 b) { return {a.x-b.x,a.y-b.y,a.z-b.z}; }
+Vec3 cross(Vec3 a, Vec3 b) {
+    return {a.y*b.z-a.z*b.y, a.z*b.x-a.x*b.z, a.x*b.y-a.y*b.x};
+}
+float length_squared(Vec3 v) { return v.x*v.x+v.y*v.y+v.z*v.z; }
 }
 
 Result<MeshData> import_obj_mesh(std::string_view source) {
@@ -125,6 +132,33 @@ Result<MeshData> import_obj_mesh(std::string_view source) {
     }
     if (source_positions.empty()) return Result<MeshData>::failure({ErrorCode::invalid_argument,"OBJ mesh contains no vertices"});
     if (mesh.positions.empty() || mesh.indices.empty()) return Result<MeshData>::failure({ErrorCode::invalid_argument,"OBJ mesh contains no faces"});
+
+    // Generate smooth, area-weighted normals only where the source omitted them.
+    // Explicit OBJ normals remain untouched, including intentional hard edges.
+    std::vector<Vec3> generated(mesh.positions.size());
+    std::vector<bool> needs_normal(mesh.positions.size(), false);
+    for (std::size_t i=0; i<mesh.normals.size(); ++i)
+        needs_normal[i] = length_squared(mesh.normals[i]) <= 1.0e-20F;
+    for (std::size_t i=0; i<mesh.indices.size(); i+=3) {
+        const auto ia=mesh.indices[i], ib=mesh.indices[i+1], ic=mesh.indices[i+2];
+        const auto face_normal=cross(
+            subtract(mesh.positions[ib],mesh.positions[ia]),
+            subtract(mesh.positions[ic],mesh.positions[ia]));
+        if (!std::isfinite(face_normal.x) || !std::isfinite(face_normal.y) || !std::isfinite(face_normal.z))
+            return Result<MeshData>::failure({ErrorCode::invalid_argument,"OBJ triangle exceeds normal-generation numeric range"});
+        for (const auto index : {ia,ib,ic}) if (needs_normal[index]) {
+            generated[index].x += face_normal.x;
+            generated[index].y += face_normal.y;
+            generated[index].z += face_normal.z;
+        }
+    }
+    for (std::size_t i=0; i<mesh.normals.size(); ++i) if (needs_normal[i]) {
+        const float length2=length_squared(generated[i]);
+        if (length2 > 1.0e-20F && std::isfinite(length2)) {
+            const float inverse=1.0F/std::sqrt(length2);
+            mesh.normals[i]={generated[i].x*inverse,generated[i].y*inverse,generated[i].z*inverse};
+        }
+    }
 
     const float high=std::numeric_limits<float>::max();
     const float low=std::numeric_limits<float>::lowest();

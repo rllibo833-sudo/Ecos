@@ -1,5 +1,6 @@
 #include "ecos_studio/mesh.hpp"
 
+#include <cmath>
 #include <iostream>
 #include <string>
 
@@ -7,7 +8,7 @@ namespace {
 int failures = 0;
 template <typename T>
 void check(const T& condition, const char* message) {
-    if (!static_cast<bool>(condition)) { std::cerr << "FAIL: " << message << '\n'; ++failures; }
+    if (!static_cast<bool>(condition)) { std::cerr << "FAIL: " << message << '\\n'; ++failures; }
 }
 void test_triangle_and_bounds() {
     using namespace ecos::studio;
@@ -23,6 +24,11 @@ f 1 2 3
         check(mesh.value().indices.size() == 3, "creates one triangle");
         check(mesh.value().bounds.minimum.x == -1.0F, "computes minimum bounds");
         check(mesh.value().bounds.maximum.y == 3.0F, "computes maximum bounds");
+        check(mesh.value().normals[0].z > 0.0F, "generates normals when OBJ omits them");
+        check(std::abs(std::sqrt(mesh.value().normals[0].x*mesh.value().normals[0].x +
+            mesh.value().normals[0].y*mesh.value().normals[0].y +
+            mesh.value().normals[0].z*mesh.value().normals[0].z)-1.0F) < 1.0e-5F,
+            "generated normals are normalized");
     }
 }
 void test_polygon_and_negative_indices() {
@@ -88,6 +94,11 @@ v 0 1 0
 vn 0 0 1
 f 1//3 2//1 3//1
 )OBJ"), "rejects out-of-range normal indices");
+    check(!import_obj_mesh(R"OBJ(v 0 0 0
+v 1 0 0
+v 0 1 0
+f 1///1 2 3
+)OBJ"), "rejects malformed face corner with extra slash");
 }
 }
 int main() {
