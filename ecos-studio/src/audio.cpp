@@ -51,6 +51,7 @@ std::vector<float> AudioMixer::mix_stereo(std::size_t frame_count) {
             }
             output[frame*2]+=left;output[frame*2+1]+=right;++voice.cursor_frame;
         }
+        if(!voice.looping&&voice.cursor_frame>=clip_frames)voice.active=false;
     }
     for(auto& sample:output)sample=std::clamp(sample,-1.0F,1.0F);
     voices_.erase(std::remove_if(voices_.begin(),voices_.end(),[](const Voice& voice){return !voice.active;}),voices_.end());
