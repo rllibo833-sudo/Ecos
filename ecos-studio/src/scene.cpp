@@ -341,32 +341,54 @@ Result<SceneGraph> deserialize_scene(const std::string& text) {
         return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Scene requires format_version=1 and scene_id"});
     if (pending.empty()) return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Scene must contain at least one node"});
 
-    SceneGraph graph;
-    std::unordered_map<std::uint64_t, NodeId> id_map;
-    std::vector<bool> created(pending.size(), false);
-    std::size_t remaining = pending.size();
-    while (remaining > 0) {
-        bool progress = false;
-        for (std::size_t i = 0; i < pending.size(); ++i) {
-            if (created[i]) continue;
-            const auto& node = pending[i];
-            std::optional<NodeId> parent;
-            if (node.source_parent) {
-                const auto found = id_map.find(*node.source_parent);
-                if (found == id_map.end()) continue;
-                parent = found->second;
-            }
-            auto created_node = graph.create_node(node.name, parent);
-            if (!created_node) return Result<SceneGraph>::failure(created_node.error());
-            auto set_transform = graph.set_local_transform(created_node.value(), node.transform);
-            if (!set_transform) return Result<SceneGraph>::failure(set_transform.error());
-            id_map.emplace(node.source_id, created_node.value());
-            created[i] = true;
-            --remaining;
-            progress = true;
+    // Validate all parent references and cycles before mutating the result graph.
+    std::unordered_map<std::uint64_t, const PendingNode*> by_id;
+    by_id.reserve(pending.size());
+    for (const auto& node : pending) by_id.emplace(node.source_id, &node);
+    for (const auto& node : pending) {
+        if (node.source_parent && !by_id.contains(*node.source_parent))
+            return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Scene contains a missing parent or hierarchy cycle"});
+        std::uint64_t current = node.source_id;
+        std::size_t steps = 0;
+        while (true) {
+            const auto found = by_id.find(current);
+            if (found == by_id.end() || !found->second->source_parent) break;
+            current = *found->second->source_parent;
+            if (++steps > pending.size())
+                return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Scene contains a missing parent or hierarchy cycle"});
         }
-        if (!progress) return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Scene contains a missing parent or hierarchy cycle"});
     }
+
+    // Restore each root subtree using source IDs instead of allocating new IDs.
+    // This keeps selection references, external entity links and editor history
+    // stable across save/load, including scenes whose IDs contain gaps.
+    SceneGraph graph;
+    for (const auto& root : pending) {
+        if (root.source_parent) continue;
+        std::vector<SceneNode> snapshot;
+        std::vector<std::uint64_t> stack{root.source_id};
+        while (!stack.empty()) {
+            const auto current = stack.back();
+            stack.pop_back();
+            const auto found = by_id.find(current);
+            if (found == by_id.end()) continue;
+            const auto& source = *found->second;
+            SceneNode node;
+            node.id = source.source_id;
+            node.name = source.name;
+            node.local_transform = source.transform;
+            node.parent = source.source_parent;
+            snapshot.push_back(std::move(node));
+            for (const auto& child : pending) {
+                if (child.source_parent && *child.source_parent == current)
+                    stack.push_back(child.source_id);
+            }
+        }
+        auto restored = graph.restore_subtree(snapshot);
+        if (!restored) return Result<SceneGraph>::failure(restored.error());
+    }
+    if (graph.size() != pending.size())
+        return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Scene contains a missing parent or hierarchy cycle"});
     return Result<SceneGraph>::success(std::move(graph));
 }
 

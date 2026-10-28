@@ -49,6 +49,30 @@ void test_round_trip() {
         }
     }
 }
+void test_preserves_ids_and_multiple_roots() {
+    using namespace ecos::studio;
+    SceneGraph graph;
+    auto first = graph.create_node("First");
+    auto removed = graph.create_node("Removed");
+    auto third = graph.create_node("Third");
+    auto child = graph.create_node("Child", third.value());
+    check(first && removed && third && child, "creates nodes for stable-id round trip");
+    if (!first || !removed || !third || !child) return;
+    check(graph.destroy_subtree(removed.value()), "creates an ID gap");
+    auto serialized = serialize_scene("stable-ids", graph);
+    check(serialized, "serializes graph with ID gap and multiple roots");
+    if (!serialized) return;
+    auto loaded = deserialize_scene(serialized.value());
+    check(loaded, "loads graph with ID gap and multiple roots");
+    if (!loaded) return;
+    check(loaded.value().find(first.value()) != nullptr, "preserves first root ID");
+    check(loaded.value().find(third.value()) != nullptr, "preserves root ID after gap");
+    check(loaded.value().find(child.value()) != nullptr, "preserves descendant ID");
+    check(loaded.value().roots().size() == 2, "preserves multiple roots");
+    auto next = loaded.value().create_node("Next");
+    check(next && next.value() > child.value(), "new IDs do not collide after loading sparse IDs");
+}
+
 void test_rejects_bad_documents() {
     using namespace ecos::studio;
     check(!deserialize_scene("scene_id=x\nnode=1|-|World|0,0,0|0,0,0|1,1,1\n"),
@@ -66,6 +90,7 @@ void test_rejects_bad_documents() {
 }
 int main() {
     test_round_trip();
+    test_preserves_ids_and_multiple_roots();
     test_rejects_bad_documents();
     if (failures != 0) { std::cerr << failures << " test(s) failed.\n"; return 1; }
     std::cout << "ECOS Studio scene serialization tests passed.\n";
