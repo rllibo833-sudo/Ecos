@@ -5,6 +5,22 @@
 #include <string>
 #include <vector>
 namespace ecos::studio {
+class SceneEditorSelection {
+public:
+ explicit SceneEditorSelection(const SceneGraph& scene) noexcept : scene_(scene) {}
+ [[nodiscard]] Result<void> select(NodeId node);
+ [[nodiscard]] Result<void> add(NodeId node);
+ [[nodiscard]] Result<void> toggle(NodeId node);
+ void clear() noexcept;
+ void prune_deleted();
+ [[nodiscard]] bool contains(NodeId node) const noexcept;
+ [[nodiscard]] const std::vector<NodeId>& selected_nodes() const noexcept { return selected_; }
+ [[nodiscard]] std::optional<NodeId> active_node() const noexcept { return active_; }
+private:
+ const SceneGraph& scene_;
+ std::vector<NodeId> selected_;
+ std::optional<NodeId> active_;
+};
 class SceneEditorHistory {
 public:
  explicit SceneEditorHistory(SceneGraph& scene) noexcept : scene_(scene) {}

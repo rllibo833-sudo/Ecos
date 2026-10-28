@@ -1,4 +1,5 @@
 #include "ecos_studio/scene_editor.hpp"
+#include <algorithm>
 #include <utility>
 namespace ecos::studio {
 std::vector<SceneNode> SceneEditorHistory::capture_subtree(NodeId root) const {

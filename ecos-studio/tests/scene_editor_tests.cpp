@@ -6,6 +6,29 @@ int failures = 0;
 template <typename T> void check(const T& condition, const char* message) {
  if (!static_cast<bool>(condition)) { std::cerr << "FAIL: " << message << '\n'; ++failures; }
 }
+void editor_selection() {
+ using namespace ecos::studio;
+ SceneGraph scene; auto a = scene.create_node("A"); auto b = scene.create_node("B"); auto c = scene.create_node("C");
+ check(a && b && c, "creates nodes for selection"); if (!a || !b || !c) return;
+ SceneEditorSelection selection(scene);
+ check(!selection.active_node() && selection.selected_nodes().empty(), "selection starts empty");
+ check(!selection.select(999999U), "rejects selecting missing node");
+ check(selection.select(a.value()), "selects one node");
+ check(selection.active_node() == a.value() && selection.selected_nodes().size() == 1, "single selection sets active node");
+ check(selection.add(b.value()), "adds second selected node");
+ check(selection.add(b.value()) && selection.selected_nodes().size() == 2, "adding same node does not duplicate it");
+ check(selection.active_node() == b.value(), "most recently added node becomes active");
+ check(selection.toggle(a.value()), "toggles selected node off");
+ check(!selection.contains(a.value()) && selection.active_node() == b.value(), "active remains valid after removing another selection");
+ check(selection.toggle(c.value()) && selection.contains(c.value()), "toggle adds an unselected node");
+ check(selection.toggle(c.value()) && !selection.contains(c.value()), "toggle removes a selected node");
+ check(selection.active_node() == b.value(), "active falls back to last remaining selection");
+ check(scene.destroy_subtree(b.value()), "deletes selected scene node");
+ selection.prune_deleted();
+ check(!selection.contains(b.value()) && selection.active_node() == std::nullopt, "prunes deleted nodes and active selection");
+ check(selection.select(a.value()), "selection remains usable after pruning");
+ selection.clear(); check(selection.selected_nodes().empty() && !selection.active_node(), "clear resets selection");
+}
 void transform_history() {
  using namespace ecos::studio;
  SceneGraph scene; auto node = scene.create_node("Player");
