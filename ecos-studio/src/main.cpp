@@ -135,11 +135,11 @@ int main(int argc, char** argv) {
     if (command == "world-validate-content") {
         if (argc != 3) { print_usage(); return 1; }
         auto manifest = ecos::studio::load_world_manifest(std::filesystem::path(argv[2]));
-        if (!manifest) { std::cerr << "error: " << manifest.error().message << '\\n'; return 2; }
+        if (!manifest) { std::cerr << "error: " << manifest.error().message << '\n'; return 2; }
         std::size_t nodes = 0;
         for (const auto& cell : manifest.value().cells) {
             auto content = ecos::studio::load_world_cell_content(manifest.value(), cell);
-            if (!content) { std::cerr << "error: " << content.error().message << '\\n'; return 2; }
+            if (!content) { std::cerr << "error: " << content.error().message << '\n'; return 2; }
             nodes += content.value().scene.size();
             std::cout << "  " << cell.id << ": " << content.value().scene.size() << " scene node(s)\n";
         }
