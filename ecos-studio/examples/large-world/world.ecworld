@@ -1,0 +1,6 @@
+# ECOS Studio world manifest v1
+format_version=1
+world_id=ecos-sample-world
+cell=arunika-origin|arunika|0,0,0|world/arunika/origin.ecell
+cell=arunika-east|arunika|1,0,0|world/arunika/east.ecell
+cell=wanasera-north|wanasera|0,0,1|world/wanasera/north.ecell

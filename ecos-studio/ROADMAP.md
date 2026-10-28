@@ -5,8 +5,8 @@ This roadmap describes product milestones, not guaranteed delivery dates.
 ## S0 — Repository foundation
 - [x] Dedicated branch and product scope.
 - [x] C++20/CMake bootstrap CLI.
-- [x] Project scaffold creation and manifest validation.
-- [x] Mod scaffold creation and validation.
+- [x] Project scaffold creation and validation.
+- [x] Data-only mod scaffold creation and validation.
 - [x] CI build and smoke workflow.
 
 ## S1 — Runtime foundations (in progress)
@@ -14,8 +14,9 @@ This roadmap describes product milestones, not guaranteed delivery dates.
 - [x] In-memory scene graph with hierarchical transforms and cycle-safe reparenting.
 - [x] Asset registry with stable IDs, safe paths, and dependency validation.
 - [x] World cell records, lifecycle transitions, resident-cell budget, and spatial radius query.
-- [ ] Versioned serialized scene/asset/world schemas and migration utilities.
-- [ ] Headless world-data validator and asset content hashing.
+- [x] Headless .ecworld manifest validator and sample region/cell metadata.
+- [ ] Versioned serialized scene/asset payload schemas and migration utilities.
+- [ ] Asset content hashing and dependency graph cycle diagnostics.
 
 ## S2 — First playable desktop slice
 - [ ] Window and input abstraction.
@@ -32,8 +33,8 @@ This roadmap describes product milestones, not guaranteed delivery dates.
 - [ ] Scripting and debugging workflow.
 
 ## S4 — Large-world runtime
-- [ ] Asynchronous cell I/O, worker queue, cancellation, and prioritization.
-- [ ] Eviction policy, LOD, and floating-origin integration.
+- [ ] Asynchronous cell I/O, worker queue, cancellation, prioritization, and eviction.
+- [ ] LOD and floating-origin integration.
 - [ ] Tiered simulation and streaming budget telemetry.
 
 ## S5 — Mod SDK

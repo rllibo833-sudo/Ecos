@@ -1,5 +1,4 @@
 name: ECOS Studio Bootstrap
-
 on:
   push:
     paths:
@@ -10,7 +9,6 @@ on:
       - 'ecos-studio/**'
       - '.github/workflows/ecos-studio.yml'
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,8 +18,10 @@ jobs:
         run: cmake -S ecos-studio -B build/ecos-studio -DCMAKE_BUILD_TYPE=Release
       - name: Build
         run: cmake --build build/ecos-studio --parallel 2
-      - name: Smoke test CLI
+      - name: Run automated tests
         run: ctest --test-dir build/ecos-studio --output-on-failure
+      - name: Validate sample world manifest
+        run: build/ecos-studio/ecos-studio world-validate ecos-studio/examples/large-world/world.ecworld
       - name: Create and validate project scaffold
         run: |
           build/ecos-studio/ecos-studio new /tmp/ecos-studio-sample "ECOS Sample"
