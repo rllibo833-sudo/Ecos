@@ -112,11 +112,35 @@ Empat bioma lama **dipertahankan**: tropis, pegunungan, pesisir, dan gurun. Dita
 
 Jumlah **25 legenda** adalah sasaran koleksi lore kawasan masjid. Legenda akan disusun sebagai cerita yang beredar di masyarakat, dengan tiga lapisan terpisah: (1) versi tutur warga, (2) bukti atau artefak yang ditemukan, dan (3) status kebenaran yang belum tentu sama dengan cerita. Tidak semua legenda harus benar secara supernatural; sebagian dapat dijelaskan oleh sejarah, teknologi, kesalahan informasi, kepentingan ekonomi, atau fenomena alam. Jangan mengklaim daftar legenda sudah terverifikasi sampai dokumen khusus memuat 25 entri lengkap dan diperiksa silang. Lokasi legenda harus cocok dengan peta kawasan masjid.
 
-## 10. Hubungan dengan alur utama
+## 10. Teknologi identitas ECOS
+
+Teknologi berikut adalah bagian dari identitas fiksional ECOS berdasarkan arah pemilik proyek. Bagian ini menetapkan **peran dasar di dunia cerita**, bukan spesifikasi teknis lengkap dan bukan klaim bahwa repositori nyata sudah terintegrasi dengan game.
+
+| Teknologi | Peran dalam dunia ECOS | Batas yang berlaku |
+|---|---|---|
+| **LynOS** | Sistem lingkungan digital yang digunakan Rezman melalui perangkat genggamnya untuk mengakses informasi, alat kerja, dan layanan digital. LynOS menjadi bagian keseharian Rezman, bukan sekadar menu futuristik. | Bentuk UI, aplikasi, izin akses, dan fitur per fitur masih perlu ditetapkan. LynOS tidak boleh dianggap dapat mengakses semua data warga secara otomatis. Repositori LynOS saat ini adalah proyek launcher/workspace Android, bukan pengganti sistem operasi Android. |
+| **Digital Forensic** | Bidang pekerjaan Rezman: memeriksa perangkat dan jejak digital, menjaga konteks bukti, menyusun kronologi, serta menguji hubungan antara artefak dan kejadian. Ini memberi alasan cerita bagi pemain untuk menyelidiki perangkat dan informasi. | Bukti tidak otomatis menjelaskan dirinya sendiri. Akses harus memiliki alasan dan kewenangan; data bisa hilang, rusak, palsu, tidak lengkap, atau disalahartikan. |
+| **Living Shared Knowledge Graph** | Jaringan pengetahuan bersama yang menghubungkan orang, tempat, peristiwa, artefak, temuan, ilmu, dan teknologi. Hubungan membantu Rezman menelusuri petunjuk dan melihat kaitan lintas sumber. | Graf bukan mahatahu dan bukan jaminan kebenaran. Setiap hubungan perlu asal-usul, waktu/konteks, tingkat keyakinan, serta kemungkinan konflik atau koreksi. Hak akses dan privasi tetap berlaku. |
+| **Bahasa .cuk / Bahasa Cuk** | Bahasa pemrograman khas dunia ECOS, digunakan terutama dalam konteks teknis di kota-kota besar, fasilitas riset, sistem industri, dan alat pengembangan. Bahasa ini memberi identitas lokal pada teknologi ECOS. | Tidak berarti semua warga harus memahaminya. Sintaks, dialek, sejarah, akses belajar, dan seberapa luas penggunaannya belum dikunci oleh bagian ini. |
+| **PusingCuk AI** | Asisten berbasis pengetahuan yang membantu pengguna memahami, menulis, atau memeriksa pekerjaan terkait Bahasa Cuk dan sistem teknis. | Bukan sumber kebenaran mutlak atau kecerdasan mahatahu. Hasilnya perlu diperiksa, dapat keliru, dan tidak menggantikan keputusan manusia. |
+| **Cuk Reality Engine** | Sistem/fasilitas khusus yang digunakan untuk menjalankan pengujian realitas atau simulasi terkontrol; terdapat wilayah tertentu yang terkait dengan pengujian **determinan**. Ini menjadi bagian misteri teknologi ECOS. | Makna teknis “determinan”, mekanisme pengujian, risiko, lokasi rinci, dan konsekuensinya masih terbuka. Jangan mengarang mekanika atau menjadikannya mesin yang dapat mengubah semua realitas tanpa batas. |
+| **Mnemos-RLI** | Rujukan konseptual untuk pencatatan, perbandingan, dan penelusuran bukti/jejak perubahan dalam pekerjaan investigasi. Relevansinya terutama pada disiplin bukti dan rekonstruksi. | Peran fiksional tidak berarti produk nyata Mnemos-RLI otomatis terintegrasi dengan LynOS, graf pengetahuan, atau game. Format data dan hubungan teknis belum ditetapkan. |
+| **Steadfast** | Untuk saat ini berstatus alat tata kelola dan audit repositori di sisi pengembangan proyek, bukan perangkat yang otomatis muncul di dunia fiksi ECOS. | Jangan membuat padanan fiksional atau fitur dalam game tanpa keputusan kanon tersendiri. |
+| **Integrasi antar-sistem** | Sistem-sistem di atas dapat berperan dalam satu rangkaian cerita: perangkat LynOS → pemeriksaan forensik → bukti terverifikasi → hubungan pada Living Shared Knowledge Graph → petunjuk menuju riset/fasilitas Cuk Reality Engine. | Ini adalah jalur desain naratif, bukan bukti semua komponen sudah dibangun atau terhubung. Urutan misi, API, format pertukaran data, dan implementasi game masih harus dirancang dan diuji. |
+
+### Aturan pengembangan teknologi
+
+1. Tetapkan fungsi fiksional, pengguna, batas, risiko, dan akibat sosial sebelum merancang aset visual atau gameplay khusus teknologi tersebut.
+2. Pisahkan tiga status: **peran kanon fiksional**, **desain teknis game**, dan **kemampuan repositori nyata**. Ketiganya tidak otomatis sama.
+3. Godot atau engine lain hanya alat implementasi. Keberadaan prototipe tidak boleh menetapkan geografi, kemampuan teknologi, atau fakta lore baru.
+4. Antarmuka harus memperlihatkan bukti, sumber, izin, ketidakpastian, dan keterbatasan jika relevan; hindari layar futuristik dekoratif yang tidak punya fungsi cerita.
+5. Detail yang belum tercantum di tabel tetap **terbuka**, bukan ruang untuk menebak atau mengunci keputusan sepihak.
+
+## 11. Hubungan dengan alur utama
 
 Alur utama mengikuti protagonis dari Juailin yang mengalami kesulitan adaptasi, sindiran, minim dukungan, kehilangan, dan rasa suka yang belum diungkapkan. Perjalanan membawanya belajar di lingkungan yang lebih luas, menghadapi pilihan dan kegagalan, membangun harga diri, lalu memutuskan apakah akan mengungkapkan perasaan. Identitas orang yang disukai, detail kehilangan, dan jawaban romantis tidak ditentukan dalam atlas ini. Eksplorasi dunia boleh berjalan tanpa mengikuti cerita utama; ini arah desain, bukan klaim implementasi.
 
-## 11. Status dan aturan perubahan
+## 12. Status dan aturan perubahan
 
 - **Kanon eksplisit pemilik:** negara ECOS; kawasan terpisah; kawasan masjid 1.000 ha; wilayah inti offline 10.000 ha; posisi relatif masjid/Juailin; kehidupan komunitas dan batas hukum; protagonis dan fondasi emosional.
 - **Keputusan worldbuilding yang ditetapkan di sini:** skala nasional sekitar 1,7 juta km², empat provinsi, ibu kota Nawasena, estimasi populasi/luas, sistem pemerintahan sipil, garis sejarah politik, transportasi, dan bioma tambahan.
