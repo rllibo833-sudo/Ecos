@@ -7,19 +7,20 @@ This roadmap describes product milestones, not guaranteed delivery dates.
 - [x] Data-only mod scaffold creation and validation.
 - [x] CI build and smoke workflow.
 
-## S1 — Runtime foundations (in progress)
+## S1 — Runtime and asset foundations (in progress)
 - [x] Runtime lifecycle, logging, typed errors/results, portable platform helpers.
 - [x] In-memory scene graph with hierarchical transforms and cycle-safe reparenting.
 - [x] Versioned scene serialization/deserialization and scene validation CLI.
 - [x] Asset registry with stable IDs, safe paths, and dependency validation.
+- [x] Initial OBJ mesh importer with triangulation, index validation, and bounds.
 - [x] World cell records, lifecycle transitions, resident-cell budget, and spatial radius query.
 - [x] Headless .ecworld manifest validator and sample region/cell metadata.
-- [ ] Asset serialization, content hashing, and dependency-cycle diagnostics.
+- [ ] Asset content hashing, normal/UV import, and dependency-cycle diagnostics.
 
 ## S2 — First playable desktop slice
 - [ ] Window and input abstraction.
-- [ ] Renderer backend and camera.
-- [ ] Mesh/material loading and visible scene viewport.
+- [ ] GPU renderer backend and camera.
+- [ ] Mesh/material GPU upload and visible scene viewport.
 - [ ] Basic audio output and spatial audio.
 - [ ] Collision/rigid-body integration.
 - [ ] One small offline game built and packaged by the toolchain.
