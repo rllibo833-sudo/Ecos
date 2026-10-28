@@ -50,6 +50,7 @@ public:
     [[nodiscard]] const SceneNode* find(NodeId node) const noexcept;
     [[nodiscard]] SceneNode* find(NodeId node) noexcept;
     [[nodiscard]] Result<Matrix4> world_matrix(NodeId node) const;
+    [[nodiscard]] std::vector<SceneNode> nodes() const;
     [[nodiscard]] std::size_t size() const noexcept;
     [[nodiscard]] const std::vector<NodeId>& roots() const noexcept;
 
@@ -60,5 +61,8 @@ private:
     std::unordered_map<NodeId, SceneNode> nodes_;
     std::vector<NodeId> roots_;
 };
+
+[[nodiscard]] Result<std::string> serialize_scene(const std::string& scene_id, const SceneGraph& graph);
+[[nodiscard]] Result<SceneGraph> deserialize_scene(const std::string& text);
 
 } // namespace ecos::studio

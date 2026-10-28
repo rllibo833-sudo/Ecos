@@ -1,0 +1,6 @@
+# ECOS Studio scene manifest v1
+format_version=1
+scene_id=hello-world
+node=1|-|World|0,0,0|0,0,0|1,1,1
+node=2|1|Player|0,0,0|0,0,0|1,1,1
+node=3|2|Camera|0,1.7,0|0,0,0|1,1,1

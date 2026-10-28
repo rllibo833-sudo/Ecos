@@ -3,20 +3,18 @@
 This roadmap describes product milestones, not guaranteed delivery dates.
 
 ## S0 — Repository foundation
-- [x] Dedicated branch and product scope.
-- [x] C++20/CMake bootstrap CLI.
-- [x] Project scaffold creation and validation.
+- [x] C++20/CMake bootstrap CLI and project scaffolding.
 - [x] Data-only mod scaffold creation and validation.
 - [x] CI build and smoke workflow.
 
 ## S1 — Runtime foundations (in progress)
 - [x] Runtime lifecycle, logging, typed errors/results, portable platform helpers.
 - [x] In-memory scene graph with hierarchical transforms and cycle-safe reparenting.
+- [x] Versioned scene serialization/deserialization and scene validation CLI.
 - [x] Asset registry with stable IDs, safe paths, and dependency validation.
 - [x] World cell records, lifecycle transitions, resident-cell budget, and spatial radius query.
 - [x] Headless .ecworld manifest validator and sample region/cell metadata.
-- [ ] Versioned serialized scene/asset payload schemas and migration utilities.
-- [ ] Asset content hashing and dependency graph cycle diagnostics.
+- [ ] Asset serialization, content hashing, and dependency-cycle diagnostics.
 
 ## S2 — First playable desktop slice
 - [ ] Window and input abstraction.
@@ -28,7 +26,7 @@ This roadmap describes product milestones, not guaranteed delivery dates.
 
 ## S3 — Creator tools
 - [ ] Desktop editor shell and scene viewport.
-- [ ] Asset browser, inspector, scene hierarchy, undo/redo.
+- [ ] Asset browser, inspector, undo/redo.
 - [ ] Import pipeline and reproducible game packaging.
 - [ ] Scripting and debugging workflow.
 
@@ -38,9 +36,7 @@ This roadmap describes product milestones, not guaranteed delivery dates.
 - [ ] Tiered simulation and streaming budget telemetry.
 
 ## S5 — Mod SDK
-- [ ] Data-only mod package schema.
-- [ ] Dependency and compatibility resolver.
-- [ ] Mod load order and conflict reports.
+- [ ] Data-only mod package schema, dependency/compatibility resolver, load order and conflict reports.
 - [ ] Permission model before executable extensions.
 
 ## S6 — ECOS flagship integration
