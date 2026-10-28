@@ -1,8 +1,11 @@
 #include "ecos_studio/mesh.hpp"
 #include "ecos_studio/render.hpp"
+#include "ecos_studio/asset_registry.hpp"
 
 #include <cstdint>
 #include <iostream>
+#include <filesystem>
+#include <fstream>
 #include <limits>
 #include <string>
 
@@ -77,6 +80,39 @@ void test_renders_multiple_transformed_instances_in_shared_scene() {
         "rejects non-finite instance transform");
 }
 
+void test_scene_graph_resolves_mesh_assets_and_world_transforms() {
+    using namespace ecos::studio;
+    const auto root = std::filesystem::temp_directory_path() / "ecos-scene-render-assets";
+    std::filesystem::remove_all(root);
+    std::filesystem::create_directories(root / "assets");
+    {
+        std::ofstream out(root / "assets/triangle.obj", std::ios::binary);
+        out << "v -0.4 -0.4 0\nv 0.4 -0.4 0\nv 0 0.4 0\nf 1 2 3\n";
+    }
+    AssetRegistry registry;
+    check(registry.register_asset(AssetRecord{"triangle", "mesh.obj", "assets/triangle.obj", {}}),
+        "registers mesh asset for scene renderer");
+    SceneGraph scene;
+    auto left = scene.create_node("Left");
+    auto right = scene.create_node("Right", left.value());
+    check(left && right, "creates graph for asset rendering");
+    if (left && right) {
+        check(scene.set_mesh_asset(left.value(), "triangle"), "assigns root mesh asset");
+        check(scene.set_mesh_asset(right.value(), "triangle"), "assigns child mesh asset");
+        Transform transform;
+        transform.position = {1.0F, 0.0F, 0.0F};
+        check(scene.set_local_transform(right.value(), transform), "transforms child mesh");
+        auto image = render_scene_graph_to_ppm(scene, registry, root, 96, 64);
+        check(image, "loads referenced OBJ assets and renders scene graph");
+        if (image) check(image.value().starts_with("P6\n96 64\n255\n"), "scene graph renderer returns a PPM frame");
+    }
+    SceneGraph missing_scene;
+    auto missing_node = missing_scene.create_node("Missing");
+    if (missing_node) check(missing_scene.set_mesh_asset(missing_node.value(), "absent"), "sets missing asset for validation");
+    check(!render_scene_graph_to_ppm(missing_scene, registry, root, 32, 32), "rejects unresolved scene mesh asset references");
+    std::filesystem::remove_all(root);
+}
+
 void test_rejects_bad_inputs() {
     using namespace ecos::studio;
     MeshData mesh;
@@ -95,6 +131,7 @@ int main() {
     test_world_transform_changes_rendered_geometry();
     test_renders_multiple_transformed_instances_in_shared_scene();
     test_rejects_bad_inputs();
+    test_scene_graph_resolves_mesh_assets_and_world_transforms();
     if (failures) { std::cerr << failures << " test(s) failed.\n"; return 1; }
     std::cout << "ECOS Studio CPU renderer tests passed.\n";
     return 0;
