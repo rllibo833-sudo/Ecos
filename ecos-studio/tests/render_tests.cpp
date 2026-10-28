@@ -90,25 +90,25 @@ void test_scene_graph_resolves_mesh_assets_and_world_transforms() {
         out << "v -0.4 -0.4 0\nv 0.4 -0.4 0\nv 0 0.4 0\nf 1 2 3\n";
     }
     AssetRegistry registry;
-    check(registry.register_asset(AssetRecord{"triangle", "mesh.obj", "assets/triangle.obj", {}}),
+    check(static_cast<bool>(registry.register_asset(AssetRecord{"triangle", "mesh.obj", "assets/triangle.obj", {}})),
         "registers mesh asset for scene renderer");
     SceneGraph scene;
     auto left = scene.create_node("Left");
     auto right = scene.create_node("Right", left.value());
     check(left && right, "creates graph for asset rendering");
     if (left && right) {
-        check(scene.set_mesh_asset(left.value(), "triangle"), "assigns root mesh asset");
-        check(scene.set_mesh_asset(right.value(), "triangle"), "assigns child mesh asset");
+        check(static_cast<bool>(scene.set_mesh_asset(left.value(), "triangle")), "assigns root mesh asset");
+        check(static_cast<bool>(scene.set_mesh_asset(right.value(), "triangle")), "assigns child mesh asset");
         Transform transform;
         transform.position = {1.0F, 0.0F, 0.0F};
-        check(scene.set_local_transform(right.value(), transform), "transforms child mesh");
+        check(static_cast<bool>(scene.set_local_transform(right.value(), transform)), "transforms child mesh");
         auto image = render_scene_graph_to_ppm(scene, registry, root, 96, 64);
-        check(image, "loads referenced OBJ assets and renders scene graph");
+        check(static_cast<bool>(image), "loads referenced OBJ assets and renders scene graph");
         if (image) check(image.value().starts_with("P6\n96 64\n255\n"), "scene graph renderer returns a PPM frame");
     }
     SceneGraph missing_scene;
     auto missing_node = missing_scene.create_node("Missing");
-    if (missing_node) check(missing_scene.set_mesh_asset(missing_node.value(), "absent"), "sets missing asset for validation");
+    if (missing_node) check(static_cast<bool>(missing_scene.set_mesh_asset(missing_node.value(), "absent")), "sets missing asset for validation");
     check(!render_scene_graph_to_ppm(missing_scene, registry, root, 32, 32), "rejects unresolved scene mesh asset references");
     std::filesystem::remove_all(root);
 }
