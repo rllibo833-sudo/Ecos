@@ -12,19 +12,19 @@ This roadmap describes product milestones, not guaranteed delivery dates.
 ## S1 — Runtime foundations (in progress)
 - [x] Minimal runtime lifecycle state machine.
 - [x] Thread-safe log writer with severity levels.
-- [x] Dependency-free automated tests for runtime lifecycle and logging.
 - [x] Stable error codes and value/error result types.
-- [x] Portable utilities for monotonic time, OS identification, safe relative paths, directory creation, and text-file reads.
-- [ ] Versioned project/asset schemas and migration utilities.
-- [ ] Asset registry and dependency graph.
-- [ ] Headless world-data validator.
+- [x] Portable platform utilities and project-relative path safety.
+- [x] In-memory scene graph with hierarchical transforms and cycle-safe reparenting.
+- [x] Asset registry with stable IDs, normalized paths, and dependency validation.
+- [ ] Versioned serialized scene/asset schemas and migration utilities.
+- [ ] Headless world-data validator and region/cell manifest.
 
 ## S2 — First playable desktop slice
 - [ ] Window and input abstraction.
-- [ ] Basic renderer and camera.
-- [ ] Scene graph and transform hierarchy.
+- [ ] Renderer backend and camera.
+- [ ] Mesh/material loading and visible scene viewport.
 - [ ] Basic audio output and spatial audio.
-- [ ] Basic collision/rigid-body integration.
+- [ ] Collision/rigid-body integration.
 - [ ] One small offline game built and packaged by the toolchain.
 
 ## S3 — Creator tools
@@ -35,23 +35,20 @@ This roadmap describes product milestones, not guaranteed delivery dates.
 
 ## S4 — Large-world runtime
 - [ ] Region/cell world format and spatial index.
-- [ ] Asynchronous streaming and eviction.
+- [ ] Asynchronous cell streaming and eviction.
 - [ ] LOD and floating-origin strategy.
-- [ ] Tiered simulation for distant regions.
-- [ ] Streaming budget instrumentation.
+- [ ] Tiered simulation and explicit streaming budgets.
 
 ## S5 — Mod SDK
 - [ ] Data-only mod package schema.
 - [ ] Dependency and compatibility resolver.
 - [ ] Mod load order and conflict reports.
-- [ ] Creator docs and sample mods.
 - [ ] Permission model before executable extensions.
 
 ## S6 — ECOS flagship integration
-- [ ] Convert selected ECOS canon/world data into engine-importable data.
-- [ ] Build a representative small region using the public tools.
+- [ ] Import selected ECOS canon/world data.
+- [ ] Build a representative small region with public tools.
 - [ ] Expand regions and simulation systems incrementally.
-- [ ] Keep engine features reusable by external developers.
 
 ## Quality bar
-Each milestone must have source, documentation, and reproducible automation where possible. A feature remains labelled planned until implemented; automated CI is not a substitute for full visual/performance validation on target PCs.
+A capability remains labelled planned until source and automation support it. CI does not substitute for visual or performance validation on target PCs.
