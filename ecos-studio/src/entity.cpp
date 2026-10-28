@@ -1,6 +1,6 @@
 #include "ecos_studio/entity.hpp"
 
-#include <limits>
+#include <stdexcept>
 
 namespace ecos::studio {
 
@@ -24,7 +24,7 @@ Entity EntityRegistry::create() {
     return Entity{index, 1};
 }
 
-bool EntityRegistry::destroy(Entity entity) noexcept {
+bool EntityRegistry::destroy(Entity entity) {
     if (!alive(entity)) return false;
 
     for (auto& [type, storage] : pools_) {

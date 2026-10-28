@@ -1,7 +1,9 @@
 #pragma once
 
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
+#include <limits>
 #include <memory>
 #include <stdexcept>
 #include <typeindex>
@@ -14,7 +16,7 @@ namespace ecos::studio {
 
 // Generation-stamped handle: destroyed entities cannot be accessed through stale IDs.
 struct Entity {
-    static constexpr std::uint32_t invalid_index = UINT32_MAX;
+    static constexpr std::uint32_t invalid_index = std::numeric_limits<std::uint32_t>::max();
 
     std::uint32_t index{invalid_index};
     std::uint32_t generation{0};
@@ -53,7 +55,7 @@ class EntityRegistry {
 
 public:
     [[nodiscard]] Entity create();
-    [[nodiscard]] bool destroy(Entity entity) noexcept;
+    [[nodiscard]] bool destroy(Entity entity);
     [[nodiscard]] bool alive(Entity entity) const noexcept;
     [[nodiscard]] std::size_t entity_count() const noexcept;
 
