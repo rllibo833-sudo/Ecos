@@ -105,8 +105,7 @@ WorldStreamingPlan WorldRuntime::plan_streaming(
         const auto distance = distance_squared(status.cell.coord, center);
         if (state == CellState::loaded && !inside_radius(status.cell.coord, center, unload_radius)) {
             plan.unload.push_back(id);
-        } else if ((state == CellState::unloaded || state == CellState::failed) &&
-                   inside_radius(status.cell.coord, center, load_radius)) {
+        } else if (state == CellState::unloaded && inside_radius(status.cell.coord, center, load_radius)) {
             candidates.push_back({id, distance});
         }
     }

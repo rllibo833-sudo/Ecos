@@ -11,6 +11,35 @@ WorldStreamingService::WorldStreamingService(
     WorldRuntime& world, JobSystem& jobs, Loader loader, Unloader unloader)
     : world_(world), jobs_(jobs), loader_(std::move(loader)), unloader_(std::move(unloader)) {}
 
+Result<void> WorldStreamingService::schedule_load(const WorldCell& cell) {
+    auto requested = world_.request_load(cell.id);
+    if (!requested) return requested;
+    try {
+        auto future = jobs_.submit([loader = loader_, cell] { return loader(cell); });
+        pending_.push_back(PendingLoad{cell.id, std::move(future)});
+    } catch (const std::exception& exception) {
+        auto failed = world_.complete_load(cell.id, false, exception.what());
+        if (!failed) return failed;
+        return Result<void>::failure({ErrorCode::internal_error, "Could not schedule world cell load: " + std::string(exception.what())});
+    }
+    return Result<void>::success();
+}
+
+Result<void> WorldStreamingService::retry_failed_cell(const std::string& id) {
+    if (!loader_) {
+        return Result<void>::failure({ErrorCode::invalid_state, "World streaming requires a cell loader callback"});
+    }
+    const auto* status = world_.find(id);
+    if (!status) return Result<void>::failure({ErrorCode::not_found, "World cell does not exist: " + id});
+    if (status->state != CellState::failed) {
+        return Result<void>::failure({ErrorCode::invalid_state, "Only failed world cells can be retried"});
+    }
+    if (world_.loaded_count() >= world_.max_loaded_cells()) {
+        return Result<void>::failure({ErrorCode::invalid_state, "World cell budget is full; unload a cell before retrying"});
+    }
+    return schedule_load(status->cell);
+}
+
 Result<StreamingUpdateReport> WorldStreamingService::collect_completed(StreamingUpdateReport report) {
     for (std::size_t i = 0; i < pending_.size();) {
         auto& pending = pending_[i];
@@ -83,18 +112,11 @@ Result<StreamingUpdateReport> WorldStreamingService::update(
     for (const auto& id : load_plan.load) {
         const auto* status = world_.find(id);
         if (!status) continue;
-        const WorldCell cell = status->cell;
-        auto requested = world_.request_load(id);
-        if (!requested) continue; // A stale plan must never break the frame.
-        try {
-            auto future = jobs_.submit([loader = loader_, cell] { return loader(cell); });
-            pending_.push_back(PendingLoad{id, std::move(future)});
-            ++report.started_loads;
-        } catch (const std::exception& exception) {
-            auto failed = world_.complete_load(id, false, exception.what());
-            if (!failed) return Result<StreamingUpdateReport>::failure(failed.error());
-            ++report.failed_loads;
-        }
+        auto scheduled = schedule_load(status->cell);
+        if (scheduled) ++report.started_loads;
+        else if (scheduled.error().code == ErrorCode::internal_error) ++report.failed_loads;
+        // A stale plan must not break the frame; invalid-state errors mean a
+        // concurrent owner-side transition already made this candidate ineligible.
     }
     return Result<StreamingUpdateReport>::success(report);
 }

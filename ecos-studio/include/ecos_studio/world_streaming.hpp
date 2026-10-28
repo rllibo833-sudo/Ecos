@@ -34,6 +34,9 @@ public:
 
     [[nodiscard]] Result<StreamingUpdateReport> update(
         CellCoord center, std::uint32_t load_radius, std::uint32_t unload_radius);
+    // Failed cells are not retried every frame. Retry is explicit to avoid
+    // repeated disk/network errors becoming a hot loop.
+    [[nodiscard]] Result<void> retry_failed_cell(const std::string& id);
     [[nodiscard]] std::size_t in_flight_count() const noexcept;
     [[nodiscard]] bool idle() const noexcept;
 
@@ -44,6 +47,7 @@ private:
     };
 
     [[nodiscard]] Result<StreamingUpdateReport> collect_completed(StreamingUpdateReport report);
+    [[nodiscard]] Result<void> schedule_load(const WorldCell& cell);
 
     WorldRuntime& world_;
     JobSystem& jobs_;

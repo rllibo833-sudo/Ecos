@@ -1,12 +1,9 @@
 #include "ecos_studio/world_streaming.hpp"
 
 #include <atomic>
-#include <chrono>
 #include <iostream>
 #include <stdexcept>
 #include <string>
-#include <thread>
-#include <vector>
 
 namespace {
 int failures = 0;
@@ -52,12 +49,14 @@ void test_async_loads_and_main_thread_unloads() {
     auto fourth = streaming.update({20, 0, 0}, 1, 3);
     check(fourth && fourth.value().completed_loads == 1, "completes destination load");
 }
-void test_failures_and_invalid_configuration() {
+void test_failures_require_explicit_retry() {
     using namespace ecos::studio;
     WorldRuntime world(2);
     check(world.register_cell({"broken", "region", {0, 0, 0}, "world/broken.ecell"}), "registers broken cell");
     JobSystem jobs(1);
-    WorldStreamingService streaming(world, jobs, [](const WorldCell&) -> Result<void> {
+    std::atomic<int> attempts{0};
+    WorldStreamingService streaming(world, jobs, [&attempts](const WorldCell&) -> Result<void> {
+        attempts.fetch_add(1, std::memory_order_relaxed);
         return Result<void>::failure({ErrorCode::io_error, "simulated read failure"});
     });
     check(!streaming.update({0, 0, 0}, 5, 2), "rejects unload radius smaller than load radius");
@@ -68,8 +67,14 @@ void test_failures_and_invalid_configuration() {
     check(finished && finished.value().failed_loads == 1, "reports asynchronous load failure");
     check(world.find("broken")->state == CellState::failed, "retains failure state for retry");
     check(world.find("broken")->last_error == "simulated read failure", "preserves loader diagnostic");
-    WorldStreamingService missing_loader(world, jobs, {});
-    check(!missing_loader.update({0, 0, 0}, 1, 1), "requires a loader callback");
+    check(finished && finished.value().started_loads == 0, "does not spin on failed cell every frame");
+    check(attempts.load(std::memory_order_relaxed) == 1, "failed cell is not retried automatically");
+    check(streaming.retry_failed_cell("broken"), "allows an explicit retry");
+    jobs.wait_idle();
+    auto retried = streaming.update({0, 0, 0}, 1, 2);
+    check(retried && retried.value().failed_loads == 1, "reports retry outcome");
+    check(attempts.load(std::memory_order_relaxed) == 2, "explicit retry schedules one new attempt");
+    check(!streaming.retry_failed_cell("unknown"), "rejects retry for unknown cell");
 }
 void test_loader_exceptions_are_captured() {
     using namespace ecos::studio;
@@ -85,11 +90,12 @@ void test_loader_exceptions_are_captured() {
     auto finish = streaming.update({0, 0, 0}, 0, 0);
     check(finish && finish.value().failed_loads == 1, "captures worker exception as failed cell");
     check(world.find("throws")->last_error == "loader exploded", "stores exception message");
+    check(finish && finish.value().started_loads == 0, "does not repeat thrown loads every frame");
 }
 }
 int main() {
     test_async_loads_and_main_thread_unloads();
-    test_failures_and_invalid_configuration();
+    test_failures_require_explicit_retry();
     test_loader_exceptions_are_captured();
     if (failures != 0) { std::cerr << failures << " streaming test(s) failed.\n"; return 1; }
     std::cout << "ECOS Studio asynchronous world streaming tests passed.\n";
