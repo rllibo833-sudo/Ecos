@@ -97,6 +97,27 @@ void test_large_deep_scene_round_trip() {
     }
 }
 
+void test_mesh_asset_reference_round_trip_and_v1_compatibility() {
+    using namespace ecos::studio;
+    SceneGraph graph;
+    auto root = graph.create_node("Root");
+    auto mesh_node = graph.create_node("Crate", root.value());
+    check(root && mesh_node, "creates mesh asset scene nodes");
+    if (!root || !mesh_node) return;
+    check(graph.set_mesh_asset(mesh_node.value(), "crate.mesh"), "assigns mesh asset reference");
+    auto serialized = serialize_scene("asset-scene", graph);
+    check(serialized && serialized.value().find("format_version=2\n") == 0, "uses scene format v2 when mesh refs exist");
+    if (!serialized) return;
+    auto loaded = deserialize_scene(serialized.value());
+    check(loaded, "loads scene format v2");
+    if (loaded) {
+        const auto* node = loaded.value().find(mesh_node.value());
+        check(node && node->mesh_asset_id == "crate.mesh", "round trip preserves mesh asset ID");
+    }
+    auto legacy = deserialize_scene("format_version=1\nscene_id=legacy\nnode=1|-|Legacy|0,0,0|0,0,0|1,1,1\n");
+    check(legacy && legacy.value().find(1)->mesh_asset_id.empty(), "v1 scene remains compatible");
+    check(!graph.set_mesh_asset(mesh_node.value(), "bad|asset"), "rejects delimiters in asset ID");
+}
 void test_rejects_bad_documents() {
     using namespace ecos::studio;
     check(!deserialize_scene("scene_id=x\nnode=1|-|World|0,0,0|0,0,0|1,1,1\n"),
@@ -117,6 +138,7 @@ int main() {
     test_preserves_ids_and_multiple_roots();
     test_large_deep_scene_round_trip();
     test_rejects_bad_documents();
+    test_mesh_asset_reference_round_trip_and_v1_compatibility();
     if (failures != 0) { std::cerr << failures << " test(s) failed.\n"; return 1; }
     std::cout << "ECOS Studio scene serialization tests passed.\n";
     return 0;
