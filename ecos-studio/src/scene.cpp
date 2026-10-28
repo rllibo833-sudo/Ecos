@@ -6,6 +6,7 @@
 #include <limits>
 #include <sstream>
 #include <tuple>
+#include <unordered_set>
 #include <utility>
 
 namespace ecos::studio {
@@ -142,16 +143,30 @@ Result<void> SceneGraph::restore_subtree(const std::vector<SceneNode>& snapshot)
             if (node.parent && !nodes_.contains(*node.parent))
                 return Result<void>::failure({ErrorCode::not_found, "Scene subtree parent does not exist"});
         }
+    }
+
+    // Each node has at most one parent, so color-marked parent walks validate
+    // the entire staged hierarchy in linear time instead of re-walking every
+    // ancestor chain for every node.
+    std::unordered_map<NodeId, unsigned char> visit_state;
+    visit_state.reserve(staged.size());
+    for (const auto& [id, node] : staged) {
+        (void)node;
+        if (visit_state[id] == 2) continue;
+        std::vector<NodeId> path;
         NodeId current = id;
-        std::size_t steps = 0;
-        while (true) {
-            const auto current_it = staged.find(current);
-            if (current_it == staged.end() || !current_it->second.parent ||
-                !staged.contains(*current_it->second.parent)) break;
-            current = *current_it->second.parent;
-            if (++steps > staged.size())
+        while (staged.contains(current)) {
+            const auto state = visit_state[current];
+            if (state == 2) break;
+            if (state == 1)
                 return Result<void>::failure({ErrorCode::invalid_argument, "Scene subtree contains a hierarchy cycle"});
+            visit_state[current] = 1;
+            path.push_back(current);
+            const auto& current_node = staged.at(current);
+            if (!current_node.parent || !staged.contains(*current_node.parent)) break;
+            current = *current_node.parent;
         }
+        for (const auto visited : path) visit_state[visited] = 2;
     }
     if (roots != 1)
         return Result<void>::failure({ErrorCode::invalid_argument, "Scene subtree must have exactly one root"});
@@ -293,6 +308,7 @@ Result<SceneGraph> deserialize_scene(const std::string& text) {
     bool id_seen = false;
     bool has_version_one = false;
     std::vector<PendingNode> pending;
+    std::unordered_set<std::uint64_t> seen_source_ids;
     std::string line;
     std::istringstream input(text);
     std::size_t line_number = 0;
@@ -330,7 +346,7 @@ Result<SceneGraph> deserialize_scene(const std::string& text) {
                 !parse_vec3(fields[5], node.transform.scale))
                 return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Invalid scene node name or transform"});
             node.name = fields[2];
-            if (std::any_of(pending.begin(), pending.end(), [&](const PendingNode& old) { return old.source_id == node.source_id; }))
+            if (!seen_source_ids.insert(node.source_id).second)
                 return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Duplicate scene node id"});
             pending.push_back(std::move(node));
         } else {
@@ -348,15 +364,31 @@ Result<SceneGraph> deserialize_scene(const std::string& text) {
     for (const auto& node : pending) {
         if (node.source_parent && !by_id.contains(*node.source_parent))
             return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Scene contains a missing parent or hierarchy cycle"});
-        std::uint64_t current = node.source_id;
-        std::size_t steps = 0;
+    }
+    std::unordered_map<std::uint64_t, unsigned char> visit_state;
+    visit_state.reserve(pending.size());
+    for (const auto& node : pending) {
+        if (visit_state[node.source_id] == 2) continue;
+        std::vector<std::uint64_t> path;
+        auto current = node.source_id;
         while (true) {
-            const auto found = by_id.find(current);
-            if (found == by_id.end() || !found->second->source_parent) break;
-            current = *found->second->source_parent;
-            if (++steps > pending.size())
+            const auto state = visit_state[current];
+            if (state == 2) break;
+            if (state == 1)
                 return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Scene contains a missing parent or hierarchy cycle"});
+            visit_state[current] = 1;
+            path.push_back(current);
+            const auto* current_node = by_id.at(current);
+            if (!current_node->source_parent) break;
+            current = *current_node->source_parent;
         }
+        for (const auto visited : path) visit_state[visited] = 2;
+    }
+
+    std::unordered_map<std::uint64_t, std::vector<std::uint64_t>> children_by_parent;
+    children_by_parent.reserve(pending.size());
+    for (const auto& node : pending) {
+        if (node.source_parent) children_by_parent[*node.source_parent].push_back(node.source_id);
     }
 
     // Restore each root subtree using source IDs instead of allocating new IDs.
@@ -379,9 +411,9 @@ Result<SceneGraph> deserialize_scene(const std::string& text) {
             node.local_transform = source.transform;
             node.parent = source.source_parent;
             snapshot.push_back(std::move(node));
-            for (const auto& child : pending) {
-                if (child.source_parent && *child.source_parent == current)
-                    stack.push_back(child.source_id);
+            const auto children = children_by_parent.find(current);
+            if (children != children_by_parent.end()) {
+                for (const auto child_id : children->second) stack.push_back(child_id);
             }
         }
         auto restored = graph.restore_subtree(snapshot);

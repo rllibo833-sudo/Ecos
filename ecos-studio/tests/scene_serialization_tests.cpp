@@ -73,6 +73,30 @@ void test_preserves_ids_and_multiple_roots() {
     check(next && next.value() > child.value(), "new IDs do not collide after loading sparse IDs");
 }
 
+
+void test_large_deep_scene_round_trip() {
+    using namespace ecos::studio;
+    SceneGraph graph;
+    auto parent = graph.create_node("Node-0");
+    check(parent, "creates root for deep scene");
+    if (!parent) return;
+    for (int i = 1; i < 1500; ++i) {
+        auto child = graph.create_node("Node-" + std::to_string(i), parent.value());
+        check(child, "creates child in deep scene");
+        if (!child) return;
+        parent = child;
+    }
+    auto serialized = serialize_scene("deep-scene", graph);
+    check(serialized, "serializes deep scene");
+    if (!serialized) return;
+    auto loaded = deserialize_scene(serialized.value());
+    check(loaded, "deserializes deep scene without quadratic hierarchy validation");
+    if (loaded) {
+        check(loaded.value().size() == 1500, "deep round trip preserves all nodes");
+        check(loaded.value().find(1500) != nullptr, "deep round trip preserves deepest node ID");
+    }
+}
+
 void test_rejects_bad_documents() {
     using namespace ecos::studio;
     check(!deserialize_scene("scene_id=x\nnode=1|-|World|0,0,0|0,0,0|1,1,1\n"),
@@ -91,6 +115,7 @@ void test_rejects_bad_documents() {
 int main() {
     test_round_trip();
     test_preserves_ids_and_multiple_roots();
+    test_large_deep_scene_round_trip();
     test_rejects_bad_documents();
     if (failures != 0) { std::cerr << failures << " test(s) failed.\n"; return 1; }
     std::cout << "ECOS Studio scene serialization tests passed.\n";
