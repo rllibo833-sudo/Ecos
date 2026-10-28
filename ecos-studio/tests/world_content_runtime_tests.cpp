@@ -49,6 +49,15 @@ void test_load_resident_snapshot_unload_and_reload() {
             check(completed && completed.value().completed_loads == 1, "completes content load");
             check(runtime->world().find("origin")->state == CellState::loaded, "marks origin cell loaded");
             check(runtime->resident_content_count() == 1, "stores parsed scene while cell is resident");
+            check(runtime->entity_count() == 2, "materializes scene nodes as runtime entities");
+            auto spawn_entity = runtime->entity_for_node("origin", 1);
+            check(spawn_entity.has_value(), "maps scene node IDs to stable entity handles");
+            if (spawn_entity) {
+                const auto* tag = runtime->entities().get<WorldCellEntityComponent>(*spawn_entity);
+                const auto* node = runtime->entities().get<SceneNodeComponent>(*spawn_entity);
+                check(tag && tag->cell_id == "origin" && tag->scene_node_id == 1, "tags runtime entities with source cell and node");
+                check(node && node->name == "Spawn", "copies scene node data into ECS component");
+            }
             auto scene = runtime->scene_snapshot("origin");
             check(scene && scene.value().size() == 2, "exposes a safe snapshot of the loaded scene");
             check(!runtime->scene_snapshot("east"), "does not expose an unloaded scene");
@@ -61,6 +70,8 @@ void test_load_resident_snapshot_unload_and_reload() {
             auto arrived = runtime->update({10, 0, 0}, 0, 1);
             check(arrived && arrived.value().completed_loads == 1, "completes destination content load");
             check(!runtime->scene_snapshot("origin"), "evicted scene is no longer accessible");
+            check(runtime->entity_count() == 1, "unloading a cell destroys its runtime entities");
+            check(!runtime->entity_for_node("origin", 1), "removes scene-to-entity mapping on unload");
             check(runtime->scene_snapshot("east"), "destination scene becomes accessible");
             auto return_trip = runtime->update({0, 0, 0}, 0, 1);
             check(return_trip && return_trip.value().unloaded_cells == 1 && return_trip.value().started_loads == 1,
@@ -69,6 +80,7 @@ void test_load_resident_snapshot_unload_and_reload() {
             auto returned = runtime->update({0, 0, 0}, 0, 1);
             check(returned && returned.value().completed_loads == 1, "reloaded cell completes");
             check(runtime->scene_snapshot("origin"), "reloaded scene can be queried again");
+            check(runtime->entity_count() == 2 && runtime->entity_for_node("origin", 1), "recreates entities when a cell is reloaded");
         }
     }
     std::filesystem::remove_all(root);
