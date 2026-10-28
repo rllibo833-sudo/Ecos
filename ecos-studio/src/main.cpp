@@ -118,15 +118,15 @@ int main(int argc, char** argv) {
     if (command == "world-inspect") {
         if (argc != 3) { print_usage(); return 1; }
         auto manifest = ecos::studio::load_world_manifest(std::filesystem::path(argv[2]));
-        if (!manifest) { std::cerr << "error: " << manifest.error().message << '\\n'; return 2; }
+        if (!manifest) { std::cerr << "error: " << manifest.error().message << '\n'; return 2; }
         auto runtime = manifest.value().create_runtime();
-        if (!runtime) { std::cerr << "error: " << runtime.error().message << '\\n'; return 2; }
+        if (!runtime) { std::cerr << "error: " << runtime.error().message << '\n'; return 2; }
         std::cout << "World '" << manifest.value().world_id << "' (" << runtime.value().size()
-                  << " cells, budget " << runtime.value().max_loaded_cells() << ")\\n";
+                  << " cells, budget " << runtime.value().max_loaded_cells() << ")\n";
         for (const auto& cell : manifest.value().cells) {
             std::cout << "  " << cell.id << " [" << cell.region_id << "] @ "
                       << cell.coord.x << ',' << cell.coord.y << ',' << cell.coord.z
-                      << " -> " << cell.content_path.generic_string() << '\\n';
+                      << " -> " << cell.content_path.generic_string() << '\n';
         }
         return 0;
     }
