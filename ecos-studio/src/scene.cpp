@@ -108,6 +108,68 @@ Result<void> SceneGraph::set_parent(NodeId node_id, std::optional<NodeId> parent
     return Result<void>::success();
 }
 
+Result<void> SceneGraph::rename_node(NodeId node_id, std::string name) {
+    if (name.empty()) return Result<void>::failure({ErrorCode::invalid_argument, "Scene node name must not be empty"});
+    auto* node = find(node_id);
+    if (!node) return Result<void>::failure({ErrorCode::not_found, "Scene node does not exist"});
+    node->name = std::move(name);
+    return Result<void>::success();
+}
+
+Result<void> SceneGraph::restore_subtree(const std::vector<SceneNode>& snapshot) {
+    if (snapshot.empty())
+        return Result<void>::failure({ErrorCode::invalid_argument, "Cannot restore an empty scene subtree"});
+
+    std::unordered_map<NodeId, SceneNode> staged;
+    staged.reserve(snapshot.size());
+    NodeId maximum_id = 0;
+    for (const auto& original : snapshot) {
+        if (original.id == 0 || nodes_.contains(original.id) ||
+            !staged.emplace(original.id, original).second)
+            return Result<void>::failure({ErrorCode::invalid_argument, "Scene subtree contains an invalid or duplicate node id"});
+        staged.at(original.id).children.clear();
+        maximum_id = std::max(maximum_id, original.id);
+    }
+    if (maximum_id == std::numeric_limits<NodeId>::max())
+        return Result<void>::failure({ErrorCode::invalid_argument, "Scene node id space is exhausted"});
+
+    std::size_t roots = 0;
+    NodeId root_id = 0;
+    for (const auto& [id, node] : staged) {
+        if (!node.parent || !staged.contains(*node.parent)) {
+            ++roots;
+            root_id = id;
+            if (node.parent && !nodes_.contains(*node.parent))
+                return Result<void>::failure({ErrorCode::not_found, "Scene subtree parent does not exist"});
+        }
+        NodeId current = id;
+        std::size_t steps = 0;
+        while (true) {
+            const auto current_it = staged.find(current);
+            if (current_it == staged.end() || !current_it->second.parent ||
+                !staged.contains(*current_it->second.parent)) break;
+            current = *current_it->second.parent;
+            if (++steps > staged.size())
+                return Result<void>::failure({ErrorCode::invalid_argument, "Scene subtree contains a hierarchy cycle"});
+        }
+    }
+    if (roots != 1)
+        return Result<void>::failure({ErrorCode::invalid_argument, "Scene subtree must have exactly one root"});
+
+    for (auto& [id, node] : staged) {
+        (void)id;
+        nodes_.emplace(node.id, std::move(node));
+    }
+    for (const auto& [id, node] : staged) {
+        if (node.parent) nodes_.at(*node.parent).children.push_back(id);
+    }
+    const auto& root = nodes_.at(root_id);
+    if (root.parent) nodes_.at(*root.parent).children.push_back(root_id);
+    else roots_.push_back(root_id);
+    next_id_ = std::max(next_id_, maximum_id + 1);
+    return Result<void>::success();
+}
+
 Result<void> SceneGraph::set_local_transform(NodeId node_id, const Transform& transform) {
     auto* node = find(node_id);
     if (!node) return Result<void>::failure({ErrorCode::not_found, "Scene node does not exist"});

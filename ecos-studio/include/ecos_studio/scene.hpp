@@ -46,6 +46,8 @@ public:
     [[nodiscard]] Result<NodeId> create_node(std::string name, std::optional<NodeId> parent = std::nullopt);
     [[nodiscard]] Result<void> set_parent(NodeId node, std::optional<NodeId> parent);
     [[nodiscard]] Result<void> set_local_transform(NodeId node, const Transform& transform);
+    [[nodiscard]] Result<void> rename_node(NodeId node, std::string name);
+    [[nodiscard]] Result<void> restore_subtree(const std::vector<SceneNode>& snapshot);
     [[nodiscard]] Result<void> destroy_subtree(NodeId node);
     [[nodiscard]] const SceneNode* find(NodeId node) const noexcept;
     [[nodiscard]] SceneNode* find(NodeId node) noexcept;
