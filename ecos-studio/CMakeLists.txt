@@ -7,7 +7,7 @@ add_library(ecos_studio_core
     src/core.cpp src/project.cpp src/result.cpp src/platform.cpp
     src/scene.cpp src/asset_registry.cpp src/world.cpp src/world_manifest.cpp
     src/mesh.cpp src/render.cpp src/content_hash.cpp src/input.cpp src/time.cpp src/engine_loop.cpp src/camera.cpp src/physics.cpp src/material.cpp src/audio.cpp
-    src/package_manager.cpp src/asset_importer.cpp src/entity.cpp
+    src/package_manager.cpp src/asset_importer.cpp src/entity.cpp src/job_system.cpp
 )
 target_include_directories(ecos_studio_core PUBLIC include)
 target_compile_features(ecos_studio_core PUBLIC cxx_std_20)
@@ -92,6 +92,10 @@ add_test(NAME asset_import_and_metadata COMMAND ecos-studio-asset-importer-tests
 add_executable(ecos-studio-entity-tests tests/entity_tests.cpp)
 target_link_libraries(ecos-studio-entity-tests PRIVATE ecos_studio_core)
 add_test(NAME entity_component_lifecycle COMMAND ecos-studio-entity-tests)
+
+add_executable(ecos-studio-job-system-tests tests/job_system_tests.cpp)
+target_link_libraries(ecos-studio-job-system-tests PRIVATE ecos_studio_core Threads::Threads)
+add_test(NAME native_job_system COMMAND ecos-studio-job-system-tests)
 
 # Installable SDK/runtime layout. On Windows the executable is emitted as
 # ecos-studio.exe by CMake; the same install rules support portable packages.
