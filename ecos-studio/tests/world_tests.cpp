@@ -42,10 +42,44 @@ void test_spatial_query() {
     check(nearby.size() == 2, "spatial query uses radius distance");
     check(nearby[0] == "c0" && nearby[1] == "c1", "spatial query results are deterministic");
 }
+void test_streaming_plan_prioritizes_nearest_and_frees_budget() {
+    using namespace ecos::studio;
+    WorldRuntime world(2);
+    check(world.register_cell({"resident-far", "r", {20, 0, 0}, "world/far.ecell"}), "register far resident");
+    check(world.register_cell({"near-b", "r", {2, 0, 0}, "world/near-b.ecell"}), "register near candidate B");
+    check(world.register_cell({"near-a", "r", {1, 0, 0}, "world/near-a.ecell"}), "register near candidate A");
+    check(world.register_cell({"outside", "r", {50, 0, 0}, "world/outside.ecell"}), "register outside candidate");
+    check(world.request_load("resident-far"), "begin far resident load");
+    check(world.complete_load("resident-far", true), "complete far resident load");
+
+    const auto plan = world.plan_streaming({0, 0, 0}, 3, 5);
+    check(plan.unload.size() == 1 && plan.unload.front() == "resident-far",
+          "plans to unload resident outside hysteresis radius");
+    check(plan.load.size() == 2 && plan.load[0] == "near-a" && plan.load[1] == "near-b",
+          "prioritizes nearest cells and respects capacity released by unload");
+    check(world.find("resident-far")->state == CellState::loaded,
+          "planning is side-effect-free and leaves execution to runtime owner");
+    check(world.find("near-a")->state == CellState::unloaded,
+          "planning does not start IO implicitly");
+}
+void test_streaming_keeps_loading_cells_and_is_deterministic() {
+    using namespace ecos::studio;
+    WorldRuntime world(2);
+    check(world.register_cell({"z", "r", {1, 0, 0}, "world/z.ecell"}), "register z");
+    check(world.register_cell({"a", "r", {-1, 0, 0}, "world/a.ecell"}), "register a");
+    check(world.register_cell({"in-flight", "r", {100, 0, 0}, "world/in-flight.ecell"}), "register in-flight");
+    check(world.request_load("in-flight"), "start in-flight cell");
+    const auto plan = world.plan_streaming({0, 0, 0}, 2, 3);
+    check(plan.load.size() == 1 && plan.load[0] == "a",
+          "does not exceed budget and breaks equal-distance ties by id");
+    check(plan.unload.empty(), "never schedules in-flight loads for unload");
+}
 }
 int main() {
     test_cell_lifecycle_and_budget();
     test_spatial_query();
+    test_streaming_plan_prioritizes_nearest_and_frees_budget();
+    test_streaming_keeps_loading_cells_and_is_deterministic();
     if (failures != 0) { std::cerr << failures << " test(s) failed.\n"; return 1; }
     std::cout << "ECOS Studio world runtime tests passed.\n";
     return 0;
