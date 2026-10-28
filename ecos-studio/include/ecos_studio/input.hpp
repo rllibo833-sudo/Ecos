@@ -1,44 +1,27 @@
 #pragma once
-
-#include <cstddef>
-#include <mutex>
-#include <unordered_set>
-#include <vector>
-
+#include "ecos_studio/result.hpp"
+#include <array>
+#include <cstdint>
 namespace ecos::studio {
-enum class InputEventType { key_pressed, key_released, mouse_button_pressed, mouse_button_released, mouse_moved, mouse_wheel, focus_lost };
-struct InputEvent {
-    InputEventType type{InputEventType::key_pressed};
-    int code{0};
-    float x{0.0F};
-    float y{0.0F};
-};
-class InputEventQueue {
-public:
-    void push(InputEvent event);
-    [[nodiscard]] std::vector<InputEvent> drain();
-    [[nodiscard]] std::size_t size() const;
-private:
-    mutable std::mutex mutex_;
-    std::vector<InputEvent> events_;
+enum class InputKey : std::uint16_t { Unknown=0, W, A, S, D, Q, E, Space, Escape, Left, Right, Up, Down, Count };
+enum class InputAction : std::uint8_t { Release=0, Press=1, Repeat=2 };
+struct InputSnapshot {
+ std::array<bool,static_cast<std::size_t>(InputKey::Count)> keys{};
+ std::array<bool,8> mouse_buttons{};
+ double mouse_x{0},mouse_y{0},mouse_delta_x{0},mouse_delta_y{0},scroll_x{0},scroll_y{0};
+ bool quit_requested{false};
+ [[nodiscard]] bool down(InputKey key) const noexcept;
 };
 class InputState {
 public:
-    void begin_frame() noexcept;
-    void apply(const InputEvent& event);
-    [[nodiscard]] bool key_down(int code) const noexcept;
-    [[nodiscard]] bool key_pressed(int code) const noexcept;
-    [[nodiscard]] bool key_released(int code) const noexcept;
-    [[nodiscard]] bool mouse_button_down(int code) const noexcept;
-    [[nodiscard]] bool mouse_button_pressed(int code) const noexcept;
-    [[nodiscard]] bool mouse_button_released(int code) const noexcept;
-    [[nodiscard]] float mouse_x() const noexcept;
-    [[nodiscard]] float mouse_y() const noexcept;
-    [[nodiscard]] float wheel_x() const noexcept;
-    [[nodiscard]] float wheel_y() const noexcept;
-private:
-    std::unordered_set<int> keys_down_, keys_pressed_, keys_released_;
-    std::unordered_set<int> buttons_down_, buttons_pressed_, buttons_released_;
-    float mouse_x_{0.0F}, mouse_y_{0.0F}, wheel_x_{0.0F}, wheel_y_{0.0F};
+ [[nodiscard]] Result<void> key_event(InputKey key,InputAction action);
+ [[nodiscard]] Result<void> mouse_button_event(std::uint8_t button,InputAction action);
+ void mouse_move(double x,double y) noexcept;
+ void scroll(double x,double y) noexcept;
+ void request_quit() noexcept;
+ [[nodiscard]] InputSnapshot snapshot() const noexcept;
+ void end_frame() noexcept;
+ void reset() noexcept;
+private: InputSnapshot state_{}; bool have_mouse_position_{false};
 };
-} // namespace ecos::studio
+}

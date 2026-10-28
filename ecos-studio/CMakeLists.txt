@@ -6,7 +6,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_library(ecos_studio_core
     src/core.cpp src/project.cpp src/result.cpp src/platform.cpp
     src/scene.cpp src/asset_registry.cpp src/world.cpp src/world_manifest.cpp
-    src/mesh.cpp src/render.cpp src/content_hash.cpp src/input.cpp src/camera.cpp src/physics.cpp src/material.cpp src/audio.cpp
+    src/mesh.cpp src/render.cpp src/content_hash.cpp src/input.cpp src/input.cpp src/camera.cpp src/physics.cpp src/material.cpp src/audio.cpp
 )
 target_include_directories(ecos_studio_core PUBLIC include)
 target_compile_features(ecos_studio_core PUBLIC cxx_std_20)
