@@ -21,6 +21,32 @@ float dot(Vec3f a, Vec3f b) { return a.x*b.x+a.y*b.y+a.z*b.z; }
 float length(Vec3f v) { return std::sqrt(dot(v,v)); }
 }
 
+Result<std::string> render_mesh_to_ppm(
+    const MeshData& mesh, const Matrix4& world_transform,
+    std::uint32_t width, std::uint32_t height) {
+    MeshData transformed = mesh;
+    for (const float value : world_transform.values) {
+        if (!std::isfinite(value)) {
+            return Result<std::string>::failure({ErrorCode::invalid_argument,
+                "World transform contains non-finite matrix values"});
+        }
+    }
+    for (auto& position : transformed.positions) {
+        const float x = position.x;
+        const float y = position.y;
+        const float z = position.z;
+        position = {
+            world_transform.values[0] * x + world_transform.values[1] * y +
+                world_transform.values[2] * z + world_transform.values[3],
+            world_transform.values[4] * x + world_transform.values[5] * y +
+                world_transform.values[6] * z + world_transform.values[7],
+            world_transform.values[8] * x + world_transform.values[9] * y +
+                world_transform.values[10] * z + world_transform.values[11]
+        };
+    }
+    return render_mesh_to_ppm(transformed, width, height);
+}
+
 Result<std::string> render_mesh_to_ppm(const MeshData& mesh, std::uint32_t width, std::uint32_t height) {
     constexpr std::uint32_t max_dimension = 4096;
     if (width == 0 || height == 0 || width > max_dimension || height > max_dimension) {

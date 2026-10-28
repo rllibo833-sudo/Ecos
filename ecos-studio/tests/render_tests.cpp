@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <iostream>
+#include <limits>
 #include <string>
 
 namespace {
@@ -30,6 +31,27 @@ void test_renders_triangle() {
     check(found_geometry,"rasterizes colored triangle pixels");
     check(image.value().size()==header_end+64U*64U*3U,"image contains exact RGB payload");
 }
+
+void test_world_transform_changes_rendered_geometry() {
+    using namespace ecos::studio;
+    auto mesh = import_obj_mesh("v -1 -1 0\\nv 1 -1 0\\nv 0 1 0\\nf 1 2 3\\n");
+    check(static_cast<bool>(mesh), "mesh imports for world-transform render test");
+    if (!mesh) return;
+    const auto identity = Matrix4::identity();
+    auto baseline = render_mesh_to_ppm(mesh.value(), identity, 64, 64);
+    Transform transform;
+    transform.scale = {1.0F, 0.25F, 1.0F};
+    const auto flattened = compose(transform);
+    auto transformed = render_mesh_to_ppm(mesh.value(), flattened, 64, 64);
+    check(baseline && transformed, "renders mesh with identity and world transforms");
+    if (baseline && transformed) check(baseline.value() != transformed.value(),
+        "world transform affects rasterized geometry");
+    auto invalid = Matrix4::identity();
+    invalid.values[0] = std::numeric_limits<float>::infinity();
+    check(!render_mesh_to_ppm(mesh.value(), invalid, 64, 64),
+        "rejects non-finite world transform matrices");
+}
+
 void test_rejects_bad_inputs() {
     using namespace ecos::studio;
     MeshData mesh;
@@ -45,6 +67,7 @@ void test_rejects_bad_inputs() {
 }
 int main() {
     test_renders_triangle();
+    test_world_transform_changes_rendered_geometry();
     test_rejects_bad_inputs();
     if (failures) { std::cerr << failures << " test(s) failed.\n"; return 1; }
     std::cout << "ECOS Studio CPU renderer tests passed.\n";
