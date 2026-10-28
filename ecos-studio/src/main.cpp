@@ -1,3 +1,4 @@
+#include "ecos_studio/asset_importer.hpp"
 #include "ecos_studio/mesh.hpp"
 #include "ecos_studio/package_manager.hpp"
 #include "ecos_studio/platform.hpp"
@@ -19,6 +20,7 @@ void print_usage() {
               << "  ecos-studio mod-init <directory> <mod-id>\n"
               << "  ecos-studio mod-validate <mod-directory>\n"
               << "  ecos-studio mod-resolve <mods-root-directory>\n"
+              << "  ecos-studio asset-import <project-directory> <source.obj> <asset-id>\n"
               << "  ecos-studio scene-validate <scene.ecscene>\n"
               << "  ecos-studio world-validate <world.ecworld>\n"
               << "  ecos-studio mesh-render <mesh.obj> <output.ppm> [width height]\n";
@@ -75,6 +77,17 @@ int main(int argc, char** argv) {
         std::cout << "Resolved " << resolved.load_order.size() << " mod package(s), dependency-first load order:\n";
         for (std::size_t index = 0; index < resolved.load_order.size(); ++index)
             std::cout << "  " << (index + 1) << ". " << resolved.load_order[index] << '\n';
+        return 0;
+    }
+    if (command == "asset-import") {
+        if (argc != 5) { print_usage(); return 1; }
+        auto imported = ecos::studio::import_obj_asset(std::filesystem::path(argv[2]),
+                                                       std::filesystem::path(argv[3]), argv[4]);
+        if (!imported) { std::cerr << "error: " << imported.error().message << '\n'; return 2; }
+        const auto& asset = imported.value();
+        std::cout << "Imported mesh '" << asset.id << "' to " << asset.relative_path.generic_string()
+                  << " (" << asset.vertex_count << " vertices, " << asset.triangle_count
+                  << " triangles, SHA-256 " << asset.content_sha256 << ").\n";
         return 0;
     }
     if (command == "scene-validate") {

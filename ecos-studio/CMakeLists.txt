@@ -7,7 +7,7 @@ add_library(ecos_studio_core
     src/core.cpp src/project.cpp src/result.cpp src/platform.cpp
     src/scene.cpp src/asset_registry.cpp src/world.cpp src/world_manifest.cpp
     src/mesh.cpp src/render.cpp src/content_hash.cpp src/input.cpp src/time.cpp src/engine_loop.cpp src/camera.cpp src/physics.cpp src/material.cpp src/audio.cpp
-    src/package_manager.cpp
+    src/package_manager.cpp src/asset_importer.cpp
 )
 target_include_directories(ecos_studio_core PUBLIC include)
 target_compile_features(ecos_studio_core PUBLIC cxx_std_20)
@@ -84,3 +84,7 @@ add_test(NAME mod_manifest_dependencies_and_safety COMMAND ecos-studio-mod-manif
 add_executable(ecos-studio-package-manager-tests tests/package_manager_tests.cpp)
 target_link_libraries(ecos-studio-package-manager-tests PRIVATE ecos_studio_core)
 add_test(NAME mod_package_dependency_resolution COMMAND ecos-studio-package-manager-tests)
+
+add_executable(ecos-studio-asset-importer-tests tests/asset_importer_tests.cpp)
+target_link_libraries(ecos-studio-asset-importer-tests PRIVATE ecos_studio_core)
+add_test(NAME asset_import_and_metadata COMMAND ecos-studio-asset-importer-tests)

@@ -8,6 +8,7 @@ It is not yet a complete Unreal Engine 5-equivalent product. Implemented capabil
 
 - Project and data-only mod scaffold creation/validation CLI, with validated dependency declarations for third-party creators.
 - Deterministic mod dependency resolver with installed-package discovery, missing-dependency diagnostics, cycle detection, and stable dependency-first ordering.
+- OBJ asset import into an existing project, with geometry validation, preserved source bytes, SHA-256 content fingerprint, mesh bounds/counts, and a versioned `.ecasset` sidecar.
 - Runtime lifecycle, thread-safe logging, typed errors/results, and safe relative-path/filesystem helpers.
 - Scene graph with hierarchical transforms, cycle prevention, subtree removal, versioned serialization, and validation CLI.
 - Asset registry with stable IDs, dependency reference/cycle validation, and SHA-256 content fingerprints.
@@ -31,11 +32,21 @@ ECOS Studio is intended as a general-purpose engine and creator toolkit, not an 
 
 The `mod-resolve` command scans immediate child directories under a mods root, validates each discovered package, reports missing dependencies and dependency cycles, and prints a deterministic dependency-first order:
 
-~~~sh
+~~~
 ecos-studio mod-resolve ../MyGame/mods
 ~~~
 
 Resolution is local-only: packages must already exist on disk. There is no package download, version-range solver, runtime loading, or executable scripting yet. Mods remain data-only for safety.
+
+## Importing assets
+
+Import a valid Wavefront OBJ into a project. The importer copies the original file into `assets/imported/` and creates a `.ecasset` metadata file containing the asset ID, type, SHA-256 fingerprint, vertex/triangle counts, and bounds.
+
+~~~
+ecos-studio asset-import ../MyGame ./models/character.obj character.mesh
+~~~
+
+Imports reject malformed geometry, unsafe IDs, invalid projects, and existing output files rather than silently overwriting them. MTL parsing is available as a separate foundation; automatic OBJ-to-MTL linking and texture import are not yet wired into this command.
 
 ## Not implemented yet
 
@@ -60,6 +71,7 @@ ecos-studio validate ../MyGame
 ecos-studio mod-init ../MyGameMod com.example.my-mod
 ecos-studio mod-validate ../MyGameMod
 ecos-studio mod-resolve ../MyGame/mods
+ecos-studio asset-import ../MyGame ./models/character.obj character.mesh
 ecos-studio scene-validate examples/hello-world/scenes/main.ecscene
 ecos-studio world-validate examples/large-world/world.ecworld
 ~~~
