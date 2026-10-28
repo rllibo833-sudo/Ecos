@@ -46,22 +46,23 @@ Result<std::string> render_mesh_to_ppm(const MeshData& mesh, std::uint32_t width
     float min_y = min_x;
     float max_x = std::numeric_limits<float>::lowest();
     float max_y = max_x;
-    float min_z = min_x;
-    float max_z = max_x;
     for (const auto& p : mesh.positions) {
         if (!std::isfinite(p.x) || !std::isfinite(p.y) || !std::isfinite(p.z)) {
             return Result<std::string>::failure({ErrorCode::invalid_argument, "Mesh contains non-finite vertex coordinates"});
         }
         min_x = std::min(min_x,p.x); max_x = std::max(max_x,p.x);
         min_y = std::min(min_y,p.y); max_y = std::max(max_y,p.y);
-        min_z = std::min(min_z,p.z); max_z = std::max(max_z,p.z);
     }
     const float span_x = max_x-min_x;
     const float span_y = max_y-min_y;
     const float span = std::max({span_x,span_y,0.0001F});
+    if (!std::isfinite(span_x) || !std::isfinite(span_y) || !std::isfinite(span)) {
+        return Result<std::string>::failure({ErrorCode::invalid_argument,
+            "Mesh bounds exceed the renderer's numeric range"});
+    }
     const float scale = 0.90F * static_cast<float>(std::min(width,height)) / span;
-    const float center_x = (min_x+max_x)*0.5F;
-    const float center_y = (min_y+max_y)*0.5F;
+    const float center_x = min_x*0.5F+max_x*0.5F;
+    const float center_y = min_y*0.5F+max_y*0.5F;
     std::vector<ScreenVertex> projected;
     projected.reserve(mesh.positions.size());
     for (const auto& p : mesh.positions) {

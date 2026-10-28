@@ -20,6 +20,10 @@ jobs:
         run: cmake --build build/ecos-studio --parallel 2
       - name: Run automated tests
         run: ctest --test-dir build/ecos-studio --output-on-failure
+      - name: Render sample mesh to image
+        run: |
+          build/ecos-studio/ecos-studio mesh-render ecos-studio/examples/hello-world/assets/triangle.obj /tmp/ecos-studio-triangle.ppm 160 120
+          test -s /tmp/ecos-studio-triangle.ppm
       - name: Validate sample scene
         run: build/ecos-studio/ecos-studio scene-validate ecos-studio/examples/hello-world/scenes/main.ecscene
       - name: Validate sample world manifest
