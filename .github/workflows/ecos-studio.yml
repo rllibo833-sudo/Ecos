@@ -1,0 +1,32 @@
+name: ECOS Studio Bootstrap
+
+on:
+  push:
+    paths:
+      - 'ecos-studio/**'
+      - '.github/workflows/ecos-studio.yml'
+  pull_request:
+    paths:
+      - 'ecos-studio/**'
+      - '.github/workflows/ecos-studio.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S ecos-studio -B build/ecos-studio -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build/ecos-studio --parallel 2
+      - name: Smoke test CLI
+        run: ctest --test-dir build/ecos-studio --output-on-failure
+      - name: Create and validate project scaffold
+        run: |
+          build/ecos-studio/ecos-studio new /tmp/ecos-studio-sample "ECOS Sample"
+          build/ecos-studio/ecos-studio validate /tmp/ecos-studio-sample
+      - name: Create and validate mod scaffold
+        run: |
+          build/ecos-studio/ecos-studio mod-init /tmp/ecos-studio-mod com.ecos.sample
+          build/ecos-studio/ecos-studio mod-validate /tmp/ecos-studio-mod

@@ -1,0 +1,6 @@
+# Sample project manifest for ECOS Studio bootstrap
+format_version=1
+name=Hello World
+project_type=game
+world_mode=streamed
+entry_scene=scenes/main.ecos-scene
