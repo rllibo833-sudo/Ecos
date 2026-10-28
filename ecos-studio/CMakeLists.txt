@@ -6,7 +6,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_library(ecos_studio_core
     src/core.cpp src/project.cpp src/result.cpp src/platform.cpp
     src/scene.cpp src/asset_registry.cpp src/world.cpp src/world_manifest.cpp
-    src/mesh.cpp src/render.cpp
+    src/mesh.cpp src/render.cpp src/content_hash.cpp
 )
 target_include_directories(ecos_studio_core PUBLIC include)
 target_compile_features(ecos_studio_core PUBLIC cxx_std_20)
@@ -39,7 +39,10 @@ add_test(NAME world_manifest_validation COMMAND ecos-studio-world-manifest-tests
 add_executable(ecos-studio-mesh-import-tests tests/mesh_import_tests.cpp)
 target_link_libraries(ecos-studio-mesh-import-tests PRIVATE ecos_studio_core)
 add_test(NAME obj_mesh_import COMMAND ecos-studio-mesh-import-tests)
+add_executable(ecos-studio-content-hash-tests tests/content_hash_tests.cpp)
+target_link_libraries(ecos-studio-content-hash-tests PRIVATE ecos_studio_core)
 add_executable(ecos-studio-render-tests tests/render_tests.cpp)
 target_link_libraries(ecos-studio-render-tests PRIVATE ecos_studio_core)
 add_test(NAME cpu_reference_renderer COMMAND ecos-studio-render-tests)
+add_test(NAME content_hash_sha256 COMMAND ecos-studio-content-hash-tests)
 add_test(NAME cli_help COMMAND ecos-studio --help)
