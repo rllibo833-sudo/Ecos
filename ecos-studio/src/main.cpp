@@ -24,6 +24,7 @@ void print_usage() {
               << "  ecos-studio asset-validate <project-directory>\n"
               << "  ecos-studio scene-validate <scene.ecscene>\n"
               << "  ecos-studio world-validate <world.ecworld>\n"
+              << "  ecos-studio world-inspect <world.ecworld>\n"
               << "  ecos-studio mesh-render <mesh.obj> <output.ppm> [width height]\n";
 }
 int print_result(const ecos::studio::ValidationResult& result) {
@@ -113,6 +114,21 @@ int main(int argc, char** argv) {
     if (command == "world-validate") {
         if (argc != 3) { print_usage(); return 1; }
         return print_result(ecos::studio::validate_world_manifest(std::filesystem::path(argv[2])));
+    }
+    if (command == "world-inspect") {
+        if (argc != 3) { print_usage(); return 1; }
+        auto manifest = ecos::studio::load_world_manifest(std::filesystem::path(argv[2]));
+        if (!manifest) { std::cerr << "error: " << manifest.error().message << '\\n'; return 2; }
+        auto runtime = manifest.value().create_runtime();
+        if (!runtime) { std::cerr << "error: " << runtime.error().message << '\\n'; return 2; }
+        std::cout << "World '" << manifest.value().world_id << "' (" << runtime.value().size()
+                  << " cells, budget " << runtime.value().max_loaded_cells() << ")\\n";
+        for (const auto& cell : manifest.value().cells) {
+            std::cout << "  " << cell.id << " [" << cell.region_id << "] @ "
+                      << cell.coord.x << ',' << cell.coord.y << ',' << cell.coord.z
+                      << " -> " << cell.content_path.generic_string() << '\\n';
+        }
+        return 0;
     }
     if (command == "mesh-render") {
         if (argc != 4 && argc != 6) { print_usage(); return 1; }

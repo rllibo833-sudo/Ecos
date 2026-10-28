@@ -28,6 +28,8 @@ jobs:
         run: build/ecos-studio/ecos-studio scene-validate ecos-studio/examples/hello-world/scenes/main.ecscene
       - name: Validate sample world manifest
         run: build/ecos-studio/ecos-studio world-validate ecos-studio/examples/large-world/world.ecworld
+      - name: Instantiate and inspect sample world
+        run: build/ecos-studio/ecos-studio world-inspect ecos-studio/examples/large-world/world.ecworld
       - name: Create and validate project scaffold
         run: |
           build/ecos-studio/ecos-studio new /tmp/ecos-studio-sample "ECOS Sample"
