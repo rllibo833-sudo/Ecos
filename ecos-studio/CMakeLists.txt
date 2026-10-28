@@ -3,9 +3,10 @@ project(ECOSStudio VERSION 0.9.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+find_package(Threads REQUIRED)
 add_library(ecos_studio_core
     src/core.cpp src/project.cpp src/result.cpp src/platform.cpp
-    src/scene.cpp src/asset_registry.cpp src/world.cpp src/world_manifest.cpp
+    src/scene.cpp src/asset_registry.cpp src/world.cpp src/world_streaming.cpp src/world_manifest.cpp
     src/mesh.cpp src/render.cpp src/content_hash.cpp src/input.cpp src/time.cpp src/engine_loop.cpp src/camera.cpp src/physics.cpp src/material.cpp src/audio.cpp
     src/package_manager.cpp src/asset_importer.cpp src/entity.cpp src/job_system.cpp
 )
@@ -34,6 +35,9 @@ add_test(NAME scene_serialization_round_trip COMMAND ecos-studio-scene-serializa
 add_executable(ecos-studio-world-tests tests/world_tests.cpp)
 target_link_libraries(ecos-studio-world-tests PRIVATE ecos_studio_core)
 add_test(NAME world_cell_lifecycle_and_spatial_query COMMAND ecos-studio-world-tests)
+add_executable(ecos-studio-world-streaming-tests tests/world_streaming_tests.cpp)
+target_link_libraries(ecos-studio-world-streaming-tests PRIVATE ecos_studio_core Threads::Threads)
+add_test(NAME asynchronous_world_streaming COMMAND ecos-studio-world-streaming-tests)
 add_executable(ecos-studio-world-manifest-tests tests/world_manifest_tests.cpp)
 target_link_libraries(ecos-studio-world-manifest-tests PRIVATE ecos_studio_core)
 add_test(NAME world_manifest_validation COMMAND ecos-studio-world-manifest-tests)
@@ -47,58 +51,42 @@ target_link_libraries(ecos-studio-render-tests PRIVATE ecos_studio_core)
 add_test(NAME cpu_reference_renderer COMMAND ecos-studio-render-tests)
 add_test(NAME content_hash_sha256 COMMAND ecos-studio-content-hash-tests)
 add_test(NAME cli_help COMMAND ecos-studio --help)
-
-find_package(Threads REQUIRED)
 add_executable(ecos-studio-input-tests tests/input_tests.cpp)
 target_link_libraries(ecos-studio-input-tests PRIVATE ecos_studio_core Threads::Threads)
 add_test(NAME input_events_and_frame_state COMMAND ecos-studio-input-tests)
-
 add_executable(ecos-studio-camera-tests tests/camera_tests.cpp)
 target_link_libraries(ecos-studio-camera-tests PRIVATE ecos_studio_core)
 add_test(NAME camera_view_and_projection_math COMMAND ecos-studio-camera-tests)
-
 add_executable(ecos-studio-physics-tests tests/physics_tests.cpp)
 target_link_libraries(ecos-studio-physics-tests PRIVATE ecos_studio_core)
 add_test(NAME collision_overlap_and_ray_queries COMMAND ecos-studio-physics-tests)
-
 add_executable(ecos-studio-material-tests tests/material_tests.cpp)
 target_link_libraries(ecos-studio-material-tests PRIVATE ecos_studio_core)
 add_test(NAME wavefront_mtl_material_import COMMAND ecos-studio-material-tests)
-
 add_executable(ecos-studio-audio-tests tests/audio_tests.cpp)
 target_link_libraries(ecos-studio-audio-tests PRIVATE ecos_studio_core)
 add_test(NAME audio_mixer_pcm_and_voice_state COMMAND ecos-studio-audio-tests)
-
 add_executable(ecos-studio-time-tests tests/time_tests.cpp)
 target_link_libraries(ecos-studio-time-tests PRIVATE ecos_studio_core)
 add_test(NAME fixed_step_frame_clock COMMAND ecos-studio-time-tests)
-
 add_executable(ecos-studio-engine-loop-tests tests/engine_loop_tests.cpp)
 target_link_libraries(ecos-studio-engine-loop-tests PRIVATE ecos_studio_core)
 add_test(NAME engine_loop_fixed_updates_and_input COMMAND ecos-studio-engine-loop-tests)
-
 add_executable(ecos-studio-mod-manifest-tests tests/mod_manifest_tests.cpp)
 target_link_libraries(ecos-studio-mod-manifest-tests PRIVATE ecos_studio_core)
 add_test(NAME mod_manifest_dependencies_and_safety COMMAND ecos-studio-mod-manifest-tests)
-
 add_executable(ecos-studio-package-manager-tests tests/package_manager_tests.cpp)
 target_link_libraries(ecos-studio-package-manager-tests PRIVATE ecos_studio_core)
 add_test(NAME mod_package_dependency_resolution COMMAND ecos-studio-package-manager-tests)
-
 add_executable(ecos-studio-asset-importer-tests tests/asset_importer_tests.cpp)
 target_link_libraries(ecos-studio-asset-importer-tests PRIVATE ecos_studio_core)
 add_test(NAME asset_import_and_metadata COMMAND ecos-studio-asset-importer-tests)
-
 add_executable(ecos-studio-entity-tests tests/entity_tests.cpp)
 target_link_libraries(ecos-studio-entity-tests PRIVATE ecos_studio_core)
 add_test(NAME entity_component_lifecycle COMMAND ecos-studio-entity-tests)
-
 add_executable(ecos-studio-job-system-tests tests/job_system_tests.cpp)
 target_link_libraries(ecos-studio-job-system-tests PRIVATE ecos_studio_core Threads::Threads)
 add_test(NAME native_job_system COMMAND ecos-studio-job-system-tests)
-
-# Installable SDK/runtime layout. On Windows the executable is emitted as
-# ecos-studio.exe by CMake; the same install rules support portable packages.
 include(GNUInstallDirs)
 install(TARGETS ecos_studio_core
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -112,7 +100,6 @@ install(TARGETS ecos-studio
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(DIRECTORY docs/ DESTINATION share/ecos-studio/docs)
 install(DIRECTORY examples/ DESTINATION share/ecos-studio/examples)
-
 set(CPACK_PACKAGE_NAME "ECOS-Studio")
 set(CPACK_PACKAGE_VENDOR "ECOS Studio")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Independent native game engine and development toolchain")
