@@ -267,6 +267,7 @@ Result<SceneGraph> deserialize_scene(const std::string& text) {
                 !parse_vec3(fields[4], node.transform.rotation_euler_radians) ||
                 !parse_vec3(fields[5], node.transform.scale))
                 return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Invalid scene node name or transform"});
+            node.name = fields[2];
             if (std::any_of(pending.begin(), pending.end(), [&](const PendingNode& old) { return old.source_id == node.source_id; }))
                 return Result<SceneGraph>::failure({ErrorCode::invalid_argument, "Duplicate scene node id"});
             pending.push_back(std::move(node));

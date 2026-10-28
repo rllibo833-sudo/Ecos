@@ -1,8 +1,10 @@
 #include "ecos_studio/project.hpp"
+#include "ecos_studio/scene.hpp"
 
 #include <cctype>
 #include <fstream>
 #include <map>
+#include <sstream>
 #include <system_error>
 
 namespace ecos::studio {
@@ -123,12 +125,13 @@ bool create_project(const fs::path& root, const std::string& name, std::string& 
     const std::string manifest =
         "# ECOS Studio project manifest; format_version is intentionally explicit.\n"
         "format_version=1\nname=" + name +
-        "\nproject_type=game\nworld_mode=streamed\nentry_scene=scenes/main.ecos-scene\n";
+        "\nproject_type=game\nworld_mode=streamed\nentry_scene=scenes/main.ecscene\n";
     if (!write_file(root / "project.ecos", manifest, error)) return false;
     const std::string scene =
-        "# Scene scaffold metadata; rendering is not implemented in this bootstrap.\n"
-        "scene_format=1\nname=Main\nroot=WorldRoot\n";
-    if (!write_file(root / "scenes/main.ecos-scene", scene, error)) return false;
+        "# ECOS Studio scene document v1.\n"
+        "format_version=1\nscene_id=main\n"
+        "node=1|-|WorldRoot|0,0,0|0,0,0|1,1,1\n";
+    if (!write_file(root / "scenes/main.ecscene", scene, error)) return false;
     const std::string ignore =
         "# Generated/imported content should not be committed by default.\n"
         "build/\n.ecos-cache/\n";
@@ -167,6 +170,15 @@ ValidationResult validate_project(const fs::path& root) {
         } else if (!fs::is_regular_file(root / entry->second)) {
             result.ok = false;
             result.errors.push_back("entry_scene does not exist: " + entry->second);
+        } else if (fs::path(entry->second).extension() == ".ecscene") {
+            std::ifstream scene_input(root / entry->second, std::ios::binary);
+            std::ostringstream scene_buffer;
+            scene_buffer << scene_input.rdbuf();
+            auto scene = deserialize_scene(scene_buffer.str());
+            if (!scene) {
+                result.ok = false;
+                result.errors.push_back("Invalid entry scene: " + scene.error().message);
+            }
         }
     }
     for (const auto& [key, value] : manifest) {
