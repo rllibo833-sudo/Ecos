@@ -156,12 +156,12 @@ Result<void> SceneGraph::restore_subtree(const std::vector<SceneNode>& snapshot)
     if (roots != 1)
         return Result<void>::failure({ErrorCode::invalid_argument, "Scene subtree must have exactly one root"});
 
-    for (auto& [id, node] : staged) {
-        (void)id;
-        nodes_.emplace(node.id, std::move(node));
+    for (const auto& [id, node] : staged) {
+        nodes_.emplace(id, node);
     }
     for (const auto& [id, node] : staged) {
-        if (node.parent) nodes_.at(*node.parent).children.push_back(id);
+        if (node.parent && staged.contains(*node.parent))
+            nodes_.at(*node.parent).children.push_back(id);
     }
     const auto& root = nodes_.at(root_id);
     if (root.parent) nodes_.at(*root.parent).children.push_back(root_id);

@@ -69,6 +69,7 @@ void create_delete_subtree_history() {
  check(history.undo(), "undo restores deleted subtree");
  check(scene.find(created_id) && scene.find(child_id), "undo restores all original ids");
  check(scene.find(child_id)->parent == created_id, "undo restores internal parent link");
+ check(scene.find(parent.value())->children.size() == 1, "restored subtree root is attached exactly once");
  check(history.redo(), "redo deletes subtree again");
  check(scene.find(created_id) == nullptr && scene.find(child_id) == nullptr, "redo removes subtree again");
  check(scene.find(parent.value()) != nullptr, "external parent remains intact");
