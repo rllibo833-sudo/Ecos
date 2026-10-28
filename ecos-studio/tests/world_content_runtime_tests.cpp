@@ -60,6 +60,9 @@ void test_load_resident_snapshot_unload_and_reload() {
                 auto gate_entity = runtime->entity_for_node("origin", 2);
                 const auto* gate = gate_entity ? runtime->entities().get<SceneNodeComponent>(*gate_entity) : nullptr;
                 check(gate && gate->parent_entity == spawn_entity, "resolves scene parent links to runtime entity handles");
+                const auto* gate_world = gate_entity ? runtime->entities().get<WorldTransformComponent>(*gate_entity) : nullptr;
+                check(gate_world && gate_world->matrix.values[3] == 2.0F,
+                      "runtime update computes world transforms for streamed scene entities");
             }
             auto scene = runtime->scene_snapshot("origin");
             check(scene && scene.value().size() == 2, "exposes a safe snapshot of the loaded scene");

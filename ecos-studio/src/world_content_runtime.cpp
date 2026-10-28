@@ -1,4 +1,5 @@
 #include "ecos_studio/world_content_runtime.hpp"
+#include "ecos_studio/world_transform.hpp"
 
 #include <utility>
 #include <exception>
@@ -109,6 +110,8 @@ Result<StreamingUpdateReport> WorldContentRuntime::update(
             if (!materialized) return Result<StreamingUpdateReport>::failure(materialized.error());
         }
     }
+    auto transforms = WorldTransformSystem::update(entities_);
+    if (!transforms) return Result<StreamingUpdateReport>::failure(transforms.error());
     return updated;
 }
 
