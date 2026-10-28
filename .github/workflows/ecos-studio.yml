@@ -1,4 +1,4 @@
-name: ECOS Studio Bootstrap
+name: ECOS Studio CI
 on:
   push:
     paths:
@@ -36,17 +36,6 @@ jobs:
         run: |
           build/ecos-studio/ecos-studio mod-init /tmp/ecos-studio-mod com.ecos.sample
           build/ecos-studio/ecos-studio mod-validate /tmp/ecos-studio-mod
-      - name: Build portable Linux package
-        run: |
-          cmake --install build/ecos-studio --prefix "$RUNNER_TEMP/ecos-studio-package"
-          cd "$RUNNER_TEMP/ecos-studio-package"
-          tar -czf "$RUNNER_TEMP/ECOS-Studio-linux-x64.tar.gz" .
-      - name: Upload Linux package
-        uses: actions/upload-artifact@v4
-        with:
-          name: ECOS-Studio-linux-x64
-          path: ${{ runner.temp }}/ECOS-Studio-linux-x64.tar.gz
-          if-no-files-found: error
 
   build-windows:
     runs-on: windows-latest
@@ -58,18 +47,3 @@ jobs:
         run: cmake --build build/ecos-studio --config Release --parallel 2
       - name: Run automated tests
         run: ctest --test-dir build/ecos-studio -C Release --output-on-failure
-      - name: Install distributable package
-        run: cmake --install build/ecos-studio --config Release --prefix "$env:RUNNER_TEMP/ecos-studio-package"
-      - name: Create portable ZIP
-        run: Compress-Archive -Path "$env:RUNNER_TEMP/ecos-studio-package/*" -DestinationPath "$env:RUNNER_TEMP/ECOS-Studio-${{ github.ref_name }}-windows-x64.zip"
-      - name: Verify executable is packaged
-        run: |
-          $exe = Get-ChildItem "$env:RUNNER_TEMP/ecos-studio-package" -Recurse -Filter ecos-studio.exe
-          if (-not $exe) { throw "ecos-studio.exe missing from distributable package" }
-          Write-Host "Packaged executable: $($exe.FullName)"
-      - name: Upload Windows executable package
-        uses: actions/upload-artifact@v4
-        with:
-          name: ECOS-Studio-windows-x64
-          path: ${{ runner.temp }}/ECOS-Studio-${{ github.ref_name }}-windows-x64.zip
-          if-no-files-found: error
