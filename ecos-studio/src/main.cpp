@@ -1,26 +1,39 @@
+#include "ecos_studio/mesh.hpp"
 #include "ecos_studio/platform.hpp"
 #include "ecos_studio/project.hpp"
+#include "ecos_studio/render.hpp"
 #include "ecos_studio/scene.hpp"
 #include "ecos_studio/world_manifest.hpp"
+#include <charconv>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <string>
 namespace {
 void print_usage() {
-    std::cout << "ECOS Studio bootstrap 0.7.0\nUsage:\n"
+    std::cout << "ECOS Studio 0.9.0\nUsage:\n"
               << "  ecos-studio --help\n"
               << "  ecos-studio new <directory> <project-name>\n"
               << "  ecos-studio validate <project-directory>\n"
               << "  ecos-studio mod-init <directory> <mod-id>\n"
               << "  ecos-studio mod-validate <mod-directory>\n"
               << "  ecos-studio scene-validate <scene.ecscene>\n"
-              << "  ecos-studio world-validate <world.ecworld>\n";
+              << "  ecos-studio world-validate <world.ecworld>\n"
+              << "  ecos-studio mesh-render <mesh.obj> <output.ppm> [width height]\n";
 }
 int print_result(const ecos::studio::ValidationResult& result) {
     for (const auto& warning : result.warnings) std::cout << "info: " << warning << '\n';
     for (const auto& error : result.errors) std::cerr << "error: " << error << '\n';
     if (result.ok) { std::cout << "Valid.\n"; return 0; }
     return 2;
+}
+bool parse_dimension(const char* text, std::uint32_t& value) {
+    const std::string input(text);
+    std::uint32_t parsed{};
+    const auto result = std::from_chars(input.data(), input.data()+input.size(), parsed);
+    if (result.ec != std::errc{} || result.ptr != input.data()+input.size()) return false;
+    value=parsed;
+    return true;
 }
 }
 int main(int argc, char** argv) {
@@ -63,6 +76,27 @@ int main(int argc, char** argv) {
     if (command == "world-validate") {
         if (argc != 3) { print_usage(); return 1; }
         return print_result(ecos::studio::validate_world_manifest(std::filesystem::path(argv[2])));
+    }
+    if (command == "mesh-render") {
+        if (argc != 4 && argc != 6) { print_usage(); return 1; }
+        std::uint32_t width=640, height=480;
+        if (argc == 6 && (!parse_dimension(argv[4],width) || !parse_dimension(argv[5],height))) {
+            std::cerr << "error: width and height must be positive integers\n"; return 2;
+        }
+        auto source=ecos::studio::platform::read_text_file(std::filesystem::path(argv[2]));
+        if (!source) { std::cerr << "error: " << source.error().message << '\n'; return 2; }
+        auto mesh=ecos::studio::import_obj_mesh(source.value());
+        if (!mesh) { std::cerr << "error: " << mesh.error().message << '\n'; return 2; }
+        auto image=ecos::studio::render_mesh_to_ppm(mesh.value(),width,height);
+        if (!image) { std::cerr << "error: " << image.error().message << '\n'; return 2; }
+        std::ofstream output(std::filesystem::path(argv[3]),std::ios::binary);
+        if (!output) { std::cerr << "error: cannot open output image for writing\n"; return 2; }
+        output.write(image.value().data(),static_cast<std::streamsize>(image.value().size()));
+        if (!output) { std::cerr << "error: failed while writing output image\n"; return 2; }
+        std::cout << "Rendered " << mesh.value().positions.size() << " vertices / "
+                  << mesh.value().indices.size()/3 << " triangles to " << argv[3]
+                  << " (" << width << "x" << height << ").\n";
+        return 0;
     }
     std::cerr << "error: unknown command '" << command << "'\n";
     print_usage(); return 1;

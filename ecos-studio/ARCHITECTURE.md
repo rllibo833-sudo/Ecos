@@ -9,9 +9,9 @@
 The editor must not be required to run a packaged game. Runtime and editor share project and asset formats but have separate launch targets.
 
 ## Implemented foundation
-The C++20 core currently includes project/mod scaffold CLI tools, runtime lifecycle and logging, typed error/result values, portable filesystem/path helpers, an in-memory scene graph with hierarchical transforms and cycle rejection, an asset registry with dependency validation, and a world-cell lifecycle model with loading budgets and spatial radius queries.
+The C++20 core includes project/mod scaffold CLI tools, runtime lifecycle and logging, typed errors/results, portable filesystem/path helpers, an in-memory scene graph with hierarchical transforms and cycle rejection, an asset registry with dependency validation, a world-cell lifecycle model with loading budgets and spatial radius queries, a validated OBJ importer, and a deterministic CPU reference triangle renderer that emits PPM images.
 
-CI builds the C++ code and runs automated tests. This remains foundational engine work: no visible 3D renderer, full editor, physics, audio, or scripting runtime is implemented yet.
+CI builds the C++ code and runs automated tests. The CPU renderer proves a basic mesh-to-pixels path but is not a GPU renderer or a desktop editor. Production viewport, physics, audio, and scripting runtime are not implemented yet.
 
 ## Subsystem boundaries
 | Subsystem | Responsibility | Status |
@@ -21,7 +21,9 @@ CI builds the C++ code and runs automated tests. This remains foundational engin
 | Asset registry | Stable IDs, paths, dependencies | Initial implementation |
 | World runtime | Cell lifecycle, budget, spatial query | Initial implementation |
 | Project/mod manifests | Bootstrap creation and validation | Implemented bootstrap |
-| Renderer | Graphics API abstraction, frame pipeline, materials, visibility | Planned |
+| Mesh import | OBJ positions, triangulation, bounds | Initial implementation |
+| Reference renderer | CPU triangle rasterization, depth buffer, diffuse light, PPM output | Initial implementation |
+| GPU renderer | Graphics API abstraction, frame pipeline, materials, visibility | Planned |
 | Physics/audio | Collision, rigid bodies, audio output and spatial audio | Planned |
 | Asset pipeline | Importers, metadata, content hashes, cache | Planned |
 | Editor | Viewport, inspectors, undo/redo, world tools | Planned |

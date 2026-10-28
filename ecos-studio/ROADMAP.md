@@ -17,10 +17,11 @@ This roadmap describes product milestones, not guaranteed delivery dates.
 - [x] Headless .ecworld manifest validator and sample region/cell metadata.
 - [ ] Asset content hashing, normal/UV import, and dependency-cycle diagnostics.
 
-## S2 — First playable desktop slice
+## S2 — First renderable desktop slice
+- [x] Deterministic CPU reference rasterizer and OBJ-to-PPM CLI path.
 - [ ] Window and input abstraction.
 - [ ] GPU renderer backend and camera.
-- [ ] Mesh/material GPU upload and visible scene viewport.
+- [ ] Mesh/material GPU upload and visible interactive scene viewport.
 - [ ] Basic audio output and spatial audio.
 - [ ] Collision/rigid-body integration.
 - [ ] One small offline game built and packaged by the toolchain.
