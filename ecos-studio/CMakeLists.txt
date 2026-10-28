@@ -6,7 +6,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(Threads REQUIRED)
 add_library(ecos_studio_core
     src/core.cpp src/project.cpp src/result.cpp src/platform.cpp
-    src/scene.cpp src/scene_editor.cpp src/asset_registry.cpp src/world.cpp src/world_streaming.cpp src/world_manifest.cpp
+    src/scene.cpp src/scene_editor.cpp src/scene_document.cpp src/asset_registry.cpp src/world.cpp src/world_streaming.cpp src/world_manifest.cpp
     src/mesh.cpp src/render.cpp src/content_hash.cpp src/input.cpp src/time.cpp src/engine_loop.cpp src/camera.cpp src/physics.cpp src/material.cpp src/audio.cpp
     src/package_manager.cpp src/asset_importer.cpp src/entity.cpp src/job_system.cpp
 )
@@ -32,6 +32,9 @@ add_test(NAME scene_graph_and_asset_registry COMMAND ecos-studio-scene-asset-tes
 add_executable(ecos-studio-scene-editor-tests tests/scene_editor_tests.cpp)
 target_link_libraries(ecos-studio-scene-editor-tests PRIVATE ecos_studio_core)
 add_test(NAME scene_editor_undo_redo COMMAND ecos-studio-scene-editor-tests)
+add_executable(ecos-studio-scene-document-tests tests/scene_document_tests.cpp)
+target_link_libraries(ecos-studio-scene-document-tests PRIVATE ecos_studio_core)
+add_test(NAME scene_document_dirty_tracking_and_lifecycle COMMAND ecos-studio-scene-document-tests)
 add_executable(ecos-studio-scene-serialization-tests tests/scene_serialization_tests.cpp)
 target_link_libraries(ecos-studio-scene-serialization-tests PRIVATE ecos_studio_core)
 add_test(NAME scene_serialization_round_trip COMMAND ecos-studio-scene-serialization-tests)
