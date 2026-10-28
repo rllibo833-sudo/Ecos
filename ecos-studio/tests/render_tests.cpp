@@ -54,7 +54,7 @@ void test_world_transform_changes_rendered_geometry() {
 
 void test_renders_multiple_transformed_instances_in_shared_scene() {
     using namespace ecos::studio;
-    auto mesh = import_obj_mesh("v -0.4 -0.4 0\\nv 0.4 -0.4 0\\nv 0 0.4 0\\nf 1 2 3\\n");
+    auto mesh = import_obj_mesh("v -0.4 -0.4 0\nv 0.4 -0.4 0\nv 0 0.4 0\nf 1 2 3\n");
     check(static_cast<bool>(mesh), "mesh imports for multi-instance scene");
     if (!mesh) return;
     const auto identity = Matrix4::identity();
