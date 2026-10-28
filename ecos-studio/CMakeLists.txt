@@ -88,3 +88,34 @@ add_test(NAME mod_package_dependency_resolution COMMAND ecos-studio-package-mana
 add_executable(ecos-studio-asset-importer-tests tests/asset_importer_tests.cpp)
 target_link_libraries(ecos-studio-asset-importer-tests PRIVATE ecos_studio_core)
 add_test(NAME asset_import_and_metadata COMMAND ecos-studio-asset-importer-tests)
+
+# Installable SDK/runtime layout. On Windows the executable is emitted as
+# ecos-studio.exe by CMake; the same install rules support portable packages.
+include(GNUInstallDirs)
+install(TARGETS ecos_studio_core
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+install(TARGETS ecos-studio
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    BUNDLE DESTINATION .
+)
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(DIRECTORY docs/ DESTINATION share/ecos-studio/docs)
+install(DIRECTORY examples/ DESTINATION share/ecos-studio/examples)
+
+set(CPACK_PACKAGE_NAME "ECOS-Studio")
+set(CPACK_PACKAGE_VENDOR "ECOS Studio")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Independent native game engine and development toolchain")
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "ECOS Studio")
+if(WIN32)
+    set(CPACK_GENERATOR "ZIP")
+    set(CPACK_PACKAGE_FILE_NAME "ECOS-Studio-${PROJECT_VERSION}-windows-x64")
+elseif(APPLE)
+    set(CPACK_GENERATOR "ZIP")
+else()
+    set(CPACK_GENERATOR "TGZ")
+endif()
+include(CPack)
