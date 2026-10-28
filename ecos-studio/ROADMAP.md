@@ -15,7 +15,7 @@ This roadmap describes product milestones, not guaranteed delivery dates.
 - [x] Initial OBJ mesh importer with triangulation, index validation, and bounds.
 - [x] World cell records, lifecycle transitions, resident-cell budget, and spatial radius query.
 - [x] Headless .ecworld manifest validator and sample region/cell metadata.
-- [ ] Asset content hashing, normal/UV import, and dependency-cycle diagnostics.
+- [x] OBJ UV/normal import with independent-index resolution and seam expansion.\n- [x] Asset dependency-cycle diagnostics.\n- [ ] Asset content hashing and import cache metadata.
 
 ## S2 — First renderable desktop slice
 - [x] Deterministic CPU reference rasterizer and OBJ-to-PPM CLI path.
