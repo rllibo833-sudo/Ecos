@@ -2,7 +2,6 @@
 #include "ecos_studio/platform.hpp"
 
 #include <algorithm>
-#include <cmath>
 #include <utility>
 
 namespace ecos::studio {
@@ -20,7 +19,10 @@ Result<void> WorldRuntime::register_cell(WorldCell cell) {
     auto safe_path = platform::safe_relative_path(cell.content_path);
     if (!safe_path) return Result<void>::failure(safe_path.error());
     cell.content_path = safe_path.value();
-    cells_.emplace(cell.id, CellStatus{std::move(cell), CellState::unloaded, {}});
+    // Copy the key before moving the record; argument evaluation order must not
+    // determine whether the map receives an empty key.
+    const std::string id = cell.id;
+    cells_.emplace(id, CellStatus{std::move(cell), CellState::unloaded, {}});
     return Result<void>::success();
 }
 

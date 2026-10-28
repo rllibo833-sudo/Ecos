@@ -20,7 +20,9 @@ Result<void> AssetRegistry::register_asset(AssetRecord asset) {
         }
     }
     asset.path = safe_path.value();
-    assets_.emplace(asset.id, std::move(asset));
+    // Preserve the key independently of the moved value.
+    const std::string id = asset.id;
+    assets_.emplace(id, std::move(asset));
     return Result<void>::success();
 }
 
