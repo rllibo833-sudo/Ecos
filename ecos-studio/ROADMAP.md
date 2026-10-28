@@ -1,26 +1,28 @@
 # ECOS Studio Roadmap
 
-This roadmap describes product milestones, not guaranteed delivery dates.
+This roadmap describes product milestones, not guaranteed delivery dates. Checkboxes represent code that exists, not aspirations.
 
 ## S0 — Repository foundation
 - [x] C++20/CMake bootstrap CLI and project scaffolding.
 - [x] Data-only mod scaffold creation and validation.
 - [x] CI build and smoke workflow.
 
-## S1 — Runtime and asset foundations (in progress)
+## S1 — Runtime, scene, and asset foundations (in progress)
 - [x] Runtime lifecycle, logging, typed errors/results, portable platform helpers.
 - [x] In-memory scene graph with hierarchical transforms and cycle-safe reparenting.
 - [x] Versioned scene serialization/deserialization and scene validation CLI.
-- [x] Asset registry with stable IDs, safe paths, and dependency validation.
-- [x] Initial OBJ mesh importer with triangulation, index validation, and bounds.
+- [x] Asset registry with stable IDs, safe paths, dependency validation, and cycle diagnostics.
+- [x] SHA-256 content fingerprints for exact asset bytes.
+- [x] OBJ importer with triangulation, independent UV/normal indices, seam expansion, validation, bounds, and generated normals.
 - [x] World cell records, lifecycle transitions, resident-cell budget, and spatial radius query.
 - [x] Headless .ecworld manifest validator and sample region/cell metadata.
-- [x] OBJ UV/normal import with independent-index resolution and seam expansion.\n- [x] Asset dependency-cycle diagnostics.\n- [ ] Asset content hashing and import cache metadata.
 
-## S2 — First renderable desktop slice
+## S2 — First renderable desktop slice (in progress)
 - [x] Deterministic CPU reference rasterizer and OBJ-to-PPM CLI path.
-- [ ] Window and input abstraction.
-- [ ] GPU renderer backend and camera.
+- [x] Platform-neutral input event/state abstraction.
+- [x] Camera view/projection and world-to-NDC math.
+- [ ] Native window and OS input adapter.
+- [ ] GPU renderer backend and frame lifecycle.
 - [ ] Mesh/material GPU upload and visible interactive scene viewport.
 - [ ] Basic audio output and spatial audio.
 - [ ] Collision/rigid-body integration.
@@ -29,7 +31,7 @@ This roadmap describes product milestones, not guaranteed delivery dates.
 ## S3 — Creator tools
 - [ ] Desktop editor shell and scene viewport.
 - [ ] Asset browser, inspector, undo/redo.
-- [ ] Import pipeline and reproducible game packaging.
+- [ ] Material editor, import pipeline, and reproducible game packaging.
 - [ ] Scripting and debugging workflow.
 
 ## S4 — Large-world runtime
@@ -38,7 +40,7 @@ This roadmap describes product milestones, not guaranteed delivery dates.
 - [ ] Tiered simulation and streaming budget telemetry.
 
 ## S5 — Mod SDK
-- [ ] Data-only mod package schema, dependency/compatibility resolver, load order and conflict reports.
+- [ ] Data-only mod package schema, dependency/compatibility resolver, load order, and conflict reports.
 - [ ] Permission model before executable extensions.
 
 ## S6 — ECOS flagship integration
@@ -47,4 +49,5 @@ This roadmap describes product milestones, not guaranteed delivery dates.
 - [ ] Expand regions and simulation systems incrementally.
 
 ## Quality bar
+
 A capability remains labelled planned until source and automation support it. CI does not substitute for visual or performance validation on target PCs.

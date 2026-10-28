@@ -1,33 +1,40 @@
 # ECOS Studio
 
-**ECOS Studio** is the independent game-development engine and modding toolkit being built for creators and for the ECOS PC flagship game, whose world concept spans approximately **1.7 million km²**.
+**ECOS Studio** is an independent C++20 engine foundation and modding toolkit for creators and the ECOS PC flagship game, whose world concept spans approximately **1.7 million km²**.
 
-This branch is an active C++20 engine foundation, not yet a complete UE5-equivalent product.
+It is not yet a complete Unreal Engine 5-equivalent product. Implemented capabilities below are source-backed and covered by automated tests where noted.
 
-## Implemented source foundation
+## Implemented
+
 - Project and data-only mod scaffold creation/validation CLI.
-- Runtime lifecycle, thread-safe logger, typed errors/results, and portable filesystem helpers.
-- In-memory scene graph with parent-child hierarchy, local transforms, world matrices, cycle prevention, and subtree removal.
-- Versioned scene serialization/deserialization with hierarchy validation and CLI validation.
-- Asset registry with stable IDs, safe project-relative paths, and dependency-reference validation.
-- Initial Wavefront OBJ importer for vertices, positive/negative face indices, polygon triangulation, and mesh bounds.
-- World cell records with integer coordinates, load-state transitions, resident/loading budget, failure diagnostics, retry, unload, and deterministic radius query.
-- Headless .ecworld manifest validator for schema version, unique cell IDs/coordinates, and safe content paths.
-- CMake build and GitHub Actions automation for build, tests, and example validation.
+- Runtime lifecycle, thread-safe logging, typed errors/results, and safe relative-path/filesystem helpers.
+- Scene graph with hierarchical transforms, cycle prevention, subtree removal, versioned serialization, and validation CLI.
+- Asset registry with stable IDs, dependency reference/cycle validation, and SHA-256 content fingerprints.
+- Wavefront OBJ importer supporting positions, UVs, explicit normals, independent positive/negative indices, polygon fan triangulation, UV seam expansion, generated normals when missing, finite-value validation, and mesh bounds.
+- Deterministic CPU reference triangle rasterizer with depth buffering, simple directional lighting, and PPM output. This is a test/reference renderer, not a GPU viewport.
+- World-cell lifecycle model, resident/loading budgets, failure/retry/unload, and radius queries.
+- .ecworld manifest validator for schema version, unique cell IDs/coordinates, and safe content paths.
+- Platform-neutral input event queue/state for keys, mouse buttons, pointer movement, wheel deltas, and focus-loss releases.
+- Camera view, perspective/orthographic projection, and projection of points to NDC with validation.
+- CMake build, subsystem tests, and GitHub Actions automation.
 
-## Still planned
-No visible GPU renderer, desktop editor viewport, full mesh/material pipeline, physics runtime, audio engine, scripting VM, or asynchronous world streaming is implemented yet. Next is a rendering/window backend and creator-facing editor tools.
+## Not implemented yet
+
+No production GPU backend, native desktop window/editor shell, interactive viewport, physics runtime, audio engine, scripting VM, asynchronous disk streaming, or complete material/import pipeline exists yet. Camera math and input state are foundations for those integrations, not proof that a viewport is available.
 
 ## Build
+
 Requires CMake 3.20+ and a C++20 compiler.
-```sh
+
+~~~sh
 cmake -S ecos-studio -B build
 cmake --build build --config Release
 ctest --test-dir build --output-on-failure
-```
+~~~
 
 ## CLI
-```sh
+
+~~~sh
 ecos-studio --help
 ecos-studio new ../MyGame "My Game"
 ecos-studio validate ../MyGame
@@ -35,9 +42,10 @@ ecos-studio mod-init ../MyGameMod com.example.my-mod
 ecos-studio mod-validate ../MyGameMod
 ecos-studio scene-validate examples/hello-world/scenes/main.ecscene
 ecos-studio world-validate examples/large-world/world.ecworld
-```
+~~~
 
 ## Engineering principles
+
 1. Build an independent architecture; do not copy Unreal Engine source.
 2. Stream large worlds instead of keeping the whole country active in RAM.
 3. Use versioned data formats and explicit migrations before freezing public APIs.
