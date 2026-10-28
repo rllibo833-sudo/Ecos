@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(ECOSStudio VERSION 0.4.0 LANGUAGES CXX)
+project(ECOSStudio VERSION 0.5.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -11,6 +11,7 @@ add_library(ecos_studio_core
     src/platform.cpp
     src/scene.cpp
     src/asset_registry.cpp
+    src/world.cpp
 )
 target_include_directories(ecos_studio_core PUBLIC include)
 target_compile_features(ecos_studio_core PUBLIC cxx_std_20)
@@ -32,4 +33,7 @@ add_test(NAME platform_paths_filesystem_and_clock COMMAND ecos-studio-platform-t
 add_executable(ecos-studio-scene-asset-tests tests/scene_asset_tests.cpp)
 target_link_libraries(ecos-studio-scene-asset-tests PRIVATE ecos_studio_core)
 add_test(NAME scene_graph_and_asset_registry COMMAND ecos-studio-scene-asset-tests)
+add_executable(ecos-studio-world-tests tests/world_tests.cpp)
+target_link_libraries(ecos-studio-world-tests PRIVATE ecos_studio_core)
+add_test(NAME world_cell_lifecycle_and_spatial_query COMMAND ecos-studio-world-tests)
 add_test(NAME cli_help COMMAND ecos-studio --help)

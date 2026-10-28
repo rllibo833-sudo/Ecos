@@ -1,46 +1,37 @@
 # ECOS Studio
 
-**ECOS Studio** is the planned commercial game-development engine and modding toolkit for independent developers, studios, and ECOS community modders. Its flagship project is the ECOS PC game, designed around a country-scale world of approximately **1.7 million km²**.
+**ECOS Studio** is the independent game-development engine and modding toolkit being built for creators and for the ECOS PC flagship game, whose world concept spans approximately **1.7 million km²**.
 
-This branch establishes the first source-controlled foundation. It does **not** claim to be feature-complete or equivalent to Unreal Engine yet.
+This branch is an active C++20 engine foundation, not yet a complete UE5-equivalent product.
 
-## Product goals
+## Implemented source foundation
+- Project and data-only mod scaffold creation/validation CLI.
+- Runtime lifecycle, thread-safe logger, typed errors/results, and portable filesystem helpers.
+- In-memory scene graph with parent-child hierarchy, local transforms, world matrices, cycle prevention, and subtree removal.
+- Asset registry with stable IDs, safe project-relative paths, and dependency-reference validation.
+- World cell records with integer coordinates, load-state transitions, resident/loading budget, failure diagnostics, retry, unload, and deterministic radius query.
+- CMake build and GitHub Actions automation for the test suite.
 
-- A desktop editor for building games and authoring worlds.
-- A reusable runtime/core that can ship games independently of the editor.
-- World tools designed for large worlds: partitioning, streaming, hierarchical detail, and region-scoped simulation.
-- Physics, audio, input, rendering, animation, scripting, asset import, profiling, and packaging as separate subsystems.
-- A versioned mod SDK with compatibility rules, content packages, and creator documentation.
-- ECOS as the flagship game built with the same tools available to other developers.
-
-## Current implementation
-
-The current bootstrap is a dependency-free C++20 command-line tool. It can create and validate project scaffolds and mod-package scaffolds. It does **not** yet render 3D scenes, simulate physics, play audio, or build a playable game. Those are explicit future engine milestones, not implied features.
+## Still planned
+No visible 3D renderer, desktop editor viewport, mesh importer, physics runtime, audio engine, scripting VM, or asynchronous world streaming is implemented yet. The next work is versioned serialization and a headless world validator, followed by a real graphics/window slice and creator-facing editor.
 
 ## Build
-
 Requires CMake 3.20+ and a C++20 compiler.
 
     cmake -S . -B build
     cmake --build build --config Release
+    ctest --test-dir build --output-on-failure
 
-Run the executable from the build output directory:
-
+## CLI
+    ecos-studio --help
     ecos-studio new ../MyGame "My Game"
     ecos-studio validate ../MyGame
     ecos-studio mod-init ../MyGameMod com.example.my-mod
     ecos-studio mod-validate ../MyGameMod
 
-On multi-configuration generators, the executable may be under build/Release/.
-
-## Project and mod formats
-
-Projects use a deliberately small, dependency-free project.ecos key/value manifest. Mod packages use mod.ecos. Both formats are versioned. See docs/PROJECT-FORMAT.md and modding/MOD-SDK.md.
-
-## Product principles
-
-1. **One engine, two consumers:** ECOS Studio for third-party creators and ECOS the game.
-2. **Stream, don't load everything:** large-world runtime must load regions and simulation tiers on demand.
-3. **Creator-first:** reproducible projects, clear errors, stable formats, and documented migration.
-4. **Commercially sustainable:** maintain a third-party license inventory before adopting external code or assets.
-5. **Evidence over claims:** every capability is labelled implemented, experimental, or planned.
+## Engineering principles
+1. Build an independent architecture; do not copy Unreal Engine source.
+2. Stream large worlds instead of keeping the whole country active in RAM.
+3. Use versioned data formats and explicit migrations before freezing public APIs.
+4. Keep mods data-only until a proper extension trust model exists.
+5. Mark every capability implemented, experimental, or planned honestly.

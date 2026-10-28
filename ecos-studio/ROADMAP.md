@@ -6,18 +6,16 @@ This roadmap describes product milestones, not guaranteed delivery dates.
 - [x] Dedicated branch and product scope.
 - [x] C++20/CMake bootstrap CLI.
 - [x] Project scaffold creation and manifest validation.
-- [x] Mod scaffold creation and manifest validation.
+- [x] Mod scaffold creation and validation.
 - [x] CI build and smoke workflow.
 
 ## S1 — Runtime foundations (in progress)
-- [x] Minimal runtime lifecycle state machine.
-- [x] Thread-safe log writer with severity levels.
-- [x] Stable error codes and value/error result types.
-- [x] Portable platform utilities and project-relative path safety.
+- [x] Runtime lifecycle, logging, typed errors/results, portable platform helpers.
 - [x] In-memory scene graph with hierarchical transforms and cycle-safe reparenting.
-- [x] Asset registry with stable IDs, normalized paths, and dependency validation.
-- [ ] Versioned serialized scene/asset schemas and migration utilities.
-- [ ] Headless world-data validator and region/cell manifest.
+- [x] Asset registry with stable IDs, safe paths, and dependency validation.
+- [x] World cell records, lifecycle transitions, resident-cell budget, and spatial radius query.
+- [ ] Versioned serialized scene/asset/world schemas and migration utilities.
+- [ ] Headless world-data validator and asset content hashing.
 
 ## S2 — First playable desktop slice
 - [ ] Window and input abstraction.
@@ -34,10 +32,9 @@ This roadmap describes product milestones, not guaranteed delivery dates.
 - [ ] Scripting and debugging workflow.
 
 ## S4 — Large-world runtime
-- [ ] Region/cell world format and spatial index.
-- [ ] Asynchronous cell streaming and eviction.
-- [ ] LOD and floating-origin strategy.
-- [ ] Tiered simulation and explicit streaming budgets.
+- [ ] Asynchronous cell I/O, worker queue, cancellation, and prioritization.
+- [ ] Eviction policy, LOD, and floating-origin integration.
+- [ ] Tiered simulation and streaming budget telemetry.
 
 ## S5 — Mod SDK
 - [ ] Data-only mod package schema.
