@@ -24,6 +24,8 @@ This roadmap describes product milestones, not guaranteed delivery dates. Checkb
 - [x] Camera view/projection and world-to-NDC math.
 - [x] AABB/sphere overlap and ray intersection query primitives.
 - [x] Deterministic software PCM mixer with mono/stereo, gain, pan, loops, and voice state.
+- [x] Backend-neutral keyboard/mouse input snapshots and per-frame transient reset.
+- [x] Bounded fixed-step frame clock with interpolation alpha.
 - [ ] Native window and OS input adapter.
 - [ ] GPU renderer backend and frame lifecycle.
 - [ ] Mesh/material GPU upload and visible interactive scene viewport.
