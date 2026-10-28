@@ -1,4 +1,5 @@
 #include "ecos_studio/mesh.hpp"
+#include "ecos_studio/package_manager.hpp"
 #include "ecos_studio/platform.hpp"
 #include "ecos_studio/project.hpp"
 #include "ecos_studio/render.hpp"
@@ -17,6 +18,7 @@ void print_usage() {
               << "  ecos-studio validate <project-directory>\n"
               << "  ecos-studio mod-init <directory> <mod-id>\n"
               << "  ecos-studio mod-validate <mod-directory>\n"
+              << "  ecos-studio mod-resolve <mods-root-directory>\n"
               << "  ecos-studio scene-validate <scene.ecscene>\n"
               << "  ecos-studio world-validate <world.ecworld>\n"
               << "  ecos-studio mesh-render <mesh.obj> <output.ppm> [width height]\n";
@@ -64,6 +66,17 @@ int main(int argc, char** argv) {
         if (argc != 3) { print_usage(); return 1; }
         return print_result(ecos::studio::validate_mod(std::filesystem::path(argv[2])));
     }
+    if (command == "mod-resolve") {
+        if (argc != 3) { print_usage(); return 1; }
+        const auto resolved = ecos::studio::resolve_mod_dependencies(std::filesystem::path(argv[2]));
+        for (const auto& warning : resolved.warnings) std::cout << "warning: " << warning << '\n';
+        for (const auto& message : resolved.errors) std::cerr << "error: " << message << '\n';
+        if (!resolved.ok) return 2;
+        std::cout << "Resolved " << resolved.load_order.size() << " mod package(s), dependency-first load order:\n";
+        for (std::size_t index = 0; index < resolved.load_order.size(); ++index)
+            std::cout << "  " << (index + 1) << ". " << resolved.load_order[index] << '\n';
+        return 0;
+    }
     if (command == "scene-validate") {
         if (argc != 3) { print_usage(); return 1; }
         auto contents = ecos::studio::platform::read_text_file(std::filesystem::path(argv[2]));
@@ -80,7 +93,7 @@ int main(int argc, char** argv) {
     if (command == "mesh-render") {
         if (argc != 4 && argc != 6) { print_usage(); return 1; }
         std::uint32_t width=640, height=480;
-        if (argc == 6 && (!parse_dimension(argv[4],width) || !parse_dimension(argv[5],height))) {
+        if (argc == 6 && (!parse_dimension(argv[4],width) || !parse_dimension(argv[5],height) || width == 0 || height == 0)) {
             std::cerr << "error: width and height must be positive integers\n"; return 2;
         }
         auto source=ecos::studio::platform::read_text_file(std::filesystem::path(argv[2]));
