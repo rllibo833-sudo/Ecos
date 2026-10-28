@@ -8,7 +8,7 @@ add_library(ecos_studio_core
     src/core.cpp src/project.cpp src/result.cpp src/platform.cpp
     src/scene.cpp src/scene_editor.cpp src/scene_document.cpp src/asset_registry.cpp src/world.cpp src/world_streaming.cpp src/world_manifest.cpp
     src/mesh.cpp src/render.cpp src/content_hash.cpp src/input.cpp src/time.cpp src/engine_loop.cpp src/camera.cpp src/physics.cpp src/material.cpp src/audio.cpp
-    src/package_manager.cpp src/asset_importer.cpp src/entity.cpp src/job_system.cpp src/world_content.cpp
+    src/package_manager.cpp src/asset_importer.cpp src/entity.cpp src/job_system.cpp src/world_content.cpp src/world_content_runtime.cpp
 )
 target_include_directories(ecos_studio_core PUBLIC include)
 target_compile_features(ecos_studio_core PUBLIC cxx_std_20)
@@ -50,6 +50,9 @@ add_test(NAME world_manifest_validation COMMAND ecos-studio-world-manifest-tests
 add_executable(ecos-studio-world-content-tests tests/world_content_tests.cpp)
 target_link_libraries(ecos-studio-world-content-tests PRIVATE ecos_studio_core)
 add_test(NAME world_cell_content_loading COMMAND ecos-studio-world-content-tests)
+add_executable(ecos-studio-world-content-runtime-tests tests/world_content_runtime_tests.cpp)
+target_link_libraries(ecos-studio-world-content-runtime-tests PRIVATE ecos_studio_core Threads::Threads)
+add_test(NAME world_content_runtime_lifecycle COMMAND ecos-studio-world-content-runtime-tests)
 add_executable(ecos-studio-mesh-import-tests tests/mesh_import_tests.cpp)
 target_link_libraries(ecos-studio-mesh-import-tests PRIVATE ecos_studio_core)
 add_test(NAME obj_mesh_import COMMAND ecos-studio-mesh-import-tests)
