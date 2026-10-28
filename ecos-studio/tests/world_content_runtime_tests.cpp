@@ -1,4 +1,5 @@
 #include "ecos_studio/world_content_runtime.hpp"
+#include "ecos_studio/world_transform.hpp"
 
 #include <filesystem>
 #include <fstream>
