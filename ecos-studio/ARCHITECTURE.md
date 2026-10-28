@@ -11,7 +11,7 @@ The editor must not be required to run a packaged game. Runtime and editor share
 
 ## Implemented foundation
 
-The C++20 core includes project/mod scaffold tools, runtime lifecycle/logging, typed errors, filesystem helpers, scene graph and serialization, asset dependency validation and cycle detection, SHA-256 content fingerprints, OBJ import with UVs/normals, a CPU reference rasterizer, world-cell lifecycle and manifest validation, a platform-neutral input event queue/state, and validated camera/projection math, and collision overlap/ray queries for AABBs and spheres.
+The C++20 core includes project/mod scaffold tools, runtime lifecycle/logging, typed errors, filesystem helpers, scene graph and serialization, asset dependency validation and cycle detection, SHA-256 content fingerprints, OBJ import with UVs/normals, a basic MTL material parser, a CPU reference rasterizer, world-cell lifecycle and manifest validation, a platform-neutral input event queue/state, and validated camera/projection math, and collision overlap/ray queries for AABBs and spheres.
 
 CI builds the code and runs automated tests, renders a sample mesh to PPM, and validates sample project/mod/scene/world artifacts. This is a growing engine foundation, not a production desktop editor or GPU renderer.
 
@@ -32,7 +32,7 @@ CI builds the code and runs automated tests, renders a sample mesh to PPM, and v
 | GPU renderer/window | Graphics backend, frame pipeline, native window | Planned |
 | Physics queries | AABB/sphere overlap and ray intersection | Initial implementation |
 | Physics simulation/audio | Rigid bodies, constraints, audio output and spatial audio | Planned |
-| Asset pipeline | Materials, additional importers, metadata and cache | Partial foundation; integration planned |
+| Asset pipeline | OBJ import, basic MTL material parsing, content hashes | Partial foundation; OBJ/MTL linkage, textures and cache planned |
 | Editor | Viewport, inspectors, undo/redo, world tools | Planned |
 | Scripting | Gameplay API, sandbox and reload workflow | Planned |
 | Mod runtime | Version checks, content mounts and permissions | Planned |

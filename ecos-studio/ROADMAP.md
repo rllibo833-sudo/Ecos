@@ -14,6 +14,7 @@ This roadmap describes product milestones, not guaranteed delivery dates. Checkb
 - [x] Asset registry with stable IDs, safe paths, dependency validation, and cycle diagnostics.
 - [x] SHA-256 content fingerprints for exact asset bytes.
 - [x] OBJ importer with triangulation, independent UV/normal indices, seam expansion, validation, bounds, and generated normals.
+- [x] MTL material text parser for diffuse color, opacity/transparency, shininess, and illumination model.
 - [x] World cell records, lifecycle transitions, resident-cell budget, and spatial radius query.
 - [x] Headless .ecworld manifest validator and sample region/cell metadata.
 

@@ -10,7 +10,8 @@ It is not yet a complete Unreal Engine 5-equivalent product. Implemented capabil
 - Runtime lifecycle, thread-safe logging, typed errors/results, and safe relative-path/filesystem helpers.
 - Scene graph with hierarchical transforms, cycle prevention, subtree removal, versioned serialization, and validation CLI.
 - Asset registry with stable IDs, dependency reference/cycle validation, and SHA-256 content fingerprints.
-- Wavefront OBJ importer supporting positions, UVs, explicit normals, independent positive/negative indices, polygon fan triangulation, UV seam expansion, generated normals when missing, finite-value validation, and mesh bounds.
+- Wavefront OBJ importer supporting positions, UVs, explicit/generated normals, independent positive/negative indices, polygon fan triangulation, UV seam expansion, finite-value validation, and mesh bounds.
+- Wavefront MTL text importer for named materials, diffuse color, opacity/transparency, shininess, and illumination model.
 - Deterministic CPU reference triangle rasterizer with depth buffering, simple directional lighting, and PPM output. This is a test/reference renderer, not a GPU viewport.
 - World-cell lifecycle model, resident/loading budgets, failure/retry/unload, and radius queries.
 - .ecworld manifest validator for schema version, unique cell IDs/coordinates, and safe content paths.
