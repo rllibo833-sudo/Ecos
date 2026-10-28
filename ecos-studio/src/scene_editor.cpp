@@ -2,6 +2,34 @@
 #include <algorithm>
 #include <utility>
 namespace ecos::studio {
+Result<void> SceneEditorSelection::select(NodeId node) {
+ if (!scene_.find(node)) return Result<void>::failure({ErrorCode::not_found, "Cannot select: scene node does not exist"});
+ selected_.assign(1, node); active_ = node; return Result<void>::success();
+}
+Result<void> SceneEditorSelection::add(NodeId node) {
+ if (!scene_.find(node)) return Result<void>::failure({ErrorCode::not_found, "Cannot select: scene node does not exist"});
+ if (!contains(node)) selected_.push_back(node);
+ active_ = node; return Result<void>::success();
+}
+Result<void> SceneEditorSelection::toggle(NodeId node) {
+ if (!scene_.find(node)) return Result<void>::failure({ErrorCode::not_found, "Cannot select: scene node does not exist"});
+ const auto found = std::find(selected_.begin(), selected_.end(), node);
+ if (found != selected_.end()) {
+  selected_.erase(found);
+  if (active_ == node) active_ = selected_.empty() ? std::nullopt : std::optional<NodeId>{selected_.back()};
+ } else {
+  selected_.push_back(node); active_ = node;
+ }
+ return Result<void>::success();
+}
+void SceneEditorSelection::clear() noexcept { selected_.clear(); active_.reset(); }
+void SceneEditorSelection::prune_deleted() {
+ selected_.erase(std::remove_if(selected_.begin(), selected_.end(), [this](NodeId id) { return scene_.find(id) == nullptr; }), selected_.end());
+ if (active_ && !contains(*active_)) active_ = selected_.empty() ? std::nullopt : std::optional<NodeId>{selected_.back()};
+}
+bool SceneEditorSelection::contains(NodeId node) const noexcept {
+ return std::find(selected_.begin(), selected_.end(), node) != selected_.end();
+}
 std::vector<SceneNode> SceneEditorHistory::capture_subtree(NodeId root) const {
  std::vector<SceneNode> snapshot;
  std::vector<NodeId> pending{root};
