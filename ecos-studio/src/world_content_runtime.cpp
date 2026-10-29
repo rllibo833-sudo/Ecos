@@ -125,7 +125,7 @@ Result<StreamingUpdateReport> WorldContentRuntime::update_viewport_position(
             {ErrorCode::invalid_argument, "Viewport world position must be finite"});
     }
     constexpr double cell_size_meters = 1000.0;
-    const auto to_cell = [](double meters) -> std::int64_t {
+    const auto to_cell = [=](double meters) -> std::int64_t {
         const double cell = std::floor(meters / cell_size_meters);
         if (cell < static_cast<double>(std::numeric_limits<std::int64_t>::min()) ||
             cell > static_cast<double>(std::numeric_limits<std::int64_t>::max())) {
