@@ -1,4 +1,7 @@
 #include "ecos_studio/asset_importer.hpp"
+#include "ecos_studio/camera.hpp"
+#include "ecos_studio/job_system.hpp"
+#include "ecos_studio/world_content_runtime.hpp"
 #include "ecos_studio/mesh.hpp"
 #include "ecos_studio/package_manager.hpp"
 #include "ecos_studio/platform.hpp"
@@ -156,6 +159,63 @@ int main(int argc, char** argv) {
             std::cout << "  " << cell.id << ": " << content.value().scene.size() << " scene node(s)\n";
         }
         std::cout << "Validated " << manifest.value().cells.size() << " cell(s), " << nodes << " total scene node(s).\n";
+        return 0;
+    }
+    if (command == "world-render") {
+        if (argc != 5 && argc != 7) { print_usage(); return 1; }
+        std::uint32_t width = 640, height = 480;
+        if (argc == 7 && (!parse_dimension(argv[5], width) ||
+            !parse_dimension(argv[6], height) || width == 0 || height == 0 ||
+            width > 4096 || height > 4096)) {
+            std::cerr << "error: width and height must be integers between 1 and 4096\\n";
+            return 2;
+        }
+        auto manifest = ecos::studio::load_world_manifest(std::filesystem::path(argv[2]));
+        if (!manifest) { std::cerr << "error: " << manifest.error().message << '\\n'; return 2; }
+        if (manifest.value().cells.empty()) {
+            std::cerr << "error: world manifest contains no cells\\n";
+            return 2;
+        }
+        const auto center = manifest.value().cells.front().coord;
+        ecos::studio::JobSystem jobs(2);
+        auto created = ecos::studio::WorldContentRuntime::create(
+            std::move(manifest.value()), jobs);
+        if (!created) { std::cerr << "error: " << created.error().message << '\\n'; return 2; }
+        auto runtime = std::move(created.value());
+        auto scheduled = runtime->update(center, 0, 0);
+        if (!scheduled) { std::cerr << "error: " << scheduled.error().message << '\\n'; return 2; }
+        jobs.wait_idle();
+        auto completed = runtime->update(center, 0, 0);
+        if (!completed) { std::cerr << "error: " << completed.error().message << '\\n'; return 2; }
+        if (runtime->world().loaded_count() == 0) {
+            std::cerr << "error: first world cell failed to load";
+            const auto* status = runtime->world().find(runtime->manifest().cells.front().id);
+            if (status && !status->last_error.empty()) std::cerr << ": " << status->last_error;
+            std::cerr << '\\n';
+            return 2;
+        }
+        auto assets = ecos::studio::load_imported_asset_registry(std::filesystem::path(argv[3]));
+        if (!assets) { std::cerr << "error: " << assets.error().message << '\\n'; return 2; }
+        const ecos::studio::Vec3 target{
+            static_cast<float>(center.x), static_cast<float>(center.y), static_cast<float>(center.z)};
+        const ecos::studio::Vec3 eye{target.x + 3.0F, target.y + 3.0F, target.z + 5.0F};
+        auto view = ecos::studio::look_at(eye, target, {0.0F, 1.0F, 0.0F});
+        if (!view) { std::cerr << "error: " << view.error().message << '\\n'; return 2; }
+        auto projection = ecos::studio::perspective(
+            1.0471975512F, static_cast<float>(width) / static_cast<float>(height), 0.1F, 1000.0F);
+        if (!projection) { std::cerr << "error: " << projection.error().message << '\\n'; return 2; }
+        const auto view_projection = ecos::studio::multiply(projection.value(), view.value());
+        auto image = ecos::studio::render_world_content_runtime_to_ppm(
+            *runtime, assets.value(), std::filesystem::path(argv[3]),
+            view_projection, width, height);
+        if (!image) { std::cerr << "error: " << image.error().message << '\\n'; return 2; }
+        std::ofstream output(std::filesystem::path(argv[4]), std::ios::binary);
+        if (!output) { std::cerr << "error: cannot open output image for writing\\n"; return 2; }
+        output.write(image.value().data(), static_cast<std::streamsize>(image.value().size()));
+        if (!output) { std::cerr << "error: failed while writing output image\\n"; return 2; }
+        std::cout << "Rendered streamed world cell '" << runtime->manifest().cells.front().id
+                  << "' with " << runtime->entity_count() << " runtime entity(s) to "
+                  << argv[4] << " (" << width << "x" << height << ").\\n";
         return 0;
     }
     if (command == "scene-render") {
