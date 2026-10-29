@@ -1,4 +1,5 @@
 #include "ecos_studio/physics.hpp"
+#include "ecos_studio/world_content_runtime.hpp"
 #include <cmath>
 #include <iostream>
 namespace {
@@ -34,5 +35,36 @@ void test_ray_sphere(){
  check(limited&&!limited.value().hit,"respects maximum ray distance");
  check(!intersect_ray_sphere({{0,0,0},{1,0,0},},Sphere{{0,0,0},-1}),"rejects negative sphere radius");
 }
+void test_ecs_physics_integration(){
+ using namespace ecos::studio;
+ EntityRegistry entities;
+ const auto falling=entities.create();
+ Transform transform; transform.position={0,10,0};
+ entities.emplace<SceneNodeComponent>(falling,SceneNodeComponent{"falling","",transform,{},{}});
+ entities.emplace<RigidBodyComponent>(falling,RigidBodyComponent{});
+ auto stepped=PhysicsSystem::step(entities,0.5);
+ check(stepped&&stepped.value()==1,"integrates dynamic ECS body");
+ auto* node=entities.get<SceneNodeComponent>(falling);
+ auto* body=entities.get<RigidBodyComponent>(falling);
+ check(node&&body&&near(body->velocity.y,-4.905F)&&near(node->local_transform.position.y,7.5475F),
+       "gravity updates velocity and scene-local position in one fixed step");
+
+ const auto fixed=entities.create();
+ Transform fixed_transform; fixed_transform.position={2,3,4};
+ entities.emplace<SceneNodeComponent>(fixed,SceneNodeComponent{"fixed","",fixed_transform,{},{}});
+ RigidBodyComponent fixed_body; fixed_body.kinematic=true; fixed_body.velocity={10,10,10};
+ entities.emplace<RigidBodyComponent>(fixed,fixed_body);
+ stepped=PhysicsSystem::step(entities,1.0);
+ check(stepped&&stepped.value()==1,"kinematic body is skipped while dynamic body advances");
+ check(near(entities.get<SceneNodeComponent>(fixed)->local_transform.position.y,3)&&
+       near(entities.get<RigidBodyComponent>(fixed)->velocity.y,10),"kinematic body preserves pose and velocity");
+
+ const float before=node->local_transform.position.y;
+ entities.get<RigidBodyComponent>(fixed)->linear_damping=-1;
+ stepped=PhysicsSystem::step(entities,0.25);
+ check(!stepped&&near(node->local_transform.position.y,before),
+       "invalid body aborts the whole physics step without partial movement");
+ check(!PhysicsSystem::step(entities,-0.1),"rejects negative delta time");
 }
-int main(){test_overlaps();test_ray_aabb();test_ray_sphere();if(failures){std::cerr<<failures<<" physics test(s) failed.\n";return 1;}std::cout<<"ECOS Studio collision query tests passed.\n";return 0;}
+}
+int main(){test_overlaps();test_ray_aabb();test_ray_sphere();test_ecs_physics_integration();if(failures){std::cerr<<failures<<" physics test(s) failed.\n";return 1;}std::cout<<"ECOS Studio collision and ECS physics tests passed.\n";return 0;}

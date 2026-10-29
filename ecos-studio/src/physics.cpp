@@ -1,8 +1,10 @@
 #include "ecos_studio/physics.hpp"
+#include "ecos_studio/world_content_runtime.hpp"
 
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <vector>
 
 namespace ecos::studio {
 namespace {
@@ -21,7 +23,59 @@ bool valid_aabb(const Aabb& b) {
         b.minimum.y<=b.maximum.y&&b.minimum.z<=b.maximum.z;
 }
 bool valid_sphere(const Sphere& s) { return finite(s.center)&&std::isfinite(s.radius)&&s.radius>=0.0F; }
+struct BodyUpdate {
+    Entity entity;
+    Vec3 velocity;
+    Vec3 position;
+};
 }
+
+Result<std::size_t> PhysicsSystem::step(EntityRegistry& entities, double delta_seconds, Vec3 gravity) {
+    if (!std::isfinite(delta_seconds) || delta_seconds < 0.0 ||
+        delta_seconds > static_cast<double>(std::numeric_limits<float>::max()) || !finite(gravity)) {
+        return Result<std::size_t>::failure(
+            {ErrorCode::invalid_argument, "Physics step has an invalid delta time or gravity"});
+    }
+    const float dt = static_cast<float>(delta_seconds);
+    const auto bodies = entities.entities_with<RigidBodyComponent>();
+    std::vector<BodyUpdate> updates;
+    updates.reserve(bodies.size());
+
+    // Validate and calculate every result before publishing any mutation.
+    for (const auto entity : bodies) {
+        const auto* body = entities.get<RigidBodyComponent>(entity);
+        const auto* node = entities.get<SceneNodeComponent>(entity);
+        if (!body || !node) {
+            return Result<std::size_t>::failure(
+                {ErrorCode::invalid_state, "Rigid body requires a live scene-node component"});
+        }
+        if (!finite(body->velocity) || !finite(body->acceleration) ||
+            !std::isfinite(body->gravity_scale) || !std::isfinite(body->linear_damping) ||
+            body->linear_damping < 0.0F || !finite(node->local_transform.position)) {
+            return Result<std::size_t>::failure(
+                {ErrorCode::invalid_argument, "Rigid body contains non-finite values or negative damping"});
+        }
+        if (body->kinematic || dt == 0.0F) continue;
+
+        const Vec3 total_acceleration = add(body->acceleration, scale(gravity, body->gravity_scale));
+        Vec3 velocity = add(body->velocity, scale(total_acceleration, dt));
+        // Exponential damping is stable across varying fixed-step sizes.
+        velocity = scale(velocity, std::exp(-body->linear_damping * dt));
+        const Vec3 position = add(node->local_transform.position, scale(velocity, dt));
+        if (!finite(velocity) || !finite(position)) {
+            return Result<std::size_t>::failure(
+                {ErrorCode::invalid_argument, "Physics integration overflowed to a non-finite value"});
+        }
+        updates.push_back({entity, velocity, position});
+    }
+
+    for (const auto& update : updates) {
+        entities.get<RigidBodyComponent>(update.entity)->velocity = update.velocity;
+        entities.get<SceneNodeComponent>(update.entity)->local_transform.position = update.position;
+    }
+    return Result<std::size_t>::success(updates.size());
+}
+
 bool overlaps(const Aabb& a,const Aabb& b) noexcept {
     return valid_aabb(a)&&valid_aabb(b)&&
         a.minimum.x<=b.maximum.x&&a.maximum.x>=b.minimum.x&&
