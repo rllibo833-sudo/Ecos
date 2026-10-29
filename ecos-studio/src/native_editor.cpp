@@ -115,7 +115,7 @@ static bool init_gpu_renderer(std::string& error) {
  gpu.VertexAttribDivisor=reinterpret_cast<PFNGLVERTEXATTRIBDIVISORPROC>(glfwGetProcAddress("glVertexAttribDivisor")); gpu.instancing_ready=gpu.DrawElementsInstanced&&gpu.VertexAttribDivisor;
 #undef LOAD_GL
  const char* vs="#version 120\nattribute vec3 aPosition; attribute vec3 aNormal; attribute vec4 aInstance0; attribute vec4 aInstance1; attribute vec4 aInstance2; attribute vec4 aInstance3; uniform mat4 uMvp; uniform mat4 uModel; varying vec3 vNormal; void main(){ mat4 inst=mat4(aInstance0,aInstance1,aInstance2,aInstance3); vNormal=mat3(inst)*aNormal; gl_Position=uMvp*inst*vec4(aPosition,1.0); }";
- const char* fs="#version 120\nvarying vec3 vNormal; uniform vec3 uAlbedo; void main(){ vec3 n=normalize(vNormal); vec3 l=normalize(vec3(-0.4,0.85,0.3)); float diffuse=max(dot(n,l),0.0); float light=0.18+0.82*diffuse; gl_FragColor=vec4(uAlbedo*light,1.0); }";
+ const char* fs="#version 120\nvarying vec3 vNormal; uniform vec3 uAlbedo; void main(){ vec3 n=normalize(vNormal); vec3 l=normalize(vec3(-0.4,0.85,0.3)); float ndotl=max(dot(n,l),0.0); float light=0.7+0.3*ndotl; gl_FragColor=vec4(uAlbedo*light,1.0); }";
  auto compile=[&](GLenum type,const char* code)->GLuint { GLuint sh=gpu.CreateShader(type);gpu.ShaderSource(sh,1,&code,nullptr);gpu.CompileShader(sh);GLint ok=0;gpu.GetShaderiv(sh,GL_COMPILE_STATUS,&ok);if(!ok){GLint n=0;gpu.GetShaderiv(sh,GL_INFO_LOG_LENGTH,&n);std::string log(static_cast<std::size_t>(std::max(n,1)), '\0');gpu.GetShaderInfoLog(sh,n,nullptr,log.data());error="Shader compile failed: "+log;return 0;}return sh; };
  GLuint v=compile(GL_VERTEX_SHADER,vs);if(!v)return false;GLuint f=compile(GL_FRAGMENT_SHADER,fs);if(!f)return false;
  gpu.program=gpu.CreateProgram();gpu.AttachShader(gpu.program,v);gpu.AttachShader(gpu.program,f);gpu.LinkProgram(gpu.program);GLint linked=0;gpu.GetProgramiv(gpu.program,GL_LINK_STATUS,&linked);
@@ -123,8 +123,10 @@ static bool init_gpu_renderer(std::string& error) {
  gpu.mvp=gpu.GetUniformLocation(gpu.program,"uMvp");gpu.model=gpu.GetUniformLocation(gpu.program,"uModel");gpu.albedo=gpu.GetUniformLocation(gpu.program,"uAlbedo");gpu.position=gpu.GetAttribLocation(gpu.program,"aPosition");gpu.normal=gpu.GetAttribLocation(gpu.program,"aNormal");gpu.instance0=gpu.GetAttribLocation(gpu.program,"aInstance0");gpu.instance1=gpu.GetAttribLocation(gpu.program,"aInstance1");gpu.instance2=gpu.GetAttribLocation(gpu.program,"aInstance2");gpu.instance3=gpu.GetAttribLocation(gpu.program,"aInstance3");if(gpu.position<0||gpu.normal<0){error="GPU shader attributes were optimized out or not linked";return false;}gpu.ready=true;return true;
 }
 struct Mesh;
+struct Vertex { float x{}, y{}, z{}; };
+struct Bounds3 { Vertex min{}, max{}; bool valid{false}; };
 struct GpuVertex { float p[3]; float n[3]; };
-struct GpuMesh { GLuint vertex_buffer{}, index_buffer{}; GLsizei index_count{}; };
+struct GpuMesh { GLuint vertex_buffer{}, index_buffer{}; GLsizei index_count{}; Bounds3 bounds; };
 static std::unordered_map<const Mesh*, GpuMesh> gpu_mesh_cache;
 static void clear_gpu_mesh_cache() {
     if (gpu.ready) for (const auto& entry : gpu_mesh_cache) {
@@ -133,8 +135,13 @@ static void clear_gpu_mesh_cache() {
     }
     gpu_mesh_cache.clear();
 }
-struct Vertex { float x{}, y{}, z{}; };
-struct Mesh { std::vector<Vertex> vertices; std::vector<std::uint32_t> triangles; };
+struct Mesh { std::vector<Vertex> vertices; std::vector<std::uint32_t> triangles; Bounds3 bounds; };
+static void compute_mesh_bounds(Mesh& mesh) {
+    if (mesh.vertices.empty()) { mesh.bounds.valid=false; return; }
+    Vertex lo=mesh.vertices.front(), hi=lo;
+    for (const auto& v:mesh.vertices) { lo.x=std::min(lo.x,v.x); lo.y=std::min(lo.y,v.y); lo.z=std::min(lo.z,v.z); hi.x=std::max(hi.x,v.x); hi.y=std::max(hi.y,v.y); hi.z=std::max(hi.z,v.z); }
+    mesh.bounds={lo,hi,true};
+}
 struct SceneInstance { std::shared_ptr<Mesh> mesh; ecos::studio::Matrix4 world{ecos::studio::Matrix4::identity()}; std::string name; std::string mesh_asset_id; ecos::studio::NodeId node_id{}; bool is_lod_proxy{false}; };
 struct AssetLodPolicy {
     float full_detail_distance_m{500.0F};
@@ -203,6 +210,7 @@ static bool load_obj(const std::string& path, Mesh& out, std::string& error) {
     const float span=std::max({hi.x-lo.x,hi.y-lo.y,hi.z-lo.z,0.0001F});
     const float cx=(hi.x+lo.x)*0.5F,cy=(hi.y+lo.y)*0.5F,cz=(hi.z+lo.z)*0.5F;
     for (auto& v:next.vertices) { v.x=(v.x-cx)*2/span;v.y=(v.y-cy)*2/span;v.z=(v.z-cz)*2/span; }
+    compute_mesh_bounds(next);
     out=std::move(next); return true;
 }
 static void draw_mesh(const Mesh& mesh);
@@ -238,6 +246,7 @@ static bool load_ecos_scene(const std::filesystem::path& project_root,
             shared_mesh->vertices.reserve(imported.value().positions.size());
             for (const auto& p : imported.value().positions) shared_mesh->vertices.push_back({p.x,p.y,p.z});
             shared_mesh->triangles = imported.value().indices;
+            compute_mesh_bounds(*shared_mesh);
             mesh_by_asset.emplace(node.mesh_asset_id, shared_mesh);
         }
         SceneInstance instance;
@@ -574,7 +583,7 @@ static void draw_mesh(const Mesh& mesh) {
                 const auto& p=mesh.vertices[idx];vertices.push_back({{p.x,p.y,p.z},{nx,ny,nz}});indices.push_back(static_cast<std::uint32_t>(indices.size()));
             }
         }
-        GpuMesh cached;gpu.GenBuffers(1,&cached.vertex_buffer);
+        GpuMesh cached; cached.bounds=mesh.bounds; gpu.GenBuffers(1,&cached.vertex_buffer);
         gpu.BindBuffer(GL_ARRAY_BUFFER,cached.vertex_buffer);
         gpu.BufferData(GL_ARRAY_BUFFER,static_cast<GLsizeiptr>(vertices.size()*sizeof(GpuVertex)),vertices.data(),GL_STATIC_DRAW);
         gpu.GenBuffers(1,&cached.index_buffer);
@@ -731,9 +740,13 @@ int main(int argc,char** argv) {
                         proxy.mesh=proxy_mesh;
                         proxy.is_lod_proxy=true;
                         proxy.name=instance.name+" [LOD proxy]";
-                        constexpr float half_extent=12.0F;
-                        for (int row=0;row<3;++row) for (int col=0;col<3;++col)
-                            proxy.world.values[static_cast<std::size_t>(row*4+col)] *= half_extent;
+                        const auto bounds=instance.mesh->bounds;
+                        if (bounds.valid) {
+                            proxy_mesh->vertices={{bounds.min.x,bounds.min.y,bounds.min.z},{bounds.max.x,bounds.min.y,bounds.min.z},{bounds.max.x,bounds.max.y,bounds.min.z},{bounds.min.x,bounds.max.y,bounds.min.z},{bounds.min.x,bounds.min.y,bounds.max.z},{bounds.max.x,bounds.min.y,bounds.max.z},{bounds.max.x,bounds.max.y,bounds.max.z},{bounds.min.x,bounds.max.y,bounds.max.z}};
+                            proxy_mesh->triangles={0,2,1,0,3,2,4,5,6,4,6,7,0,1,5,0,5,4,3,7,6,3,6,2,0,4,7,0,7,3,1,2,6,1,6,5};
+                            compute_mesh_bounds(*proxy_mesh);
+                        }
+                        proxy.world=instance.world;
                         lod_proxies.push_back(std::move(proxy));
                     }
                 }
