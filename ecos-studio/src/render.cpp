@@ -224,7 +224,7 @@ Result<std::string> render_scene_to_ppm(
             }
         }
     }
-    std::string image="P6\\n"+std::to_string(width)+" "+std::to_string(height)+"\\n255\\n";
+    std::string image="P6\n"+std::to_string(width)+" "+std::to_string(height)+"\n255\n";
     image.append(reinterpret_cast<const char*>(pixels.data()),pixels.size());
     return Result<std::string>::success(std::move(image));
 }
