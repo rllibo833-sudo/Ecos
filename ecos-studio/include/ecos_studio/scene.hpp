@@ -37,6 +37,7 @@ struct SceneNode {
     NodeId id{0};
     std::string name;
     std::string mesh_asset_id;
+    std::string material_asset_id;
     Transform local_transform{};
     std::optional<NodeId> parent;
     std::vector<NodeId> children;
@@ -49,6 +50,7 @@ public:
     [[nodiscard]] Result<void> set_local_transform(NodeId node, const Transform& transform);
     [[nodiscard]] Result<void> rename_node(NodeId node, std::string name);
     [[nodiscard]] Result<void> set_mesh_asset(NodeId node, std::string asset_id);
+    [[nodiscard]] Result<void> set_material_asset(NodeId node, std::string asset_id);
     [[nodiscard]] Result<void> restore_subtree(const std::vector<SceneNode>& snapshot);
     [[nodiscard]] Result<void> destroy_subtree(NodeId node);
     [[nodiscard]] const SceneNode* find(NodeId node) const noexcept;
