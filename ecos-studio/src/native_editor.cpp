@@ -111,7 +111,7 @@ static bool load_ecos_scene(const std::filesystem::path& project_root,
 }
 static bool save_scene_file(EditorState& state) {
     if (!state.document || state.scene_path.empty()) return false;
-    auto serialized = state.document->save();
+    auto serialized = ecos::studio::serialize_scene(state.document->scene_id(), state.document->scene());
     if (!serialized) { state.status = serialized.error().message; return false; }
     const auto temporary = state.scene_path.string() + ".tmp";
     {
@@ -128,6 +128,8 @@ static bool save_scene_file(EditorState& state) {
         std::filesystem::rename(temporary, state.scene_path, ec);
     }
     if (ec) { state.status = "Cannot replace scene file: " + ec.message(); return false; }
+    auto marked_saved = state.document->save();
+    if (!marked_saved) { state.status = marked_saved.error().message; return false; }
     state.status = "Scene saved";
     return true;
 }

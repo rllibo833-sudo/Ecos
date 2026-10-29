@@ -10,6 +10,7 @@ set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(glfw GIT_REPOSITORY https://github.com/glfw/glfw.git GIT_TAG 3.4 GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(glfw)
+find_package(OpenGL REQUIRED)
 FetchContent_Declare(imgui GIT_REPOSITORY https://github.com/ocornut/imgui.git GIT_TAG v1.91.9b GIT_SHALLOW TRUE)
 FetchContent_GetProperties(imgui)
 if(NOT imgui_POPULATED)
@@ -25,7 +26,6 @@ add_library(ecos_imgui STATIC
 )
 target_include_directories(ecos_imgui PUBLIC ${imgui_SOURCE_DIR} ${imgui_SOURCE_DIR}/backends)
 target_link_libraries(ecos_imgui PUBLIC glfw OpenGL::GL)
-find_package(OpenGL REQUIRED)
 add_library(ecos_studio_core
     src/core.cpp src/project.cpp src/result.cpp src/platform.cpp
     src/scene.cpp src/scene_editor.cpp src/scene_document.cpp src/camera_controller.cpp src/asset_registry.cpp src/world.cpp src/world_streaming.cpp src/world_manifest.cpp
