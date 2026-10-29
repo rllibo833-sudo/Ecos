@@ -31,6 +31,7 @@ void test_invalid_materials(){
  check(!import_mtl_materials("Kd 1 1 1\nnewmtl later\n"),"rejects properties before newmtl");
  check(!import_mtl_materials("newmtl same\nnewmtl same\n"),"rejects duplicate material names");
  check(!import_mtl_materials("newmtl bad\nKd -1 0 0\n"),"rejects negative diffuse values");
+ check(!import_mtl_materials("newmtl bad\nKd 2 0 0\n"),"rejects diffuse values above one");
  check(!import_mtl_materials("newmtl bad\nd 1.5\n"),"rejects opacity outside [0,1]");
  check(!import_mtl_materials("# no materials\n"),"rejects empty library");
 }
