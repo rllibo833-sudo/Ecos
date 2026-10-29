@@ -6,7 +6,7 @@ It is not yet a complete Unreal Engine 5-equivalent product. Implemented capabil
 
 ## Native editor viewport (first desktop slice)
 
-Build `ecos-studio-editor` for a native Windows executable, macOS `.app`, or Linux executable. It opens a real native window with a depth-tested 3D viewport, grid and XYZ axes, orbit by dragging the left mouse button, zoom by scrolling, and camera reset with **R**. It supports a standalone OBJ preview and a project-backed scene mode that reads `.ecscene`, resolves mesh IDs through the validated imported-asset registry, imports OBJ geometry through the engine importer, and applies hierarchical world transforms.
+Build `ecos-studio-editor` for a native Windows executable, macOS `.app`, or Linux executable. It opens a native desktop window with a depth-tested 3D viewport, grid and XYZ axes, orbit by dragging the left mouse button, zoom by scrolling, and camera reset with **R**. Project-backed scene mode reads `.ecscene`, resolves mesh IDs through the validated imported-asset registry, imports OBJ geometry through the engine importer, and applies hierarchical world transforms. The native World Outliner and Inspector support selecting/creating/deleting entities, editing names and local transforms, undo/redo, and saving the scene.
 
 ```
 # Standalone mesh preview
@@ -18,7 +18,7 @@ ecos-studio-editor --project ../MyGame --scene ../MyGame/scenes/main.ecscene
 
 The project CI builds Windows, macOS, and Linux targets; CI packaging is a delivery mechanism, not the engine implementation.
 
-This is an **early native editor slice, not an Unreal Engine 5 equivalent**. The viewport still uses the OpenGL compatibility pipeline; scene loading is read-only and the editor does not yet have an interactive native hierarchy/inspector, production PBR/material pipeline, play-in-editor, scripting, or complete game packaging workflow. The browser editor remains available under `editor/index.html`.
+This is an **early native editor slice, not an Unreal Engine 5 equivalent**. The viewport still uses the OpenGL compatibility pipeline, scene asset assignment is not yet exposed in the native inspector, and production PBR/materials, play-in-editor, scripting, and complete game packaging workflow remain unfinished. The browser editor remains available under `editor/index.html`.
 
 ## Implemented
 
@@ -32,7 +32,7 @@ This is an **early native editor slice, not an Unreal Engine 5 equivalent**. The
 - Wavefront OBJ importer supporting positions, UVs, explicit/generated normals, independent positive/negative indices, polygon fan triangulation, UV seam expansion, finite-value validation, and mesh bounds.
 - Wavefront MTL text importer for named materials, diffuse color, opacity/transparency, shininess, and illumination model.
 - Deterministic CPU reference triangle rasterizer with depth buffering, simple directional lighting, and PPM output.
-- Native editor viewport with standalone OBJ preview and read-only .ecscene rendering through the existing scene graph and validated imported-asset registry; hierarchical world transforms are applied. This is a starting renderer, not a production AAA pipeline.
+- Native editor viewport with standalone OBJ preview and project .ecscene rendering through the existing scene graph and validated imported-asset registry; native World Outliner, transform inspector, entity create/delete, undo/redo, and scene save are wired to SceneDocument. This is a starting renderer, not a production AAA pipeline.
 - World-cell lifecycle model, resident/loading budgets, failure/retry/unload, and radius queries.
 - .ecworld manifest validator for schema version, unique cell IDs/coordinates, and safe content paths.
 - Platform-neutral input event queue/state for keys, mouse buttons, pointer movement, wheel deltas, and focus-loss releases.
@@ -69,7 +69,7 @@ Validation re-hashes source bytes, reparses the OBJ, checks stored geometry stat
 
 ## Not implemented yet
 
-The native viewport currently uses legacy OpenGL and scene loading is read-only. A modern production GPU renderer, interactive native scene editing, production physics runtime, audio device backend, scripting VM, asynchronous disk streaming/LOD, and complete material/import pipeline remain unimplemented.
+The native viewport currently uses legacy OpenGL. A modern production GPU renderer, native mesh/material assignment workflow, play-in-editor, production physics runtime, audio device backend, scripting VM, asynchronous disk streaming/LOD, and complete material/import pipeline remain unimplemented.
 
 ## Build
 
