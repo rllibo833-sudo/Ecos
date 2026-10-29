@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <cstddef>
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
@@ -53,6 +54,7 @@ using PFNGLGETPROGRAMIVPROC = void (APIENTRY*)(GLuint, GLenum, GLint*);
 using PFNGLGETPROGRAMINFOLOGPROC = void (APIENTRY*)(GLuint, GLsizei, GLsizei*, char*);
 using PFNGLUSEPROGRAMPROC = void (APIENTRY*)(GLuint);
 using PFNGLGETUNIFORMLOCATIONPROC = GLint (APIENTRY*)(GLuint, const char*);
+using PFNGLGETATTRIBLOCATIONPROC = GLint (APIENTRY*)(GLuint, const char*);
 using PFNGLUNIFORMMATRIX4FVPROC = void (APIENTRY*)(GLint, GLsizei, GLboolean, const GLfloat*);
 using PFNGLUNIFORM3FPROC = void (APIENTRY*)(GLint, GLfloat, GLfloat, GLfloat);
 using PFNGLGENBUFFERSPROC = void (APIENTRY*)(GLsizei, GLuint*);
@@ -66,10 +68,10 @@ using PFNGLDRAWElementsPROC = void (APIENTRY*)(GLenum, GLsizei, GLenum, const vo
 struct GpuApi {
  PFNGLCREATESHADERPROC CreateShader{}; PFNGLSHADERSOURCEPROC ShaderSource{}; PFNGLCOMPILESHADERPROC CompileShader{}; PFNGLGETSHADERIVPROC GetShaderiv{}; PFNGLGETSHADERINFOLOGPROC GetShaderInfoLog{};
  PFNGLCREATEPROGRAMPROC CreateProgram{}; PFNGLATTACHSHADERPROC AttachShader{}; PFNGLLINKPROGRAMPROC LinkProgram{}; PFNGLGETPROGRAMIVPROC GetProgramiv{}; PFNGLGETPROGRAMINFOLOGPROC GetProgramInfoLog{}; PFNGLUSEPROGRAMPROC UseProgram{};
- PFNGLGETUNIFORMLOCATIONPROC GetUniformLocation{}; PFNGLUNIFORMMATRIX4FVPROC UniformMatrix4fv{}; PFNGLUNIFORM3FPROC Uniform3f{};
+ PFNGLGETUNIFORMLOCATIONPROC GetUniformLocation{}; PFNGLGETATTRIBLOCATIONPROC GetAttribLocation{}; PFNGLUNIFORMMATRIX4FVPROC UniformMatrix4fv{}; PFNGLUNIFORM3FPROC Uniform3f{};
  PFNGLGENBUFFERSPROC GenBuffers{}; PFNGLBINDBUFFERPROC BindBuffer{}; PFNGLBUFFERDATAPROC BufferData{}; PFNGLDELETEBUFFERSPROC DeleteBuffers{};
  PFNGLENABLEVERTEXATTRIBARRAYPROC EnableVertexAttribArray{}; PFNGLDISABLEVERTEXATTRIBARRAYPROC DisableVertexAttribArray{}; PFNGLVERTEXATTRIBPOINTERPROC VertexAttribPointer{}; PFNGLDRAWElementsPROC DrawElements{};
- GLuint program{}; GLint mvp{-1}, model{-1}, albedo{-1}; bool ready{false};
+ GLuint program{}; GLint mvp{-1}, model{-1}, albedo{-1}, position{-1}, normal{-1}; bool ready{false};
 };
 static GpuApi gpu;
 static bool init_gpu_renderer(std::string& error) {
@@ -86,6 +88,7 @@ static bool init_gpu_renderer(std::string& error) {
  LOAD_GL(GetProgramInfoLog,PFNGLGETPROGRAMINFOLOGPROC,"glGetProgramInfoLog")
  LOAD_GL(UseProgram,PFNGLUSEPROGRAMPROC,"glUseProgram")
  LOAD_GL(GetUniformLocation,PFNGLGETUNIFORMLOCATIONPROC,"glGetUniformLocation")
+ LOAD_GL(GetAttribLocation,PFNGLGETATTRIBLOCATIONPROC,"glGetAttribLocation")
  LOAD_GL(UniformMatrix4fv,PFNGLUNIFORMMATRIX4FVPROC,"glUniformMatrix4fv")
  LOAD_GL(Uniform3f,PFNGLUNIFORM3FPROC,"glUniform3f")
  LOAD_GL(GenBuffers,PFNGLGENBUFFERSPROC,"glGenBuffers")
@@ -103,7 +106,7 @@ static bool init_gpu_renderer(std::string& error) {
  GLuint v=compile(GL_VERTEX_SHADER,vs);if(!v)return false;GLuint f=compile(GL_FRAGMENT_SHADER,fs);if(!f)return false;
  gpu.program=gpu.CreateProgram();gpu.AttachShader(gpu.program,v);gpu.AttachShader(gpu.program,f);gpu.LinkProgram(gpu.program);GLint linked=0;gpu.GetProgramiv(gpu.program,GL_LINK_STATUS,&linked);
  if(!linked){GLint n=0;gpu.GetProgramiv(gpu.program,GL_INFO_LOG_LENGTH,&n);std::string log(static_cast<std::size_t>(std::max(n,1)), '\0');gpu.GetProgramInfoLog(gpu.program,n,nullptr,log.data());error="GPU renderer link failed: "+log;return false;}
- gpu.mvp=gpu.GetUniformLocation(gpu.program,"uMvp");gpu.model=gpu.GetUniformLocation(gpu.program,"uModel");gpu.albedo=gpu.GetUniformLocation(gpu.program,"uAlbedo");gpu.ready=true;return true;
+ gpu.mvp=gpu.GetUniformLocation(gpu.program,"uMvp");gpu.model=gpu.GetUniformLocation(gpu.program,"uModel");gpu.albedo=gpu.GetUniformLocation(gpu.program,"uAlbedo");gpu.position=gpu.GetAttribLocation(gpu.program,"aPosition");gpu.normal=gpu.GetAttribLocation(gpu.program,"aNormal");if(gpu.position<0||gpu.normal<0){error="GPU shader attributes were optimized out or not linked";return false;}gpu.ready=true;return true;
 }
 struct GpuVertex { float p[3]; float n[3]; };
 struct Vertex { float x{}, y{}, z{}; };
@@ -441,7 +444,7 @@ static void draw_mesh(const Mesh& mesh) {
     for(int row=0;row<4;++row)for(int col=0;col<4;++col){mvp[col*4+row]=0;for(int k=0;k<4;++k)mvp[col*4+row]+=projection[k*4+row]*model[col*4+k];}
     gpu.UniformMatrix4fv(gpu.mvp,1,GL_FALSE,mvp);gpu.UniformMatrix4fv(gpu.model,1,GL_FALSE,model);gpu.Uniform3f(gpu.albedo,0.28F,0.58F,0.95F);
     gpu.DrawElements(GL_TRIANGLES,static_cast<GLsizei>(indices.size()),GL_UNSIGNED_INT,nullptr);
-    gpu.DisableVertexAttribArray(0);gpu.DisableVertexAttribArray(1);gpu.UseProgram(0);gpu.BindBuffer(GL_ARRAY_BUFFER,0);gpu.BindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);gpu.DeleteBuffers(2,buffers);
+    gpu.DisableVertexAttribArray(static_cast<GLuint>(gpu.position));gpu.DisableVertexAttribArray(static_cast<GLuint>(gpu.normal));gpu.UseProgram(0);gpu.BindBuffer(GL_ARRAY_BUFFER,0);gpu.BindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);gpu.DeleteBuffers(2,buffers);
 }
 static Mesh starter_cube() {
     Mesh m;
