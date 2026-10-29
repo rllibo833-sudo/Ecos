@@ -101,8 +101,15 @@ static void draw_mesh(const Mesh& mesh) {
     }
     glEnd();
 }
+static Mesh starter_cube() {
+    Mesh m;
+    m.vertices={{-1,-1,-1},{1,-1,-1},{1,1,-1},{-1,1,-1},{-1,-1,1},{1,-1,1},{1,1,1},{-1,1,1}};
+    m.triangles={0,2,1,0,3,2,4,5,6,4,6,7,0,1,5,0,5,4,3,7,6,3,6,2,0,4,7,0,7,3,1,2,6,1,6,5};
+    return m;
+}
 int main(int argc,char** argv) {
     EditorState state;
+    state.mesh=starter_cube();
     if(argc>1){std::string error;if(!load_obj(argv[1],state.mesh,error)){std::cerr<<error<<'\n';return 2;}state.title+=" — "+std::string(argv[1]);}
     if(!glfwInit()){std::cerr<<"GLFW initialization failed\n";return 2;}
 #ifdef __APPLE__
