@@ -94,6 +94,10 @@ void test_scene_graph_resolves_mesh_assets_and_world_transforms() {
         std::ofstream out(root / "assets/triangle.obj", std::ios::binary);
         out << "v -0.4 -0.4 0\nv 0.4 -0.4 0\nv 0 0.4 0\nf 1 2 3\n";
     }
+    {
+        std::ofstream out(root / "assets/red.mtl", std::ios::binary);
+        out << "newmtl red\nKd 1 0 0\n";
+    }
     AssetRegistry registry;
     check(static_cast<bool>(registry.register_asset(AssetRecord{"triangle", "mesh.obj", "assets/triangle.obj", {}})),
         "registers mesh asset for scene renderer");
@@ -109,9 +113,13 @@ void test_scene_graph_resolves_mesh_assets_and_world_transforms() {
         Transform transform;
         transform.position = {1.0F, 0.0F, 0.0F};
         check(static_cast<bool>(scene.set_local_transform(right.value(), transform)), "transforms child mesh");
+        auto baseline = render_scene_graph_to_ppm(scene, registry, root, 96, 64);
+        check(static_cast<bool>(baseline), "loads referenced OBJ assets and renders scene graph");
+        check(static_cast<bool>(scene.set_material_asset(left.value(), "red-material")), "assigns MTL asset to scene node");
         auto image = render_scene_graph_to_ppm(scene, registry, root, 96, 64);
-        check(static_cast<bool>(image), "loads referenced OBJ assets and renders scene graph");
+        check(static_cast<bool>(image), "loads referenced MTL material and renders scene graph");
         if (image) check(image.value().starts_with("P6\n96 64\n255\n"), "scene graph renderer returns a PPM frame");
+        if (image && baseline) check(image.value() != baseline.value(), "material diffuse color changes rendered scene pixels");
     }
     SceneGraph missing_scene;
     auto missing_node = missing_scene.create_node("Missing");
