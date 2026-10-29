@@ -205,6 +205,80 @@ Result<std::optional<ColliderRayHit>> PhysicsQuerySystem::raycast(
     return Result<std::optional<ColliderRayHit>>::success(nearest);
 }
 
+
+Result<std::size_t> PhysicsSystem::resolve_collisions(EntityRegistry& entities, std::size_t iterations) {
+    if (iterations == 0U) {
+        return Result<std::size_t>::failure(
+            {ErrorCode::invalid_argument, "Collision resolution requires at least one iteration"});
+    }
+    // Validate all participating dynamic bodies before changing any transform.
+    for (const auto entity : entities.entities_with<RigidBodyComponent>()) {
+        const auto* body = entities.get<RigidBodyComponent>(entity);
+        const auto* node = entities.get<SceneNodeComponent>(entity);
+        if (!body || !node) {
+            return Result<std::size_t>::failure(
+                {ErrorCode::invalid_state, "Rigid body requires a live scene-node component"});
+        }
+        if (!finite(body->velocity) || !finite(node->local_transform.position)) {
+            return Result<std::size_t>::failure(
+                {ErrorCode::invalid_argument, "Collision resolution encountered non-finite body data"});
+        }
+        if (!body->kinematic && (node->parent.has_value() || node->parent_entity.has_value())) {
+            return Result<std::size_t>::failure(
+                {ErrorCode::invalid_state, "Dynamic collision resolution currently requires root scene nodes"});
+        }
+    }
+
+    std::size_t resolved_contacts = 0U;
+    constexpr float slop = 1.0e-3F;
+    constexpr float correction_fraction = 0.8F;
+    for (std::size_t iteration = 0U; iteration < iterations; ++iteration) {
+        auto detected = CollisionSystem::detect(entities);
+        if (!detected) return Result<std::size_t>::failure(detected.error());
+        bool changed = false;
+        for (const auto& pair : detected.value()) {
+            if (pair.trigger || pair.penetration <= slop) continue;
+            auto* first_node = entities.get<SceneNodeComponent>(pair.first);
+            auto* second_node = entities.get<SceneNodeComponent>(pair.second);
+            if (!first_node || !second_node) {
+                return Result<std::size_t>::failure(
+                    {ErrorCode::invalid_state, "Collision pair references an entity without a scene node"});
+            }
+            auto* first_body = entities.get<RigidBodyComponent>(pair.first);
+            auto* second_body = entities.get<RigidBodyComponent>(pair.second);
+            const float inv_first = first_body && !first_body->kinematic ? 1.0F : 0.0F;
+            const float inv_second = second_body && !second_body->kinematic ? 1.0F : 0.0F;
+            const float inv_total = inv_first + inv_second;
+            if (inv_total <= 0.0F) continue;
+
+            const float correction = correction_fraction * (pair.penetration - slop) / inv_total;
+            if (inv_first > 0.0F) {
+                first_node->local_transform.position =
+                    subtract(first_node->local_transform.position, scale(pair.normal, correction * inv_first));
+            }
+            if (inv_second > 0.0F) {
+                second_node->local_transform.position =
+                    add(second_node->local_transform.position, scale(pair.normal, correction * inv_second));
+            }
+
+            Vec3 first_velocity = first_body ? first_body->velocity : Vec3{};
+            Vec3 second_velocity = second_body ? second_body->velocity : Vec3{};
+            const float inward_speed = dot(subtract(second_velocity, first_velocity), pair.normal);
+            if (inward_speed < 0.0F) {
+                const float impulse = -inward_speed / inv_total;
+                if (inv_first > 0.0F)
+                    first_body->velocity = subtract(first_body->velocity, scale(pair.normal, impulse * inv_first));
+                if (inv_second > 0.0F)
+                    second_body->velocity = add(second_body->velocity, scale(pair.normal, impulse * inv_second));
+            }
+            ++resolved_contacts;
+            changed = true;
+        }
+        if (!changed) break;
+    }
+    return Result<std::size_t>::success(resolved_contacts);
+}
+
 Result<std::vector<CollisionPair>> CollisionSystem::detect(EntityRegistry& entities) {
     auto transformed = WorldTransformSystem::update(entities);
     if (!transformed) return Result<std::vector<CollisionPair>>::failure(transformed.error());

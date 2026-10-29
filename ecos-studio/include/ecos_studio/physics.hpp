@@ -111,6 +111,11 @@ public:
     [[nodiscard]] static Result<std::size_t> step(
         EntityRegistry& entities, double delta_seconds,
         Vec3 gravity = {0.0F, -9.81F, 0.0F});
+    // Resolves non-trigger contacts with positional correction and removes
+    // inward normal velocity. Dynamic bodies must be root scene nodes so
+    // world-space corrections cannot corrupt parent-local transforms.
+    [[nodiscard]] static Result<std::size_t> resolve_collisions(
+        EntityRegistry& entities, std::size_t iterations = 4U);
 };
 
 [[nodiscard]] bool overlaps(const Aabb& a, const Aabb& b) noexcept;

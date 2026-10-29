@@ -127,6 +127,39 @@ void test_collision_event_lifecycle(){
  check(events&&events.value().size()==1&&events.value()[0].phase==CollisionPhase::enter,
        "reset clears the collision lifecycle baseline");
 }
+
+void test_collision_resolution(){
+ using namespace ecos::studio;
+ EntityRegistry entities;
+ const auto floor=entities.create(), falling=entities.create();
+ Transform floor_transform; floor_transform.position={0,0,0};
+ Transform body_transform; body_transform.position={0,0.75F,0};
+ entities.emplace<SceneNodeComponent>(floor,SceneNodeComponent{"floor","",floor_transform,{},{}});
+ entities.emplace<SceneNodeComponent>(falling,SceneNodeComponent{"body","",body_transform,{},{}});
+ ColliderComponent box; box.shape=ColliderShape::box; box.half_extents={2,0.5F,2};
+ entities.emplace<ColliderComponent>(floor,box);
+ ColliderComponent sphere; sphere.shape=ColliderShape::sphere; sphere.radius=0.5F;
+ entities.emplace<ColliderComponent>(falling,sphere);
+ RigidBodyComponent body; body.velocity={0,-3,0};
+ entities.emplace<RigidBodyComponent>(falling,body);
+ auto resolved=PhysicsSystem::resolve_collisions(entities,8U);
+ check(resolved&&resolved.value()>0,"resolves overlapping dynamic body against static collider");
+ check(entities.get<SceneNodeComponent>(falling)->local_transform.position.y>0.98F,
+       "positional correction separates dynamic body from static floor");
+ check(near(entities.get<RigidBodyComponent>(falling)->velocity.y,0),
+       "collision resolution removes inward normal velocity");
+
+ const auto trigger_entity=entities.create();
+ Transform trigger_transform; trigger_transform.position={0,0.75F,0};
+ entities.emplace<SceneNodeComponent>(trigger_entity,SceneNodeComponent{"trigger","",trigger_transform,{},{}});
+ sphere.trigger=true; entities.emplace<ColliderComponent>(trigger_entity,sphere);
+ const float before=entities.get<SceneNodeComponent>(falling)->local_transform.position.y;
+ resolved=PhysicsSystem::resolve_collisions(entities,2U);
+ check(resolved&&near(entities.get<SceneNodeComponent>(falling)->local_transform.position.y,before),
+       "trigger overlaps are reported but not physically resolved");
+
+ check(!PhysicsSystem::resolve_collisions(entities,0U),"rejects zero resolution iterations");
+}
 void test_ecs_physics_integration(){
  using namespace ecos::studio;
  EntityRegistry entities;
@@ -159,4 +192,4 @@ void test_ecs_physics_integration(){
  check(!PhysicsSystem::step(entities,-0.1),"rejects negative delta time");
 }
 }
-int main(){test_overlaps();test_ray_aabb();test_ray_sphere();test_ecs_collision_detection();test_ecs_raycast();test_collision_event_lifecycle();test_ecs_physics_integration();if(failures){std::cerr<<failures<<" physics test(s) failed.\n";return 1;}std::cout<<"ECOS Studio collision and ECS physics tests passed.\n";return 0;}
+int main(){test_overlaps();test_ray_aabb();test_ray_sphere();test_ecs_collision_detection();test_ecs_raycast();test_collision_event_lifecycle();test_collision_resolution();test_ecs_physics_integration();if(failures){std::cerr<<failures<<" physics test(s) failed.\n";return 1;}std::cout<<"ECOS Studio collision and ECS physics tests passed.\n";return 0;}
