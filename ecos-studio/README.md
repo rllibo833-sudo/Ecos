@@ -6,9 +6,9 @@ It is not yet a complete Unreal Engine 5-equivalent product. Implemented capabil
 
 ## Visual scene editor (early preview)
 
-Open `editor/index.html` in a modern browser to try the first ECOS Studio visual editor. It can open existing `.ecscene` files, show the scene hierarchy, create/delete objects, edit names and transforms, assign mesh/material asset IDs, undo/redo edits, and export the scene back to the native line-based scene format. It runs locally in the browser and needs no install or server.
+Open `editor/index.html` in a modern browser to try the first ECOS Studio visual editor. It opens `.ecscene` files, shows the hierarchy, creates/deletes objects, edits transforms, supports undo/redo, and exports the native scene format. Use **Import OBJ** to load a real Wavefront OBJ mesh into the viewport and attach it to the selected object; faces are triangulated and displayed with simple shaded polygons. This browser preview runs locally without installation.
 
-This is the first usable editor slice, **not** the finished Unreal-style editor: the viewport is a lightweight scene preview, not the engine's final 3D renderer. GPU rendering, importing and displaying real models in the viewport, a native desktop shell, play-in-editor, visual scripting, and game packaging still need to be integrated. The existing C++ runtime and scene format remain intact.
+This is still an early editor, **not** an Unreal Engine 5 equivalent. The OBJ preview is a lightweight browser-side renderer: imported meshes remain in the current editor session, and the scene file only stores asset IDs. For persistent project assets, import OBJ files through the C++ `asset-import` command. A production GPU renderer, durable asset browser, native desktop shell, play-in-editor, visual scripting, and game packaging remain unimplemented. The existing C++ runtime and scene format remain intact.
 
 ## Implemented
 
