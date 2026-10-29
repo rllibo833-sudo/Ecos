@@ -26,6 +26,8 @@ struct MeshData {
     std::vector<Vec3> normals;
     std::vector<std::uint32_t> indices;
     MeshBounds bounds{};
+    // Optional linear diffuse albedo per triangle; empty keeps the legacy default material.
+    std::vector<Vec3> triangle_diffuse_colors;
 };
 
 [[nodiscard]] Result<MeshData> import_obj_mesh(std::string_view source);
