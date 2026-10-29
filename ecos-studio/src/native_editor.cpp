@@ -49,6 +49,7 @@ using PFNGLCOMPILESHADERPROC = void (APIENTRY*)(GLuint);
 using PFNGLGETSHADERIVPROC = void (APIENTRY*)(GLuint, GLenum, GLint*);
 using PFNGLGETSHADERINFOLOGPROC = void (APIENTRY*)(GLuint, GLsizei, GLsizei*, char*);
 using PFNGLCREATEPROGRAMPROC = GLuint (APIENTRY*)();
+using PFNGLDELETEPROGRAMPROC = void (APIENTRY*)(GLuint);
 using PFNGLATTACHSHADERPROC = void (APIENTRY*)(GLuint, GLuint);
 using PFNGLLINKPROGRAMPROC = void (APIENTRY*)(GLuint);
 using PFNGLGETPROGRAMIVPROC = void (APIENTRY*)(GLuint, GLenum, GLint*);
@@ -68,7 +69,7 @@ using PFNGLVERTEXATTRIBPOINTERPROC = void (APIENTRY*)(GLuint, GLint, GLenum, GLb
 using PFNGLDRAWElementsPROC = void (APIENTRY*)(GLenum, GLsizei, GLenum, const void*);
 struct GpuApi {
  PFNGLCREATESHADERPROC CreateShader{}; PFNGLSHADERSOURCEPROC ShaderSource{}; PFNGLCOMPILESHADERPROC CompileShader{}; PFNGLGETSHADERIVPROC GetShaderiv{}; PFNGLGETSHADERINFOLOGPROC GetShaderInfoLog{};
- PFNGLCREATEPROGRAMPROC CreateProgram{}; PFNGLATTACHSHADERPROC AttachShader{}; PFNGLLINKPROGRAMPROC LinkProgram{}; PFNGLGETPROGRAMIVPROC GetProgramiv{}; PFNGLGETPROGRAMINFOLOGPROC GetProgramInfoLog{}; PFNGLUSEPROGRAMPROC UseProgram{};
+ PFNGLCREATEPROGRAMPROC CreateProgram{}; PFNGLDELETEPROGRAMPROC DeleteProgram{}; PFNGLATTACHSHADERPROC AttachShader{}; PFNGLLINKPROGRAMPROC LinkProgram{}; PFNGLGETPROGRAMIVPROC GetProgramiv{}; PFNGLGETPROGRAMINFOLOGPROC GetProgramInfoLog{}; PFNGLUSEPROGRAMPROC UseProgram{};
  PFNGLGETUNIFORMLOCATIONPROC GetUniformLocation{}; PFNGLGETATTRIBLOCATIONPROC GetAttribLocation{}; PFNGLUNIFORMMATRIX4FVPROC UniformMatrix4fv{}; PFNGLUNIFORM3FPROC Uniform3f{};
  PFNGLGENBUFFERSPROC GenBuffers{}; PFNGLBINDBUFFERPROC BindBuffer{}; PFNGLBUFFERDATAPROC BufferData{}; PFNGLDELETEBUFFERSPROC DeleteBuffers{};
  PFNGLENABLEVERTEXATTRIBARRAYPROC EnableVertexAttribArray{}; PFNGLDISABLEVERTEXATTRIBARRAYPROC DisableVertexAttribArray{}; PFNGLVERTEXATTRIBPOINTERPROC VertexAttribPointer{}; PFNGLDRAWElementsPROC DrawElements{};
@@ -83,6 +84,7 @@ static bool init_gpu_renderer(std::string& error) {
  LOAD_GL(GetShaderiv,PFNGLGETSHADERIVPROC,"glGetShaderiv")
  LOAD_GL(GetShaderInfoLog,PFNGLGETSHADERINFOLOGPROC,"glGetShaderInfoLog")
  LOAD_GL(CreateProgram,PFNGLCREATEPROGRAMPROC,"glCreateProgram")
+ LOAD_GL(DeleteProgram,PFNGLDELETEPROGRAMPROC,"glDeleteProgram")
  LOAD_GL(AttachShader,PFNGLATTACHSHADERPROC,"glAttachShader")
  LOAD_GL(LinkProgram,PFNGLLINKPROGRAMPROC,"glLinkProgram")
  LOAD_GL(GetProgramiv,PFNGLGETPROGRAMIVPROC,"glGetProgramiv")
@@ -548,6 +550,6 @@ int main(int argc,char** argv) {
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
     clear_gpu_mesh_cache();
-    if(gpu.program){glDeleteProgram(gpu.program);}
+    if(gpu.program){gpu.DeleteProgram(gpu.program);}
     glfwDestroyWindow(window);glfwTerminate();return 0;
 }
