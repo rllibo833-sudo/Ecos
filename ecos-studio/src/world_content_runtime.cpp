@@ -76,7 +76,7 @@ Result<void> WorldContentRuntime::materialize_cell_entities(const std::string& c
             entities_.emplace<WorldCellEntityComponent>(
                 entity, WorldCellEntityComponent{cell_id, node.id});
             entities_.emplace<SceneNodeComponent>(
-                entity, SceneNodeComponent{node.name, node.mesh_asset_id, node.material_asset_id, node.local_transform, node.parent, parent_entity});
+                entity, SceneNodeComponent{node.name, node.mesh_asset_id, node.local_transform, node.parent, parent_entity, node.material_asset_id});
         }
     } catch (const std::exception& exception) {
         for (const auto& [node_id, entity] : group) {
