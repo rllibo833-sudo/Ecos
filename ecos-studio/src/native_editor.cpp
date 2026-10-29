@@ -87,9 +87,8 @@ static bool load_ecos_scene(const std::filesystem::path& project_root,
     if (!registry) { error = "Asset registry load failed: " + registry.error().message; return false; }
 
     std::vector<std::string> next_asset_ids;
-    for (const auto& node : graph.nodes())
-        if (!node.mesh_asset_id.empty() && std::find(next_asset_ids.begin(), next_asset_ids.end(), node.mesh_asset_id) == next_asset_ids.end())
-            next_asset_ids.push_back(node.mesh_asset_id);
+    for (const auto& asset : registry.value().assets())
+        if (asset.type == "mesh.obj") next_asset_ids.push_back(asset.id);
     std::sort(next_asset_ids.begin(), next_asset_ids.end());
     std::vector<SceneInstance> next;
     for (const auto& node : graph.nodes()) {

@@ -22,6 +22,7 @@ public:
     [[nodiscard]] const AssetRecord* find(const std::string& id) const noexcept;
     [[nodiscard]] Result<void> validate_dependencies() const;
     [[nodiscard]] std::size_t size() const noexcept;
+    [[nodiscard]] std::vector<AssetRecord> assets() const;
     void clear() noexcept;
 
 private:

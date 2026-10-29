@@ -75,6 +75,12 @@ Result<void> AssetRegistry::validate_dependencies() const {
 }
 
 std::size_t AssetRegistry::size() const noexcept { return assets_.size(); }
+std::vector<AssetRecord> AssetRegistry::assets() const {
+    std::vector<AssetRecord> result;
+    result.reserve(assets_.size());
+    for (const auto& [id, asset] : assets_) { (void)id; result.push_back(asset); }
+    return result;
+}
 void AssetRegistry::clear() noexcept { assets_.clear(); }
 
 } // namespace ecos::studio
