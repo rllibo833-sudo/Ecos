@@ -167,7 +167,7 @@ void test_renders_only_resident_streamed_world_cells() {
                 auto camera_frame = render_world_content_runtime_to_ppm(*runtime, registry, root,
                     multiply(camera_projection.value(), camera_view.value()), 96, 64);
                 check(static_cast<bool>(camera_frame), "renders resident streamed world through active camera");
-                if (camera_frame) check(camera_frame.value().starts_with("P6\\n96 64\\n255\\n"),
+                if (camera_frame) check(camera_frame.value().starts_with("P6\n96 64\n255\n"),
                     "camera-aware streamed renderer emits a valid frame");
             }
             if (combined) check(combined.value().starts_with("P6\n96 64\n255\n"),
