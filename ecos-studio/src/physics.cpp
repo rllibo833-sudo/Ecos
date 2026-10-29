@@ -202,6 +202,31 @@ Result<std::vector<CollisionPair>> CollisionSystem::detect(EntityRegistry& entit
     return Result<std::vector<CollisionPair>>::success(std::move(pairs));
 }
 
+Result<std::vector<CollisionEvent>> CollisionEventTracker::update(EntityRegistry& entities) {
+    auto detected = CollisionSystem::detect(entities);
+    if (!detected) return Result<std::vector<CollisionEvent>>::failure(detected.error());
+
+    const auto& current = detected.value();
+    const auto same_pair = [](const CollisionPair& a, const CollisionPair& b) {
+        return a.first == b.first && a.second == b.second;
+    };
+    std::vector<CollisionEvent> events;
+    events.reserve(current.size() + active_pairs_.size());
+
+    for (const auto& pair : current) {
+        const auto previous = std::find_if(active_pairs_.begin(), active_pairs_.end(),
+            [&](const CollisionPair& old) { return same_pair(old, pair); });
+        events.push_back({previous == active_pairs_.end() ? CollisionPhase::enter : CollisionPhase::stay, pair});
+    }
+    for (const auto& previous : active_pairs_) {
+        const auto still_active = std::find_if(current.begin(), current.end(),
+            [&](const CollisionPair& pair) { return same_pair(previous, pair); });
+        if (still_active == current.end()) events.push_back({CollisionPhase::exit, previous});
+    }
+    active_pairs_ = current;
+    return Result<std::vector<CollisionEvent>>::success(std::move(events));
+}
+
 bool overlaps(const Aabb& a,const Aabb& b) noexcept {
     return valid_aabb(a)&&valid_aabb(b)&&
         a.minimum.x<=b.maximum.x&&a.maximum.x>=b.minimum.x&&

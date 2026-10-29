@@ -62,6 +62,24 @@ struct CollisionPair {
     bool trigger{false};
 };
 
+enum class CollisionPhase { enter, stay, exit };
+
+struct CollisionEvent {
+    CollisionPhase phase{CollisionPhase::enter};
+    CollisionPair pair{};
+};
+
+// Maintains overlap state between simulation ticks and emits deterministic
+// enter/stay/exit transitions. A tracker belongs to one active simulation world.
+class CollisionEventTracker {
+public:
+    [[nodiscard]] Result<std::vector<CollisionEvent>> update(EntityRegistry& entities);
+    void reset() noexcept { active_pairs_.clear(); }
+
+private:
+    std::vector<CollisionPair> active_pairs_;
+};
+
 class CollisionSystem {
 public:
     // Updates hierarchical transforms, then returns deterministic overlapping

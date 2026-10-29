@@ -68,6 +68,36 @@ void test_ecs_collision_detection(){
  entities.get<ColliderComponent>(c)->radius=-1;
  check(!CollisionSystem::detect(entities),"rejects invalid collider data");
 }
+void test_collision_event_lifecycle(){
+ using namespace ecos::studio;
+ EntityRegistry entities;
+ const auto a=entities.create(), b=entities.create();
+ Transform ta; ta.position={0,0,0};
+ Transform tb; tb.position={0.5F,0,0};
+ entities.emplace<SceneNodeComponent>(a,SceneNodeComponent{"A","",ta,{},{}});
+ entities.emplace<SceneNodeComponent>(b,SceneNodeComponent{"B","",tb,{},{}});
+ ColliderComponent collider; collider.shape=ColliderShape::sphere; collider.radius=1.0F;
+ entities.emplace<ColliderComponent>(a,collider);
+ entities.emplace<ColliderComponent>(b,collider);
+ CollisionEventTracker tracker;
+ auto events=tracker.update(entities);
+ check(events&&events.value().size()==1&&events.value()[0].phase==CollisionPhase::enter,
+       "first overlap emits collision enter");
+ events=tracker.update(entities);
+ check(events&&events.value().size()==1&&events.value()[0].phase==CollisionPhase::stay,
+       "persistent overlap emits collision stay");
+ entities.get<SceneNodeComponent>(b)->local_transform.position={5,0,0};
+ events=tracker.update(entities);
+ check(events&&events.value().size()==1&&events.value()[0].phase==CollisionPhase::exit,
+       "separated colliders emit collision exit");
+ events=tracker.update(entities);
+ check(events&&events.value().empty(),"ended collision is not emitted repeatedly");
+ entities.get<SceneNodeComponent>(b)->local_transform.position={0.5F,0,0};
+ tracker.reset();
+ events=tracker.update(entities);
+ check(events&&events.value().size()==1&&events.value()[0].phase==CollisionPhase::enter,
+       "reset clears the collision lifecycle baseline");
+}
 void test_ecs_physics_integration(){
  using namespace ecos::studio;
  EntityRegistry entities;
@@ -100,4 +130,4 @@ void test_ecs_physics_integration(){
  check(!PhysicsSystem::step(entities,-0.1),"rejects negative delta time");
 }
 }
-int main(){test_overlaps();test_ray_aabb();test_ray_sphere();test_ecs_collision_detection();test_ecs_physics_integration();if(failures){std::cerr<<failures<<" physics test(s) failed.\n";return 1;}std::cout<<"ECOS Studio collision and ECS physics tests passed.\n";return 0;}
+int main(){test_overlaps();test_ray_aabb();test_ray_sphere();test_ecs_collision_detection();test_collision_event_lifecycle();test_ecs_physics_integration();if(failures){std::cerr<<failures<<" physics test(s) failed.\n";return 1;}std::cout<<"ECOS Studio collision and ECS physics tests passed.\n";return 0;}
