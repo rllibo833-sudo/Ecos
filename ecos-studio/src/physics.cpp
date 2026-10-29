@@ -152,7 +152,7 @@ bool contact(const WorldCollider& a, const WorldCollider& b, Vec3& normal, float
         else if (dy<=dz) { normal={0,sphere.center.y>=box.center.y ? 1.0F : -1.0F,0}; penetration=sphere.radius+dy; }
         else { normal={0,0,sphere.center.z>=box.center.z ? 1.0F : -1.0F}; penetration=sphere.radius+dz; }
     }
-    if (sphere_first) normal=scale(normal,-1.0F);
+    if (!sphere_first) normal=scale(normal,-1.0F);
     return true;
 }
 }
