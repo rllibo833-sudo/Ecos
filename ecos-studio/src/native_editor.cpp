@@ -25,6 +25,87 @@
 #include <string>
 #include <vector>
 
+#ifndef GL_ARRAY_BUFFER
+#define GL_ARRAY_BUFFER 0x8892
+#define GL_ELEMENT_ARRAY_BUFFER 0x8893
+#define GL_STATIC_DRAW 0x88E4
+#define GL_DYNAMIC_DRAW 0x88E8
+#define GL_VERTEX_SHADER 0x8B31
+#define GL_FRAGMENT_SHADER 0x8B30
+#define GL_COMPILE_STATUS 0x8B81
+#define GL_LINK_STATUS 0x8B82
+#define GL_INFO_LOG_LENGTH 0x8B84
+#define GL_FLOAT 0x1406
+#define GL_UNSIGNED_INT 0x1405
+#define GL_TRIANGLES 0x0004
+#define GL_FALSE 0
+#endif
+using GLsizeiptr = std::ptrdiff_t;
+using PFNGLCREATESHADERPROC = GLuint (APIENTRY*)(GLenum);
+using PFNGLSHADERSOURCEPROC = void (APIENTRY*)(GLuint, GLsizei, const char* const*, const GLint*);
+using PFNGLCOMPILESHADERPROC = void (APIENTRY*)(GLuint);
+using PFNGLGETSHADERIVPROC = void (APIENTRY*)(GLuint, GLenum, GLint*);
+using PFNGLGETSHADERINFOLOGPROC = void (APIENTRY*)(GLuint, GLsizei, GLsizei*, char*);
+using PFNGLCREATEPROGRAMPROC = GLuint (APIENTRY*)();
+using PFNGLATTACHSHADERPROC = void (APIENTRY*)(GLuint, GLuint);
+using PFNGLLINKPROGRAMPROC = void (APIENTRY*)(GLuint);
+using PFNGLGETPROGRAMIVPROC = void (APIENTRY*)(GLuint, GLenum, GLint*);
+using PFNGLGETPROGRAMINFOLOGPROC = void (APIENTRY*)(GLuint, GLsizei, GLsizei*, char*);
+using PFNGLUSEPROGRAMPROC = void (APIENTRY*)(GLuint);
+using PFNGLGETUNIFORMLOCATIONPROC = GLint (APIENTRY*)(GLuint, const char*);
+using PFNGLUNIFORMMATRIX4FVPROC = void (APIENTRY*)(GLint, GLsizei, GLboolean, const GLfloat*);
+using PFNGLUNIFORM3FPROC = void (APIENTRY*)(GLint, GLfloat, GLfloat, GLfloat);
+using PFNGLGENBUFFERSPROC = void (APIENTRY*)(GLsizei, GLuint*);
+using PFNGLBINDBUFFERPROC = void (APIENTRY*)(GLenum, GLuint);
+using PFNGLBUFFERDATAPROC = void (APIENTRY*)(GLenum, GLsizeiptr, const void*, GLenum);
+using PFNGLDELETEBUFFERSPROC = void (APIENTRY*)(GLsizei, const GLuint*);
+using PFNGLENABLEVERTEXATTRIBARRAYPROC = void (APIENTRY*)(GLuint);
+using PFNGLDISABLEVERTEXATTRIBARRAYPROC = void (APIENTRY*)(GLuint);
+using PFNGLVERTEXATTRIBPOINTERPROC = void (APIENTRY*)(GLuint, GLint, GLenum, GLboolean, GLsizei, const void*);
+using PFNGLDRAWElementsPROC = void (APIENTRY*)(GLenum, GLsizei, GLenum, const void*);
+struct GpuApi {
+ PFNGLCREATESHADERPROC CreateShader{}; PFNGLSHADERSOURCEPROC ShaderSource{}; PFNGLCOMPILESHADERPROC CompileShader{}; PFNGLGETSHADERIVPROC GetShaderiv{}; PFNGLGETSHADERINFOLOGPROC GetShaderInfoLog{};
+ PFNGLCREATEPROGRAMPROC CreateProgram{}; PFNGLATTACHSHADERPROC AttachShader{}; PFNGLLINKPROGRAMPROC LinkProgram{}; PFNGLGETPROGRAMIVPROC GetProgramiv{}; PFNGLGETPROGRAMINFOLOGPROC GetProgramInfoLog{}; PFNGLUSEPROGRAMPROC UseProgram{};
+ PFNGLGETUNIFORMLOCATIONPROC GetUniformLocation{}; PFNGLUNIFORMMATRIX4FVPROC UniformMatrix4fv{}; PFNGLUNIFORM3FPROC Uniform3f{};
+ PFNGLGENBUFFERSPROC GenBuffers{}; PFNGLBINDBUFFERPROC BindBuffer{}; PFNGLBUFFERDATAPROC BufferData{}; PFNGLDELETEBUFFERSPROC DeleteBuffers{};
+ PFNGLENABLEVERTEXATTRIBARRAYPROC EnableVertexAttribArray{}; PFNGLDISABLEVERTEXATTRIBARRAYPROC DisableVertexAttribArray{}; PFNGLVERTEXATTRIBPOINTERPROC VertexAttribPointer{}; PFNGLDRAWElementsPROC DrawElements{};
+ GLuint program{}; GLint mvp{-1}, model{-1}, albedo{-1}; bool ready{false};
+};
+static GpuApi gpu;
+static bool init_gpu_renderer(std::string& error) {
+#define LOAD_GL(member, type, symbol) gpu.member = reinterpret_cast<type>(glfwGetProcAddress(symbol)); if (!gpu.member) { error = "OpenGL driver missing " symbol; return false; }
+ LOAD_GL(CreateShader,PFNGLCREATESHADERPROC,"glCreateShader")
+ LOAD_GL(ShaderSource,PFNGLSHADERSOURCEPROC,"glShaderSource")
+ LOAD_GL(CompileShader,PFNGLCOMPILESHADERPROC,"glCompileShader")
+ LOAD_GL(GetShaderiv,PFNGLGETSHADERIVPROC,"glGetShaderiv")
+ LOAD_GL(GetShaderInfoLog,PFNGLGETSHADERINFOLOGPROC,"glGetShaderInfoLog")
+ LOAD_GL(CreateProgram,PFNGLCREATEPROGRAMPROC,"glCreateProgram")
+ LOAD_GL(AttachShader,PFNGLATTACHSHADERPROC,"glAttachShader")
+ LOAD_GL(LinkProgram,PFNGLLINKPROGRAMPROC,"glLinkProgram")
+ LOAD_GL(GetProgramiv,PFNGLGETPROGRAMIVPROC,"glGetProgramiv")
+ LOAD_GL(GetProgramInfoLog,PFNGLGETPROGRAMINFOLOGPROC,"glGetProgramInfoLog")
+ LOAD_GL(UseProgram,PFNGLUSEPROGRAMPROC,"glUseProgram")
+ LOAD_GL(GetUniformLocation,PFNGLGETUNIFORMLOCATIONPROC,"glGetUniformLocation")
+ LOAD_GL(UniformMatrix4fv,PFNGLUNIFORMMATRIX4FVPROC,"glUniformMatrix4fv")
+ LOAD_GL(Uniform3f,PFNGLUNIFORM3FPROC,"glUniform3f")
+ LOAD_GL(GenBuffers,PFNGLGENBUFFERSPROC,"glGenBuffers")
+ LOAD_GL(BindBuffer,PFNGLBINDBUFFERPROC,"glBindBuffer")
+ LOAD_GL(BufferData,PFNGLBUFFERDATAPROC,"glBufferData")
+ LOAD_GL(DeleteBuffers,PFNGLDELETEBUFFERSPROC,"glDeleteBuffers")
+ LOAD_GL(EnableVertexAttribArray,PFNGLENABLEVERTEXATTRIBARRAYPROC,"glEnableVertexAttribArray")
+ LOAD_GL(DisableVertexAttribArray,PFNGLDISABLEVERTEXATTRIBARRAYPROC,"glDisableVertexAttribArray")
+ LOAD_GL(VertexAttribPointer,PFNGLVERTEXATTRIBPOINTERPROC,"glVertexAttribPointer")
+ LOAD_GL(DrawElements,PFNGLDRAWELEMENTSPROC,"glDrawElements")
+#undef LOAD_GL
+ const char* vs="#version 120\nattribute vec3 aPosition; attribute vec3 aNormal; uniform mat4 uMvp; uniform mat4 uModel; varying vec3 vNormal; void main(){ vNormal=mat3(uModel)*aNormal; gl_Position=uMvp*vec4(aPosition,1.0); }";
+ const char* fs="#version 120\nvarying vec3 vNormal; uniform vec3 uAlbedo; void main(){ vec3 n=normalize(vNormal); vec3 l=normalize(vec3(-0.4,0.85,0.3)); float diffuse=max(dot(n,l),0.0); float light=0.18+0.82*diffuse; gl_FragColor=vec4(uAlbedo*light,1.0); }";
+ auto compile=[&](GLenum type,const char* code)->GLuint { GLuint sh=gpu.CreateShader(type);gpu.ShaderSource(sh,1,&code,nullptr);gpu.CompileShader(sh);GLint ok=0;gpu.GetShaderiv(sh,GL_COMPILE_STATUS,&ok);if(!ok){GLint n=0;gpu.GetShaderiv(sh,GL_INFO_LOG_LENGTH,&n);std::string log(static_cast<std::size_t>(std::max(n,1)), '\0');gpu.GetShaderInfoLog(sh,n,nullptr,log.data());error="Shader compile failed: "+log;return 0;}return sh; };
+ GLuint v=compile(GL_VERTEX_SHADER,vs);if(!v)return false;GLuint f=compile(GL_FRAGMENT_SHADER,fs);if(!f)return false;
+ gpu.program=gpu.CreateProgram();gpu.AttachShader(gpu.program,v);gpu.AttachShader(gpu.program,f);gpu.LinkProgram(gpu.program);GLint linked=0;gpu.GetProgramiv(gpu.program,GL_LINK_STATUS,&linked);
+ if(!linked){GLint n=0;gpu.GetProgramiv(gpu.program,GL_INFO_LOG_LENGTH,&n);std::string log(static_cast<std::size_t>(std::max(n,1)), '\0');gpu.GetProgramInfoLog(gpu.program,n,nullptr,log.data());error="GPU renderer link failed: "+log;return false;}
+ gpu.mvp=gpu.GetUniformLocation(gpu.program,"uMvp");gpu.model=gpu.GetUniformLocation(gpu.program,"uModel");gpu.albedo=gpu.GetUniformLocation(gpu.program,"uAlbedo");gpu.ready=true;return true;
+}
+struct GpuVertex { float p[3]; float n[3]; };
 struct Vertex { float x{}, y{}, z{}; };
 struct Mesh { std::vector<Vertex> vertices; std::vector<std::uint32_t> triangles; };
 struct SceneInstance { Mesh mesh; ecos::studio::Matrix4 world{ecos::studio::Matrix4::identity()}; std::string name; ecos::studio::NodeId node_id{}; };
@@ -332,17 +413,35 @@ static void draw_grid() {
     glEnd();
 }
 static void draw_mesh(const Mesh& mesh) {
-    glBegin(GL_TRIANGLES);
+    if (!gpu.ready || mesh.triangles.empty()) return;
+    std::vector<GpuVertex> vertices;
+    vertices.reserve(mesh.triangles.size());
+    std::vector<std::uint32_t> indices;
+    indices.reserve(mesh.triangles.size());
     for(std::size_t i=0;i+2<mesh.triangles.size();i+=3){
         const auto a=mesh.vertices[mesh.triangles[i]],b=mesh.vertices[mesh.triangles[i+1]],c=mesh.vertices[mesh.triangles[i+2]];
         const float ux=b.x-a.x,uy=b.y-a.y,uz=b.z-a.z,vx=c.x-a.x,vy=c.y-a.y,vz=c.z-a.z;
         float nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;const float len=std::sqrt(nx*nx+ny*ny+nz*nz);
         if(len>1e-8F){nx/=len;ny/=len;nz/=len;}else{nx=0;ny=1;nz=0;}
-        const float light=std::clamp(0.25F+0.75F*std::max(0.0F,nx*0.35F+ny*0.8F+nz*0.45F),0.18F,1.0F);
-        glColor3f(0.28F*light,0.58F*light,0.95F*light);glNormal3f(nx,ny,nz);
-        for(auto idx:{mesh.triangles[i],mesh.triangles[i+1],mesh.triangles[i+2]}){const auto& v=mesh.vertices[idx];glVertex3f(v.x,v.y,v.z);}
+        for(auto idx:{mesh.triangles[i],mesh.triangles[i+1],mesh.triangles[i+2]}){
+            const auto& p=mesh.vertices[idx];vertices.push_back({{p.x,p.y,p.z},{nx,ny,nz}});indices.push_back(static_cast<std::uint32_t>(indices.size()));
+        }
     }
-    glEnd();
+    GLuint buffers[2]{};gpu.GenBuffers(2,buffers);
+    gpu.BindBuffer(GL_ARRAY_BUFFER,buffers[0]);gpu.BufferData(GL_ARRAY_BUFFER,static_cast<GLsizeiptr>(vertices.size()*sizeof(GpuVertex)),vertices.data(),GL_DYNAMIC_DRAW);
+    gpu.BindBuffer(GL_ELEMENT_ARRAY_BUFFER,buffers[1]);gpu.BufferData(GL_ELEMENT_ARRAY_BUFFER,static_cast<GLsizeiptr>(indices.size()*sizeof(std::uint32_t)),indices.data(),GL_DYNAMIC_DRAW);
+    gpu.EnableVertexAttribArray(0);gpu.EnableVertexAttribArray(1);
+    gpu.VertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,sizeof(GpuVertex),reinterpret_cast<const void*>(offsetof(GpuVertex,p)));
+    gpu.VertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,sizeof(GpuVertex),reinterpret_cast<const void*>(offsetof(GpuVertex,n)));
+    gpu.UseProgram(gpu.program);
+    // Projection/model-view matrices are supplied by the fixed-function compatibility matrix state.
+    GLfloat mvp[16]{},model[16]{};
+    glGetFloatv(GL_MODELVIEW_MATRIX,model);
+    GLfloat projection[16]{};glGetFloatv(GL_PROJECTION_MATRIX,projection);
+    for(int row=0;row<4;++row)for(int col=0;col<4;++col){mvp[col*4+row]=0;for(int k=0;k<4;++k)mvp[col*4+row]+=projection[k*4+row]*model[col*4+k];}
+    gpu.UniformMatrix4fv(gpu.mvp,1,GL_FALSE,mvp);gpu.UniformMatrix4fv(gpu.model,1,GL_FALSE,model);gpu.Uniform3f(gpu.albedo,0.28F,0.58F,0.95F);
+    gpu.DrawElements(GL_TRIANGLES,static_cast<GLsizei>(indices.size()),GL_UNSIGNED_INT,nullptr);
+    gpu.DisableVertexAttribArray(0);gpu.DisableVertexAttribArray(1);gpu.UseProgram(0);gpu.BindBuffer(GL_ARRAY_BUFFER,0);gpu.BindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);gpu.DeleteBuffers(2,buffers);
 }
 static Mesh starter_cube() {
     Mesh m;
@@ -396,6 +495,8 @@ int main(int argc,char** argv) {
     GLFWwindow* window=glfwCreateWindow(1440,900,state.title.c_str(),nullptr,nullptr);
     if(!window){glfwTerminate();std::cerr<<"Cannot create native OpenGL viewport window\n";return 2;}
     glfwMakeContextCurrent(window);glfwSwapInterval(1);glfwSetWindowUserPointer(window,&state);
+    std::string gpu_error;
+    if(!init_gpu_renderer(gpu_error)){std::cerr<<gpu_error<<'\n';glfwDestroyWindow(window);glfwTerminate();return 3;}
     glfwSetScrollCallback(window,scroll_callback);glfwSetMouseButtonCallback(window,mouse_button_callback);glfwSetCursorPosCallback(window,cursor_callback);glfwSetKeyCallback(window,key_callback);
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
