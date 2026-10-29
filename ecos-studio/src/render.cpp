@@ -541,7 +541,7 @@ Result<std::string> render_world_content_runtime_to_ppm(
     std::unordered_map<std::string, std::size_t> mesh_cache;
     for (const auto& scene : scenes) {
         auto appended = append_scene_graph_instances(scene.graph, assets, root.value(),
-            scene.world_transform, meshes, instances, mesh_cache);
+            scene.world_transform, meshes, instances, mesh_cache, material_cache);
         if (!appended) return Result<std::string>::failure(appended.error());
     }
     if (instances.empty()) {
