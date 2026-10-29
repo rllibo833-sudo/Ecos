@@ -4,6 +4,12 @@
 
 It is not yet a complete Unreal Engine 5-equivalent product. Implemented capabilities below are source-backed and covered by automated tests where noted.
 
+## Visual scene editor (early preview)
+
+Open `editor/index.html` in a modern browser to try the first ECOS Studio visual editor. It can open existing `.ecscene` files, show the scene hierarchy, create/delete objects, edit names and transforms, assign mesh/material asset IDs, undo/redo edits, and export the scene back to the native line-based scene format. It runs locally in the browser and needs no install or server.
+
+This is the first usable editor slice, **not** the finished Unreal-style editor: the viewport is a lightweight scene preview, not the engine's final 3D renderer. GPU rendering, importing and displaying real models in the viewport, a native desktop shell, play-in-editor, visual scripting, and game packaging still need to be integrated. The existing C++ runtime and scene format remain intact.
+
 ## Implemented
 
 - Project and data-only mod scaffold creation/validation CLI, with validated dependency declarations for third-party creators.

@@ -35,8 +35,8 @@ This roadmap describes product milestones, not guaranteed delivery dates. Checkb
 - [ ] One small offline game built and packaged by the toolchain.
 
 ## S3 — Creator tools
-- [ ] Desktop editor shell and scene viewport.
-- [ ] Asset browser, inspector, undo/redo.
+- [~] First browser-based visual scene editor: hierarchy, selection, transform inspector, create/delete, undo/redo, and .ecscene open/save; native desktop shell and engine-rendered viewport still planned.
+- [~] Initial inspector and asset-ID assignment; full asset browser and production workflow still planned.
 - [ ] Material editor, import pipeline, and reproducible game packaging.
 - [ ] Scripting and debugging workflow.
 
