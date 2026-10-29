@@ -124,7 +124,7 @@ static void clear_gpu_mesh_cache() {
 }
 struct Vertex { float x{}, y{}, z{}; };
 struct Mesh { std::vector<Vertex> vertices; std::vector<std::uint32_t> triangles; };
-struct SceneInstance { Mesh mesh; ecos::studio::Matrix4 world{ecos::studio::Matrix4::identity()}; std::string name; ecos::studio::NodeId node_id{}; };
+struct SceneInstance { std::shared_ptr<Mesh> mesh; ecos::studio::Matrix4 world{ecos::studio::Matrix4::identity()}; std::string name; std::string mesh_asset_id; ecos::studio::NodeId node_id{}; };
 struct EditorState {
     Mesh mesh;
     std::vector<SceneInstance> scene_instances;
@@ -196,21 +196,33 @@ static bool load_ecos_scene(const std::filesystem::path& project_root,
         if (asset.type == "mesh.obj") next_asset_ids.push_back(asset.id);
     std::sort(next_asset_ids.begin(), next_asset_ids.end());
     std::vector<SceneInstance> next;
+    // One CPU mesh object and one GPU buffer pair per imported asset, shared by every scene instance.
+    std::unordered_map<std::string, std::shared_ptr<Mesh>> mesh_by_asset;
     for (const auto& node : graph.nodes()) {
         if (node.mesh_asset_id.empty()) continue;
         const auto* asset = registry.value().find(node.mesh_asset_id);
         if (!asset) { error = "Scene node '" + node.name + "' references missing mesh asset '" + node.mesh_asset_id + "'"; return false; }
         if (asset->type != "mesh.obj") { error = "Scene asset '" + node.mesh_asset_id + "' is not a mesh.obj asset"; return false; }
-        auto source = ecos::studio::platform::read_text_file(project_root / asset->path);
-        if (!source) { error = "Cannot read mesh asset '" + node.mesh_asset_id + "': " + source.error().message; return false; }
-        auto imported = ecos::studio::import_obj_mesh(source.value());
-        if (!imported) { error = "Cannot import mesh asset '" + node.mesh_asset_id + "': " + imported.error().message; return false; }
+        auto cached_mesh = mesh_by_asset.find(node.mesh_asset_id);
+        std::shared_ptr<Mesh> shared_mesh;
+        if (cached_mesh != mesh_by_asset.end()) {
+            shared_mesh = cached_mesh->second;
+        } else {
+            auto source = ecos::studio::platform::read_text_file(project_root / asset->path);
+            if (!source) { error = "Cannot read mesh asset '" + node.mesh_asset_id + "': " + source.error().message; return false; }
+            auto imported = ecos::studio::import_obj_mesh(source.value());
+            if (!imported) { error = "Cannot import mesh asset '" + node.mesh_asset_id + "': " + imported.error().message; return false; }
+            shared_mesh = std::make_shared<Mesh>();
+            shared_mesh->vertices.reserve(imported.value().positions.size());
+            for (const auto& p : imported.value().positions) shared_mesh->vertices.push_back({p.x,p.y,p.z});
+            shared_mesh->triangles = imported.value().indices;
+            mesh_by_asset.emplace(node.mesh_asset_id, shared_mesh);
+        }
         SceneInstance instance;
         instance.name = node.name;
         instance.node_id = node.id;
-        instance.mesh.vertices.reserve(imported.value().positions.size());
-        for (const auto& p : imported.value().positions) instance.mesh.vertices.push_back({p.x,p.y,p.z});
-        instance.mesh.triangles = imported.value().indices;
+        instance.mesh_asset_id = node.mesh_asset_id;
+        instance.mesh = std::move(shared_mesh);
         auto world = graph.world_matrix(node.id);
         if (!world) { error = "Cannot resolve world transform for node '" + node.name + "': " + world.error().message; return false; }
         instance.world = world.value();
@@ -391,7 +403,7 @@ static void draw_scene_instances(const std::vector<SceneInstance>& instances) {
                 matrix[col*4+row] = instance.world.values[static_cast<std::size_t>(row*4+col)];
         glPushMatrix();
         glMultMatrixf(matrix);
-        draw_mesh(instance.mesh);
+        if (instance.mesh) draw_mesh(*instance.mesh);
         glPopMatrix();
     }
 }
