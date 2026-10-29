@@ -125,18 +125,64 @@ Result<std::string> render_scene_to_ppm(
     const std::vector<RenderMeshInstance>& instances, const Matrix4& view_projection,
     std::uint32_t width, std::uint32_t height) {
     constexpr std::uint32_t max_dimension = 4096;
-    if (width == 0 || height == 0 || width > max_dimension || height > max_dimension) {
+    if (width == 0 || height == 0 || width > max_dimension || height > max_dimension)
         return Result<std::string>::failure({ErrorCode::invalid_argument,
             "Render dimensions must be between 1 and 4096 pixels"});
-    }
-    if (instances.empty()) return Result<std::string>::failure(
-        {ErrorCode::invalid_argument, "Camera renderer requires at least one mesh instance"});
+    if (instances.empty())
+        return Result<std::string>::failure({ErrorCode::invalid_argument,
+            "Camera renderer requires at least one mesh instance"});
     for (const float v : view_projection.values) if (!std::isfinite(v))
         return Result<std::string>::failure({ErrorCode::invalid_argument,
             "View-projection matrix contains non-finite values"});
 
-    const auto pixel_count = static_cast<std::size_t>(width) * height;
-    std::vector<std::uint8_t> pixels(pixel_count * 3U);
+    struct ClipVertex { float x{}, y{}, z{}, w{}; Vec3 world{}; };
+    struct RasterVertex { float x{}, y{}, z{}; };
+    const auto interpolate = [](const ClipVertex& a, const ClipVertex& b, float t) {
+        return ClipVertex{
+            a.x+(b.x-a.x)*t, a.y+(b.y-a.y)*t, a.z+(b.z-a.z)*t,
+            a.w+(b.w-a.w)*t,
+            {a.world.x+(b.world.x-a.world.x)*t,
+             a.world.y+(b.world.y-a.world.y)*t,
+             a.world.z+(b.world.z-a.world.z)*t}};
+    };
+    // OpenGL-style homogeneous clip volume: -w <= x,y,z <= w.
+    const auto clip_polygon = [&interpolate](std::vector<ClipVertex> polygon) {
+        const auto planes = std::array{
+            [](const ClipVertex& v){ return v.x+v.w; },
+            [](const ClipVertex& v){ return v.w-v.x; },
+            [](const ClipVertex& v){ return v.y+v.w; },
+            [](const ClipVertex& v){ return v.w-v.y; },
+            [](const ClipVertex& v){ return v.z+v.w; },
+            [](const ClipVertex& v){ return v.w-v.z; }};
+        for (const auto& distance : planes) {
+            if (polygon.empty()) break;
+            std::vector<ClipVertex> output;
+            output.reserve(polygon.size()+1U);
+            auto previous = polygon.back();
+            float previous_distance = distance(previous);
+            bool previous_inside = previous_distance >= 0.0F;
+            for (const auto& current : polygon) {
+                const float current_distance = distance(current);
+                const bool current_inside = current_distance >= 0.0F;
+                if (current_inside != previous_inside) {
+                    const float denominator = previous_distance-current_distance;
+                    if (std::abs(denominator) > 1.0e-20F) {
+                        const float t = std::clamp(previous_distance/denominator, 0.0F, 1.0F);
+                        output.push_back(interpolate(previous, current, t));
+                    }
+                }
+                if (current_inside) output.push_back(current);
+                previous = current;
+                previous_distance = current_distance;
+                previous_inside = current_inside;
+            }
+            polygon = std::move(output);
+        }
+        return polygon;
+    };
+
+    const auto pixel_count = static_cast<std::size_t>(width)*height;
+    std::vector<std::uint8_t> pixels(pixel_count*3U);
     std::vector<float> depth(pixel_count, std::numeric_limits<float>::infinity());
     for (std::size_t i=0; i<pixel_count; ++i) {
         pixels[i*3]=18; pixels[i*3+1]=22; pixels[i*3+2]=30;
@@ -144,7 +190,7 @@ Result<std::string> render_scene_to_ppm(
     const Vec3f light_raw{-0.35F,0.65F,0.68F};
     const float light_len=length(light_raw);
     const Vec3f light{light_raw.x/light_len,light_raw.y/light_len,light_raw.z/light_len};
-    struct CameraVertex { float x,y,z; Vec3 world; bool valid; };
+
     for (const auto& instance : instances) {
         if (!instance.mesh) return Result<std::string>::failure(
             {ErrorCode::invalid_argument, "Scene contains a null mesh instance"});
@@ -155,7 +201,7 @@ Result<std::string> render_scene_to_ppm(
         if (mesh.positions.empty() || mesh.indices.empty() || mesh.indices.size()%3U!=0)
             return Result<std::string>::failure({ErrorCode::invalid_argument,
                 "Every scene mesh requires vertices and a triangle index buffer"});
-        std::vector<CameraVertex> vertices;
+        std::vector<ClipVertex> vertices;
         vertices.reserve(mesh.positions.size());
         for (const auto& p : mesh.positions) {
             if (!std::isfinite(p.x)||!std::isfinite(p.y)||!std::isfinite(p.z))
@@ -165,62 +211,74 @@ Result<std::string> render_scene_to_ppm(
                 instance.world_transform.values[0]*p.x+instance.world_transform.values[1]*p.y+instance.world_transform.values[2]*p.z+instance.world_transform.values[3],
                 instance.world_transform.values[4]*p.x+instance.world_transform.values[5]*p.y+instance.world_transform.values[6]*p.z+instance.world_transform.values[7],
                 instance.world_transform.values[8]*p.x+instance.world_transform.values[9]*p.y+instance.world_transform.values[10]*p.z+instance.world_transform.values[11]};
-            const auto clip=transform(view_projection,{world.x,world.y,world.z,1.0F});
-            const bool valid=std::isfinite(clip.w)&&clip.w>1.0e-6F&&
-                std::isfinite(clip.x)&&std::isfinite(clip.y)&&std::isfinite(clip.z);
             if (!std::isfinite(world.x)||!std::isfinite(world.y)||!std::isfinite(world.z))
                 return Result<std::string>::failure({ErrorCode::invalid_argument,
                     "World transform produced non-finite vertex coordinates"});
-            if (!valid) vertices.push_back({0,0,0,world,false});
-            else vertices.push_back({
-                (clip.x/clip.w*0.5F+0.5F)*static_cast<float>(width-1U),
-                (0.5F-clip.y/clip.w*0.5F)*static_cast<float>(height-1U),
-                clip.z/clip.w,world,true});
+            const auto clip=transform(view_projection,{world.x,world.y,world.z,1.0F});
+            if (!std::isfinite(clip.x)||!std::isfinite(clip.y)||!std::isfinite(clip.z)||!std::isfinite(clip.w))
+                return Result<std::string>::failure({ErrorCode::invalid_argument,
+                    "View-projection transform produced non-finite clip coordinates"});
+            vertices.push_back({clip.x,clip.y,clip.z,clip.w,world});
         }
-        for (std::size_t tri=0; tri<mesh.indices.size(); tri+=3) {
+
+        for (std::size_t tri=0; tri<mesh.indices.size(); tri+=3U) {
             const auto ia=mesh.indices[tri], ib=mesh.indices[tri+1], ic=mesh.indices[tri+2];
             if (ia>=vertices.size()||ib>=vertices.size()||ic>=vertices.size())
                 return Result<std::string>::failure({ErrorCode::invalid_argument,
                     "Scene mesh index references a missing vertex"});
-            const auto& a=vertices[ia]; const auto& b=vertices[ib]; const auto& c=vertices[ic];
-            // This reference path conservatively drops triangles crossing clip planes.
-            if (!a.valid||!b.valid||!c.valid ||
-                std::abs(a.x)>static_cast<float>(width)*8.0F ||
-                std::abs(b.x)>static_cast<float>(width)*8.0F ||
-                std::abs(c.x)>static_cast<float>(width)*8.0F) continue;
-            const auto inside=[](const CameraVertex& v) {
-                return v.z>=-1.0F&&v.z<=1.0F&&v.x>=0.0F&&v.y>=0.0F;
-            };
-            if (!inside(a)||!inside(b)||!inside(c) ||
-                a.x>width-1U||b.x>width-1U||c.x>width-1U ||
-                a.y>height-1U||b.y>height-1U||c.y>height-1U) continue;
-            const Vec3f pa{a.world.x,a.world.y,a.world.z}, pb{b.world.x,b.world.y,b.world.z}, pc{c.world.x,c.world.y,c.world.z};
+            const auto& va=vertices[ia]; const auto& vb=vertices[ib]; const auto& vc=vertices[ic];
+            const Vec3f pa{va.world.x,va.world.y,va.world.z};
+            const Vec3f pb{vb.world.x,vb.world.y,vb.world.z};
+            const Vec3f pc{vc.world.x,vc.world.y,vc.world.z};
             auto normal=cross(subtract(pb,pa),subtract(pc,pa));
             const float normal_len=length(normal);
-            if (normal_len<=1.0e-8F) continue;
+            if (!std::isfinite(normal_len)||normal_len<=1.0e-8F) continue;
             normal={normal.x/normal_len,normal.y/normal_len,normal.z/normal_len};
             const float illumination=0.24F+0.76F*std::max(0.0F,dot(normal,light));
             const std::array<std::uint8_t,3> color{
                 static_cast<std::uint8_t>(std::clamp(55.0F*illumination,0.0F,255.0F)),
                 static_cast<std::uint8_t>(std::clamp(170.0F*illumination,0.0F,255.0F)),
                 static_cast<std::uint8_t>(std::clamp(235.0F*illumination,0.0F,255.0F))};
-            const float area=(b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);
-            if (std::abs(area)<1.0e-8F) continue;
-            const int x0=std::max(0,static_cast<int>(std::floor(std::min({a.x,b.x,c.x}))));
-            const int y0=std::max(0,static_cast<int>(std::floor(std::min({a.y,b.y,c.y}))));
-            const int x1=std::min(static_cast<int>(width)-1,static_cast<int>(std::ceil(std::max({a.x,b.x,c.x}))));
-            const int y1=std::min(static_cast<int>(height)-1,static_cast<int>(std::ceil(std::max({a.y,b.y,c.y}))));
-            for(int y=y0;y<=y1;++y) for(int x=x0;x<=x1;++x) {
-                const float px=static_cast<float>(x)+0.5F, py=static_cast<float>(y)+0.5F;
-                const float w0=((b.x-px)*(c.y-py)-(b.y-py)*(c.x-px))/area;
-                const float w1=((c.x-px)*(a.y-py)-(c.y-py)*(a.x-px))/area;
-                const float w2=1.0F-w0-w1;
-                if(w0<-1.0e-5F||w1<-1.0e-5F||w2<-1.0e-5F) continue;
-                const float z=w0*a.z+w1*b.z+w2*c.z;
-                const auto index=static_cast<std::size_t>(y)*width+static_cast<std::size_t>(x);
-                if(z>=depth[index]) continue;
-                depth[index]=z;
-                pixels[index*3]=color[0];pixels[index*3+1]=color[1];pixels[index*3+2]=color[2];
+
+            auto polygon=clip_polygon({va,vb,vc});
+            if (polygon.size()<3U) continue;
+            std::vector<RasterVertex> projected;
+            projected.reserve(polygon.size());
+            bool valid=true;
+            for (const auto& v : polygon) {
+                if (!std::isfinite(v.w)||v.w<=1.0e-8F) { valid=false; break; }
+                const float nx=v.x/v.w, ny=v.y/v.w, nz=v.z/v.w;
+                if (!std::isfinite(nx)||!std::isfinite(ny)||!std::isfinite(nz)) {
+                    valid=false; break;
+                }
+                projected.push_back({
+                    (nx*0.5F+0.5F)*static_cast<float>(width-1U),
+                    (0.5F-ny*0.5F)*static_cast<float>(height-1U), nz});
+            }
+            if (!valid) continue;
+
+            // A clipped triangle may become a convex quad or pentagon; fan triangulation is safe.
+            for (std::size_t fan=1; fan+1<projected.size(); ++fan) {
+                const auto& a=projected[0]; const auto& b=projected[fan]; const auto& c=projected[fan+1];
+                const float area=(b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);
+                if (!std::isfinite(area)||std::abs(area)<1.0e-8F) continue;
+                const int x0=std::max(0,static_cast<int>(std::floor(std::min({a.x,b.x,c.x}))));
+                const int y0=std::max(0,static_cast<int>(std::floor(std::min({a.y,b.y,c.y}))));
+                const int x1=std::min(static_cast<int>(width)-1,static_cast<int>(std::ceil(std::max({a.x,b.x,c.x}))));
+                const int y1=std::min(static_cast<int>(height)-1,static_cast<int>(std::ceil(std::max({a.y,b.y,c.y}))));
+                for (int y=y0;y<=y1;++y) for (int x=x0;x<=x1;++x) {
+                    const float px=static_cast<float>(x)+0.5F, py=static_cast<float>(y)+0.5F;
+                    const float w0=((b.x-px)*(c.y-py)-(b.y-py)*(c.x-px))/area;
+                    const float w1=((c.x-px)*(a.y-py)-(c.y-py)*(a.x-px))/area;
+                    const float w2=1.0F-w0-w1;
+                    if (w0<-1.0e-5F||w1<-1.0e-5F||w2<-1.0e-5F) continue;
+                    const float z=w0*a.z+w1*b.z+w2*c.z;
+                    if (!std::isfinite(z)||z < -1.00001F||z > 1.00001F) continue;
+                    const auto index=static_cast<std::size_t>(y)*width+static_cast<std::size_t>(x);
+                    if (z>=depth[index]) continue;
+                    depth[index]=z;
+                    pixels[index*3]=color[0]; pixels[index*3+1]=color[1]; pixels[index*3+2]=color[2];
+                }
             }
         }
     }
