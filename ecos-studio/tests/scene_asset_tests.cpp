@@ -46,6 +46,14 @@ void test_asset_registry() {
     check(registry.register_asset({"material.leaf", "material", "assets/leaf.mat", {"mesh.tree"}}),
           "registers material asset with dependency");
     check(registry.validate_dependencies(), "validates resolved dependencies");
+    const auto registered_assets = registry.assets();
+    check(registered_assets.size() == 2, "enumerates registered assets for editor asset browsers");
+    bool found_mesh = false, found_material = false;
+    for (const auto& asset : registered_assets) {
+        if (asset.id == "mesh.tree" && asset.type == "mesh") found_mesh = true;
+        if (asset.id == "material.leaf" && asset.type == "material") found_material = true;
+    }
+    check(found_mesh && found_material, "asset enumeration preserves IDs and asset types");
     check(!registry.register_asset({"mesh.tree", "mesh", "assets/other.mesh", {}}), "rejects duplicate ids");
     check(!registry.register_asset({"escape", "mesh", "../../outside.mesh", {}}), "rejects paths escaping project");
     check(registry.register_asset({"missing.dep", "material", "assets/missing.mat", {"no-such-asset"}}),
