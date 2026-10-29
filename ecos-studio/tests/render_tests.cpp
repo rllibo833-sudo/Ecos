@@ -177,7 +177,7 @@ void test_renders_only_resident_streamed_world_cells() {
 
 void test_camera_projection_and_engine_frame_integration() {
     using namespace ecos::studio;
-    auto mesh=import_obj_mesh("v -0.7 -0.6 0\\nv 0.7 -0.6 0\\nv 0 0.7 0\\nf 1 2 3\\n");
+    auto mesh=import_obj_mesh("v -0.7 -0.6 0\nv 0.7 -0.6 0\nv 0 0.7 0\nf 1 2 3\n");
     check(static_cast<bool>(mesh), "imports triangle for camera renderer");
     if (!mesh) return;
     auto view=look_at({0,0,3},{0,0,0},{0,1,0});
@@ -188,8 +188,8 @@ void test_camera_projection_and_engine_frame_integration() {
     auto image=render_scene_to_ppm({RenderMeshInstance{&mesh.value(),Matrix4::identity()}},vp,96,64);
     check(static_cast<bool>(image),"renders a mesh through the camera view-projection matrix");
     if (image) {
-        check(image.value().starts_with("P6\\n96 64\\n255\\n"),"camera renderer emits a valid PPM header");
-        const auto offset=image.value().find("255\\n")+4;
+        check(image.value().starts_with("P6\n96 64\n255\n"),"camera renderer emits a valid PPM header");
+        const auto offset=image.value().find("255\n")+4;
         bool geometry=false;
         for(std::size_t i=offset;i+2<image.value().size();i+=3) {
             const auto r=static_cast<std::uint8_t>(image.value()[i]);
