@@ -25,6 +25,7 @@ struct SceneInstance { Mesh mesh; ecos::studio::Matrix4 world{ecos::studio::Matr
 struct EditorState {
     Mesh mesh;
     std::vector<SceneInstance> scene_instances;
+    std::vector<std::string> available_mesh_assets;
     bool scene_loaded{false};
     std::unique_ptr<ecos::studio::SceneDocument> document;
     std::filesystem::path project_root, scene_path;
@@ -80,10 +81,16 @@ static bool load_obj(const std::string& path, Mesh& out, std::string& error) {
 static void draw_mesh(const Mesh& mesh);
 static bool load_ecos_scene(const std::filesystem::path& project_root,
                             const ecos::studio::SceneGraph& graph,
-                            std::vector<SceneInstance>& instances, std::string& error) {
+                            std::vector<SceneInstance>& instances,
+                            std::vector<std::string>& mesh_asset_ids, std::string& error) {
     auto registry = ecos::studio::load_imported_asset_registry(project_root);
     if (!registry) { error = "Asset registry load failed: " + registry.error().message; return false; }
 
+    std::vector<std::string> next_asset_ids;
+    for (const auto& node : graph.nodes())
+        if (!node.mesh_asset_id.empty() && std::find(next_asset_ids.begin(), next_asset_ids.end(), node.mesh_asset_id) == next_asset_ids.end())
+            next_asset_ids.push_back(node.mesh_asset_id);
+    std::sort(next_asset_ids.begin(), next_asset_ids.end());
     std::vector<SceneInstance> next;
     for (const auto& node : graph.nodes()) {
         if (node.mesh_asset_id.empty()) continue;
@@ -105,8 +112,8 @@ static bool load_ecos_scene(const std::filesystem::path& project_root,
         instance.world = world.value();
         next.push_back(std::move(instance));
     }
-    if (next.empty()) { error = "Scene contains no nodes referencing imported mesh assets"; return false; }
     instances = std::move(next);
+    mesh_asset_ids = std::move(next_asset_ids);
     return true;
 }
 static bool save_scene_file(EditorState& state) {
@@ -149,6 +156,18 @@ static void draw_hierarchy_node(EditorState& state, ecos::studio::NodeId id) {
         ImGui::TreePop();
     }
     ImGui::PopID();
+}
+static void refresh_scene_meshes(EditorState& state) {
+    if (!state.document) return;
+    std::vector<SceneInstance> next;
+    std::vector<std::string> asset_ids;
+    std::string error;
+    if (!load_ecos_scene(state.project_root, state.document->scene(), next, asset_ids, error)) {
+        state.status = error;
+        return;
+    }
+    state.scene_instances = std::move(next);
+    state.available_mesh_assets = std::move(asset_ids);
 }
 static void refresh_scene_instance_transforms(EditorState& state) {
     if (!state.document) return;
@@ -230,7 +249,24 @@ static void draw_editor_ui(EditorState& state) {
                     refresh_scene_instance_transforms(state);
                 }
                 ImGui::Separator();
-                ImGui::TextWrapped("Mesh asset: %s", node->mesh_asset_id.empty() ? "(none)" : node->mesh_asset_id.c_str());
+                const char* current_mesh = node->mesh_asset_id.empty() ? "(None)" : node->mesh_asset_id.c_str();
+                if (ImGui::BeginCombo("Mesh Asset", current_mesh)) {
+                    if (ImGui::Selectable("(None)", node->mesh_asset_id.empty())) {
+                        auto result = state.document->set_mesh_asset(node->id, "");
+                        state.status = result ? "Mesh assignment cleared" : result.error().message;
+                        if (result) refresh_scene_meshes(state);
+                    }
+                    for (const auto& asset_id : state.available_mesh_assets) {
+                        const bool selected = node->mesh_asset_id == asset_id;
+                        if (ImGui::Selectable(asset_id.c_str(), selected)) {
+                            auto result = state.document->set_mesh_asset(node->id, asset_id);
+                            state.status = result ? "Mesh asset assigned" : result.error().message;
+                            if (result) refresh_scene_meshes(state);
+                        }
+                        if (selected) ImGui::SetItemDefaultFocus();
+                    }
+                    ImGui::EndCombo();
+                }
                 ImGui::TextWrapped("Material asset: %s", node->material_asset_id.empty() ? "(none)" : node->material_asset_id.c_str());
             }
         }
@@ -326,7 +362,7 @@ int main(int argc,char** argv) {
         auto loaded=state.document->load(serialized.value());
         if (!loaded) { std::cerr << "Scene load failed: " << loaded.error().message << '\n'; return 2; }
         std::string error;
-        if (!load_ecos_scene(state.project_root,state.document->scene(),state.scene_instances,error)) {
+        if (!load_ecos_scene(state.project_root,state.document->scene(),state.scene_instances,state.available_mesh_assets,error)) {
             std::cerr << error << '\n'; return 2;
         }
         const auto roots=state.document->scene().roots();
