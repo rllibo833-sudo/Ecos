@@ -22,6 +22,7 @@ void print_usage() {
               << "  ecos-studio mod-validate <mod-directory>\n"
               << "  ecos-studio mod-resolve <mods-root-directory>\n"
               << "  ecos-studio asset-import <project-directory> <source.obj> <asset-id>\n"
+              << "  ecos-studio material-import <project-directory> <source.mtl> <asset-id>\n"
               << "  ecos-studio asset-validate <project-directory>\n"
               << "  ecos-studio scene-validate <scene.ecscene>\n"
               << "  ecos-studio world-validate <world.ecworld>\n"
