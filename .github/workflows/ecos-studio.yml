@@ -26,6 +26,13 @@ jobs:
           test -s /tmp/ecos-studio-triangle.ppm
       - name: Validate sample scene
         run: build/ecos-studio/ecos-studio scene-validate ecos-studio/examples/hello-world/scenes/main.ecscene
+      - name: Import an asset and render a scene end-to-end
+        run: |
+          build/ecos-studio/ecos-studio new /tmp/ecos-studio-render-project "Render Smoke"
+          build/ecos-studio/ecos-studio asset-import /tmp/ecos-studio-render-project ecos-studio/examples/hello-world/assets/triangle.obj sample-triangle
+          printf 'format_version=2\nscene_id=render-smoke\nnode=1|-|Triangle|0,0,0|0,0,0|1,1,1|sample-triangle\n' > /tmp/ecos-studio-render-project.ecscene
+          build/ecos-studio/ecos-studio scene-render /tmp/ecos-studio-render-project /tmp/ecos-studio-render-project.ecscene /tmp/ecos-studio-scene.ppm 160 120
+          test -s /tmp/ecos-studio-scene.ppm
       - name: Validate sample world manifest
         run: build/ecos-studio/ecos-studio world-validate ecos-studio/examples/large-world/world.ecworld
       - name: Instantiate and inspect sample world
