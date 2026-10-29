@@ -2,6 +2,8 @@
 #include "ecos_studio/world_transform.hpp"
 
 #include <utility>
+#include <cmath>
+#include <limits>
 #include <exception>
 
 namespace ecos::studio {
@@ -113,6 +115,26 @@ Result<StreamingUpdateReport> WorldContentRuntime::update(
     auto transforms = WorldTransformSystem::update(entities_);
     if (!transforms) return Result<StreamingUpdateReport>::failure(transforms.error());
     return updated;
+}
+
+Result<StreamingUpdateReport> WorldContentRuntime::update_viewport_position(
+    double x_meters, double y_meters, double z_meters,
+    std::uint32_t load_radius, std::uint32_t unload_radius) {
+    if (!std::isfinite(x_meters) || !std::isfinite(y_meters) || !std::isfinite(z_meters)) {
+        return Result<StreamingUpdateReport>::failure(
+            {ErrorCode::invalid_argument, "Viewport world position must be finite"});
+    }
+    constexpr double cell_size_meters = 1000.0;
+    const auto to_cell = [](double meters) -> std::int64_t {
+        const double cell = std::floor(meters / cell_size_meters);
+        if (cell < static_cast<double>(std::numeric_limits<std::int64_t>::min()) ||
+            cell > static_cast<double>(std::numeric_limits<std::int64_t>::max())) {
+            return 0;
+        }
+        return static_cast<std::int64_t>(cell);
+    };
+    return update({to_cell(x_meters), to_cell(y_meters), to_cell(z_meters)},
+                  load_radius, unload_radius);
 }
 
 Result<void> WorldContentRuntime::retry_failed_cell(const std::string& id) {

@@ -42,6 +42,10 @@ public:
 
     [[nodiscard]] Result<StreamingUpdateReport> update(
         CellCoord center, std::uint32_t load_radius, std::uint32_t unload_radius);
+    // Converts viewport world-space meters to 1 km cell coordinates and streams around the camera target.
+    [[nodiscard]] Result<StreamingUpdateReport> update_viewport_position(
+        double x_meters, double y_meters, double z_meters,
+        std::uint32_t load_radius = 0, std::uint32_t unload_radius = 1);
     [[nodiscard]] Result<void> retry_failed_cell(const std::string& id);
     [[nodiscard]] Result<SceneGraph> scene_snapshot(const std::string& cell_id) const;
     [[nodiscard]] std::size_t resident_content_count() const;

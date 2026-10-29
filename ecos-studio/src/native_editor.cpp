@@ -135,12 +135,16 @@ static void clear_gpu_mesh_cache() {
 struct Vertex { float x{}, y{}, z{}; };
 struct Mesh { std::vector<Vertex> vertices; std::vector<std::uint32_t> triangles; };
 struct SceneInstance { std::shared_ptr<Mesh> mesh; ecos::studio::Matrix4 world{ecos::studio::Matrix4::identity()}; std::string name; std::string mesh_asset_id; ecos::studio::NodeId node_id{}; };
+struct AssetLodPolicy {
+    float full_detail_distance_m{500.0F};
+    int selected_tier{0}; // 0=full detail, 1=detail skipped pending registered proxy mesh
+};
 struct EditorState {
     std::filesystem::path world_manifest_path;
     std::unique_ptr<ecos::studio::JobSystem> world_jobs;
     std::unique_ptr<ecos::studio::WorldContentRuntime> world_runtime;
     std::unordered_map<std::string, std::vector<SceneInstance>> streamed_instances;
-    std::unordered_map<std::string, int> asset_lod_tier;
+    std::unordered_map<std::string, AssetLodPolicy> asset_lod_registry;
     float target_x{}, target_z{};
     Mesh mesh;
     std::vector<SceneInstance> scene_instances;
@@ -662,7 +666,7 @@ int main(int argc,char** argv) {
         if (state.world_runtime) {
             const auto cell_x = static_cast<std::int64_t>(std::floor(state.target_x / 1000.0F));
             const auto cell_z = static_cast<std::int64_t>(std::floor(state.target_z / 1000.0F));
-            auto streamed = state.world_runtime->update({cell_x, 0, cell_z}, 0, 1);
+            auto streamed = state.world_runtime->update_viewport_position(state.target_x, 0.0, state.target_z, 0, 1);
             if (!streamed) state.status = "World streaming: " + streamed.error().message;
             for (const auto& cell : state.world_runtime->manifest().cells) {
                 const auto* status = state.world_runtime->world().find(cell.id);
@@ -680,7 +684,7 @@ int main(int argc,char** argv) {
                             instance.world.values[3] += static_cast<float>(cell.coord.x) * 1000.0F;
                             instance.world.values[7] += static_cast<float>(cell.coord.y) * 1000.0F;
                             instance.world.values[11] += static_cast<float>(cell.coord.z) * 1000.0F;
-                            state.asset_lod_tier[instance.mesh_asset_id] = 0;
+                            state.asset_lod_registry.try_emplace(instance.mesh_asset_id, AssetLodPolicy{});
                         }
                         state.streamed_instances.emplace(cell.id, std::move(cell_instances));
                     } else if (!load_error.empty()) state.status = load_error;
@@ -695,8 +699,9 @@ int main(int argc,char** argv) {
                     const float dy=instance.world.values[7];
                     const float dz=instance.world.values[11]-state.target_z;
                     const float distance=std::sqrt(dx*dx+dy*dy+dz*dz);
-                    state.asset_lod_tier[instance.mesh_asset_id] = distance > 500.0F ? 1 : 0;
-                    if (state.asset_lod_tier[instance.mesh_asset_id] == 0) lod_visible.push_back(instance);
+                    auto& lod = state.asset_lod_registry[instance.mesh_asset_id];
+                    lod.selected_tier = distance > lod.full_detail_distance_m ? 1 : 0;
+                    if (lod.selected_tier == 0) lod_visible.push_back(instance);
                 }
                 draw_scene_instances(lod_visible);
             }
