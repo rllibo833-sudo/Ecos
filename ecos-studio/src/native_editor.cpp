@@ -2,6 +2,10 @@
 #include "ecos_studio/asset_importer.hpp"
 #include "ecos_studio/platform.hpp"
 #include "ecos_studio/scene.hpp"
+#include "ecos_studio/scene_document.hpp"
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl2.h"
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
@@ -9,17 +13,23 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <memory>
+#include <cstdio>
 #include <sstream>
 #include <string>
 #include <vector>
 
 struct Vertex { float x{}, y{}, z{}; };
 struct Mesh { std::vector<Vertex> vertices; std::vector<std::uint32_t> triangles; };
-struct SceneInstance { Mesh mesh; ecos::studio::Matrix4 world{ecos::studio::Matrix4::identity()}; std::string name; };
+struct SceneInstance { Mesh mesh; ecos::studio::Matrix4 world{ecos::studio::Matrix4::identity()}; std::string name; ecos::studio::NodeId node_id{}; };
 struct EditorState {
     Mesh mesh;
     std::vector<SceneInstance> scene_instances;
     bool scene_loaded{false};
+    std::unique_ptr<ecos::studio::SceneDocument> document;
+    std::filesystem::path project_root, scene_path;
+    ecos::studio::NodeId selected_node{};
+    std::string status;
     float yaw{25.0F}, pitch{18.0F}, distance{5.0F};
     double last_x{}, last_y{};
     bool dragging{false};
@@ -69,17 +79,13 @@ static bool load_obj(const std::string& path, Mesh& out, std::string& error) {
 }
 static void draw_mesh(const Mesh& mesh);
 static bool load_ecos_scene(const std::filesystem::path& project_root,
-                            const std::filesystem::path& scene_path,
+                            const ecos::studio::SceneGraph& graph,
                             std::vector<SceneInstance>& instances, std::string& error) {
-    auto serialized = ecos::studio::platform::read_text_file(scene_path);
-    if (!serialized) { error = serialized.error().message; return false; }
-    auto graph = ecos::studio::deserialize_scene(serialized.value());
-    if (!graph) { error = "Scene load failed: " + graph.error().message; return false; }
     auto registry = ecos::studio::load_imported_asset_registry(project_root);
     if (!registry) { error = "Asset registry load failed: " + registry.error().message; return false; }
 
     std::vector<SceneInstance> next;
-    for (const auto& node : graph.value().nodes()) {
+    for (const auto& node : graph.nodes()) {
         if (node.mesh_asset_id.empty()) continue;
         const auto* asset = registry.value().find(node.mesh_asset_id);
         if (!asset) { error = "Scene node '" + node.name + "' references missing mesh asset '" + node.mesh_asset_id + "'"; return false; }
@@ -90,10 +96,11 @@ static bool load_ecos_scene(const std::filesystem::path& project_root,
         if (!imported) { error = "Cannot import mesh asset '" + node.mesh_asset_id + "': " + imported.error().message; return false; }
         SceneInstance instance;
         instance.name = node.name;
+        instance.node_id = node.id;
         instance.mesh.vertices.reserve(imported.value().positions.size());
         for (const auto& p : imported.value().positions) instance.mesh.vertices.push_back({p.x,p.y,p.z});
         instance.mesh.triangles = imported.value().indices;
-        auto world = graph.value().world_matrix(node.id);
+        auto world = graph.world_matrix(node.id);
         if (!world) { error = "Cannot resolve world transform for node '" + node.name + "': " + world.error().message; return false; }
         instance.world = world.value();
         next.push_back(std::move(instance));
@@ -101,6 +108,132 @@ static bool load_ecos_scene(const std::filesystem::path& project_root,
     if (next.empty()) { error = "Scene contains no nodes referencing imported mesh assets"; return false; }
     instances = std::move(next);
     return true;
+}
+static bool save_scene_file(EditorState& state) {
+    if (!state.document || state.scene_path.empty()) return false;
+    auto serialized = state.document->save();
+    if (!serialized) { state.status = serialized.error().message; return false; }
+    const auto temporary = state.scene_path.string() + ".tmp";
+    {
+        std::ofstream output(temporary, std::ios::binary | std::ios::trunc);
+        if (!output) { state.status = "Cannot create scene save file"; return false; }
+        output << serialized.value();
+        if (!output) { state.status = "Failed writing scene save file"; return false; }
+    }
+    std::error_code ec;
+    std::filesystem::rename(temporary, state.scene_path, ec);
+    if (ec) {
+        std::filesystem::remove(state.scene_path, ec);
+        ec.clear();
+        std::filesystem::rename(temporary, state.scene_path, ec);
+    }
+    if (ec) { state.status = "Cannot replace scene file: " + ec.message(); return false; }
+    state.status = "Scene saved";
+    return true;
+}
+static void draw_hierarchy_node(EditorState& state, ecos::studio::NodeId id) {
+    const auto* node = state.document->scene().find(id);
+    if (!node) return;
+    ImGui::PushID(static_cast<int>(id & 0x7fffffffU));
+    const bool leaf = node->children.empty();
+    const ImGuiTreeNodeFlags flags = (leaf ? ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen : 0)
+        | (state.selected_node == id ? ImGuiTreeNodeFlags_Selected : 0)
+        | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_OpenOnArrow;
+    const bool open = ImGui::TreeNodeEx(node->name.c_str(), flags);
+    if (ImGui::IsItemClicked()) state.selected_node = id;
+    if (!leaf && open) {
+        const auto children = node->children;
+        for (const auto child : children) draw_hierarchy_node(state, child);
+        ImGui::TreePop();
+    }
+    ImGui::PopID();
+}
+static void refresh_scene_instance_transforms(EditorState& state) {
+    if (!state.document) return;
+    for (auto& instance : state.scene_instances) {
+        auto world = state.document->scene().world_matrix(instance.node_id);
+        if (world) instance.world = world.value();
+        const auto* node = state.document->scene().find(instance.node_id);
+        if (node) instance.name = node->name;
+    }
+}
+static void draw_editor_ui(EditorState& state) {
+    ImGui::SetNextWindowPos(ImVec2(12, 12), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(270, 520), ImGuiCond_FirstUseEver);
+    if (ImGui::Begin("ECOS — World Outliner")) {
+        if (state.document) {
+            if (ImGui::Button("Save") && save_scene_file(state)) {}
+            ImGui::SameLine();
+            if (ImGui::Button("Undo")) {
+                auto result = state.document->undo();
+                state.status = result ? "Undo applied" : result.error().message;
+                refresh_scene_instance_transforms(state);
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Redo")) {
+                auto result = state.document->redo();
+                state.status = result ? "Redo applied" : result.error().message;
+                refresh_scene_instance_transforms(state);
+            }
+            if (ImGui::Button("Add Entity")) {
+                auto created = state.document->create_node("Entity");
+                if (created) { state.selected_node = created.value(); state.status = "Entity created"; }
+                else state.status = created.error().message;
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Delete") && state.selected_node != 0) {
+                auto result = state.document->delete_subtree(state.selected_node);
+                state.status = result ? "Entity deleted" : result.error().message;
+                state.selected_node = 0;
+                refresh_scene_instance_transforms(state);
+            }
+            ImGui::Separator();
+            for (const auto root : state.document->scene().roots()) draw_hierarchy_node(state, root);
+            if (!state.status.empty()) { ImGui::Separator(); ImGui::TextWrapped("%s", state.status.c_str()); }
+        } else {
+            ImGui::TextWrapped("Open a project scene with --project and --scene to edit its hierarchy and transforms.");
+            ImGui::TextWrapped("Standalone OBJ preview remains available from the command line.");
+        }
+    }
+    ImGui::End();
+
+    if (state.document) {
+        ImGui::SetNextWindowPos(ImVec2(296, 12), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(320, 360), ImGuiCond_FirstUseEver);
+        if (ImGui::Begin("ECOS — Inspector")) {
+            const auto* node = state.document->scene().find(state.selected_node);
+            if (!node) ImGui::TextUnformatted("Select an entity in the World Outliner.");
+            else {
+                ImGui::Text("Entity ID: %llu", static_cast<unsigned long long>(node->id));
+                char name[256]{};
+                std::snprintf(name, sizeof(name), "%s", node->name.c_str());
+                if (ImGui::InputText("Name", name, sizeof(name))) {
+                    auto result = state.document->rename_node(node->id, name);
+                    state.status = result ? "Entity renamed" : result.error().message;
+                }
+                ImGui::Separator();
+                auto transform = node->local_transform;
+                float position[3]{transform.position.x,transform.position.y,transform.position.z};
+                float rotation[3]{transform.rotation_euler_radians.x,transform.rotation_euler_radians.y,transform.rotation_euler_radians.z};
+                float scale[3]{transform.scale.x,transform.scale.y,transform.scale.z};
+                bool changed = ImGui::InputFloat3("Position", position, "%.3f");
+                changed = ImGui::InputFloat3("Rotation (rad)", rotation, "%.3f") || changed;
+                changed = ImGui::InputFloat3("Scale", scale, "%.3f") || changed;
+                if (changed) {
+                    transform.position={position[0],position[1],position[2]};
+                    transform.rotation_euler_radians={rotation[0],rotation[1],rotation[2]};
+                    transform.scale={scale[0],scale[1],scale[2]};
+                    auto result=state.document->set_transform(node->id,transform);
+                    state.status=result ? "Transform updated" : result.error().message;
+                    refresh_scene_instance_transforms(state);
+                }
+                ImGui::Separator();
+                ImGui::TextWrapped("Mesh asset: %s", node->mesh_asset_id.empty() ? "(none)" : node->mesh_asset_id.c_str());
+                ImGui::TextWrapped("Material asset: %s", node->material_asset_id.empty() ? "(none)" : node->material_asset_id.c_str());
+            }
+        }
+        ImGui::End();
+    }
 }
 static void draw_scene_instances(const std::vector<SceneInstance>& instances) {
     for (const auto& instance : instances) {
@@ -170,12 +303,11 @@ static Mesh starter_cube() {
 int main(int argc,char** argv) {
     EditorState state;
     state.mesh=starter_cube();
-    std::filesystem::path project_root, scene_path;
     std::string mesh_path;
     for (int i=1; i<argc; ++i) {
         const std::string arg=argv[i];
-        if (arg=="--project" && i+1<argc) project_root=argv[++i];
-        else if (arg=="--scene" && i+1<argc) scene_path=argv[++i];
+        if (arg=="--project" && i+1<argc) state.project_root=argv[++i];
+        else if (arg=="--scene" && i+1<argc) state.scene_path=argv[++i];
         else if (arg=="--help" || arg=="-h") {
             std::cout << "ECOS Studio native editor\n"
                       << "  ecos-studio-editor [mesh.obj]\n"
@@ -184,14 +316,21 @@ int main(int argc,char** argv) {
         } else if (!arg.empty() && arg[0]!='-') mesh_path=arg;
         else { std::cerr << "Unknown or incomplete argument: " << arg << '\n'; return 2; }
     }
-    if (!scene_path.empty()) {
-        if (project_root.empty()) { std::cerr << "--scene requires --project\n"; return 2; }
+    if (!state.scene_path.empty()) {
+        if (state.project_root.empty()) { std::cerr << "--scene requires --project\n"; return 2; }
+        auto serialized=ecos::studio::platform::read_text_file(state.scene_path);
+        if (!serialized) { std::cerr << serialized.error().message << '\n'; return 2; }
+        state.document=std::make_unique<ecos::studio::SceneDocument>();
+        auto loaded=state.document->load(serialized.value());
+        if (!loaded) { std::cerr << "Scene load failed: " << loaded.error().message << '\n'; return 2; }
         std::string error;
-        if (!load_ecos_scene(project_root,scene_path,state.scene_instances,error)) {
+        if (!load_ecos_scene(state.project_root,state.document->scene(),state.scene_instances,error)) {
             std::cerr << error << '\n'; return 2;
         }
+        const auto roots=state.document->scene().roots();
+        if (!roots.empty()) state.selected_node=roots.front();
         state.scene_loaded=true;
-        state.title += " — " + scene_path.filename().string();
+        state.title += " — " + state.scene_path.filename().string();
     } else if (!mesh_path.empty()) {
         std::string error;
         if(!load_obj(mesh_path,state.mesh,error)){std::cerr<<error<<'\n';return 2;}
@@ -208,6 +347,11 @@ int main(int argc,char** argv) {
     if(!window){glfwTerminate();std::cerr<<"Cannot create native OpenGL viewport window\n";return 2;}
     glfwMakeContextCurrent(window);glfwSwapInterval(1);glfwSetWindowUserPointer(window,&state);
     glfwSetScrollCallback(window,scroll_callback);glfwSetMouseButtonCallback(window,mouse_button_callback);glfwSetCursorPosCallback(window,cursor_callback);glfwSetKeyCallback(window,key_callback);
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(window,true);
+    ImGui_ImplOpenGL2_Init();
     glEnable(GL_DEPTH_TEST);glEnable(GL_CULL_FACE);glCullFace(GL_BACK);glClearColor(0.075F,0.09F,0.12F,1.0F);
     while(!glfwWindowShouldClose(window)){
         int width=1,height=1;glfwGetFramebufferSize(window,&width,&height);height=std::max(height,1);width=std::max(width,1);
@@ -216,7 +360,16 @@ int main(int argc,char** argv) {
         glFrustum(-top*aspect,top*aspect,-top,top,nearp,farp);
         glMatrixMode(GL_MODELVIEW);glLoadIdentity();glTranslatef(0,0,-state.distance);glRotatef(state.pitch,1,0,0);glRotatef(state.yaw,0,1,0);
         draw_grid();if(state.scene_loaded)draw_scene_instances(state.scene_instances);else if(!state.mesh.triangles.empty())draw_mesh(state.mesh);
+        ImGui_ImplOpenGL2_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        draw_editor_ui(state);
+        ImGui::Render();
+        ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
         glfwSwapBuffers(window);glfwPollEvents();
     }
+    ImGui_ImplOpenGL2_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
     glfwDestroyWindow(window);glfwTerminate();return 0;
 }
