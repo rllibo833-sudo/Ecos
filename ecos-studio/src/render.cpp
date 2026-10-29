@@ -197,6 +197,9 @@ Result<std::string> render_scene_to_ppm(
         for (const float v : instance.world_transform.values) if (!std::isfinite(v))
             return Result<std::string>::failure({ErrorCode::invalid_argument,
                 "Scene mesh transform contains non-finite matrix values"});
+        const auto valid_color = [](float value) { return std::isfinite(value) && value >= 0.0F && value <= 1.0F; };
+        if (!valid_color(instance.diffuse_color.x) || !valid_color(instance.diffuse_color.y) || !valid_color(instance.diffuse_color.z))
+            return Result<std::string>::failure({ErrorCode::invalid_argument, "Render material diffuse color components must be finite and between 0 and 1"});
         const auto& mesh=*instance.mesh;
         if (mesh.positions.empty() || mesh.indices.empty() || mesh.indices.size()%3U!=0)
             return Result<std::string>::failure({ErrorCode::invalid_argument,
@@ -236,9 +239,9 @@ Result<std::string> render_scene_to_ppm(
             normal={normal.x/normal_len,normal.y/normal_len,normal.z/normal_len};
             const float illumination=0.24F+0.76F*std::max(0.0F,dot(normal,light));
             const std::array<std::uint8_t,3> color{
-                static_cast<std::uint8_t>(std::clamp(55.0F*illumination,0.0F,255.0F)),
-                static_cast<std::uint8_t>(std::clamp(170.0F*illumination,0.0F,255.0F)),
-                static_cast<std::uint8_t>(std::clamp(235.0F*illumination,0.0F,255.0F))};
+                static_cast<std::uint8_t>(std::clamp(instance.diffuse_color.x*illumination*255.0F,0.0F,255.0F)),
+                static_cast<std::uint8_t>(std::clamp(instance.diffuse_color.y*illumination*255.0F,0.0F,255.0F)),
+                static_cast<std::uint8_t>(std::clamp(instance.diffuse_color.z*illumination*255.0F,0.0F,255.0F))};
 
             auto polygon=clip_polygon({va,vb,vc});
             if (polygon.size()<3U) continue;
