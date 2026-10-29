@@ -1,8 +1,12 @@
 #include <GLFW/glfw3.h>
+#include "ecos_studio/asset_importer.hpp"
+#include "ecos_studio/platform.hpp"
+#include "ecos_studio/scene.hpp"
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -11,7 +15,16 @@
 
 struct Vertex { float x{}, y{}, z{}; };
 struct Mesh { std::vector<Vertex> vertices; std::vector<std::uint32_t> triangles; };
-struct EditorState { Mesh mesh; float yaw{25.0F}, pitch{18.0F}, distance{5.0F}; double last_x{}, last_y{}; bool dragging{false}; std::string title{"ECOS Studio — Native 3D Viewport"}; };
+struct SceneInstance { Mesh mesh; ecos::studio::Matrix4 world{ecos::studio::Matrix4::identity()}; std::string name; };
+struct EditorState {
+    Mesh mesh;
+    std::vector<SceneInstance> scene_instances;
+    bool scene_loaded{false};
+    float yaw{25.0F}, pitch{18.0F}, distance{5.0F};
+    double last_x{}, last_y{};
+    bool dragging{false};
+    std::string title{"ECOS Studio — Native 3D Viewport"};
+};
 
 static bool load_obj(const std::string& path, Mesh& out, std::string& error) {
     std::ifstream in(path);
@@ -53,6 +66,52 @@ static bool load_obj(const std::string& path, Mesh& out, std::string& error) {
     const float cx=(hi.x+lo.x)*0.5F,cy=(hi.y+lo.y)*0.5F,cz=(hi.z+lo.z)*0.5F;
     for (auto& v:next.vertices) { v.x=(v.x-cx)*2/span;v.y=(v.y-cy)*2/span;v.z=(v.z-cz)*2/span; }
     out=std::move(next); return true;
+}
+static bool load_ecos_scene(const std::filesystem::path& project_root,
+                            const std::filesystem::path& scene_path,
+                            std::vector<SceneInstance>& instances, std::string& error) {
+    auto serialized = ecos::studio::platform::read_text_file(scene_path);
+    if (!serialized) { error = serialized.error().message; return false; }
+    auto graph = ecos::studio::deserialize_scene(serialized.value());
+    if (!graph) { error = "Scene load failed: " + graph.error().message; return false; }
+    auto registry = ecos::studio::load_imported_asset_registry(project_root);
+    if (!registry) { error = "Asset registry load failed: " + registry.error().message; return false; }
+
+    std::vector<SceneInstance> next;
+    for (const auto& node : graph.value().nodes()) {
+        if (node.mesh_asset_id.empty()) continue;
+        const auto* asset = registry.value().find(node.mesh_asset_id);
+        if (!asset) { error = "Scene node '" + node.name + "' references missing mesh asset '" + node.mesh_asset_id + "'"; return false; }
+        if (asset->type != "mesh.obj") { error = "Scene asset '" + node.mesh_asset_id + "' is not a mesh.obj asset"; return false; }
+        auto source = ecos::studio::platform::read_text_file(project_root / asset->path);
+        if (!source) { error = "Cannot read mesh asset '" + node.mesh_asset_id + "': " + source.error().message; return false; }
+        auto imported = ecos::studio::import_obj_mesh(source.value());
+        if (!imported) { error = "Cannot import mesh asset '" + node.mesh_asset_id + "': " + imported.error().message; return false; }
+        SceneInstance instance;
+        instance.name = node.name;
+        instance.mesh.vertices.reserve(imported.value().positions.size());
+        for (const auto& p : imported.value().positions) instance.mesh.vertices.push_back({p.x,p.y,p.z});
+        instance.mesh.triangles = imported.value().indices;
+        auto world = graph.value().world_matrix(node.id);
+        if (!world) { error = "Cannot resolve world transform for node '" + node.name + "': " + world.error().message; return false; }
+        instance.world = world.value();
+        next.push_back(std::move(instance));
+    }
+    if (next.empty()) { error = "Scene contains no nodes referencing imported mesh assets"; return false; }
+    instances = std::move(next);
+    return true;
+}
+static void draw_scene_instances(const std::vector<SceneInstance>& instances) {
+    for (const auto& instance : instances) {
+        float matrix[16]{};
+        for (int row=0; row<4; ++row)
+            for (int col=0; col<4; ++col)
+                matrix[col*4+row] = instance.world.values[static_cast<std::size_t>(row*4+col)];
+        glPushMatrix();
+        glMultMatrixf(matrix);
+        draw_mesh(instance.mesh);
+        glPopMatrix();
+    }
 }
 static void scroll_callback(GLFWwindow* window, double, double y) {
     auto* s=static_cast<EditorState*>(glfwGetWindowUserPointer(window));
@@ -110,7 +169,33 @@ static Mesh starter_cube() {
 int main(int argc,char** argv) {
     EditorState state;
     state.mesh=starter_cube();
-    if(argc>1){std::string error;if(!load_obj(argv[1],state.mesh,error)){std::cerr<<error<<'\n';return 2;}state.title+=" — "+std::string(argv[1]);}
+    std::filesystem::path project_root, scene_path;
+    std::string mesh_path;
+    for (int i=1; i<argc; ++i) {
+        const std::string arg=argv[i];
+        if (arg=="--project" && i+1<argc) project_root=argv[++i];
+        else if (arg=="--scene" && i+1<argc) scene_path=argv[++i];
+        else if (arg=="--help" || arg=="-h") {
+            std::cout << "ECOS Studio native editor\n"
+                      << "  ecos-studio-editor [mesh.obj]\n"
+                      << "  ecos-studio-editor --project <project-dir> --scene <scene.ecscene>\n";
+            return 0;
+        } else if (!arg.empty() && arg[0]!='-') mesh_path=arg;
+        else { std::cerr << "Unknown or incomplete argument: " << arg << '\n'; return 2; }
+    }
+    if (!scene_path.empty()) {
+        if (project_root.empty()) { std::cerr << "--scene requires --project\n"; return 2; }
+        std::string error;
+        if (!load_ecos_scene(project_root,scene_path,state.scene_instances,error)) {
+            std::cerr << error << '\n'; return 2;
+        }
+        state.scene_loaded=true;
+        state.title += " — " + scene_path.filename().string();
+    } else if (!mesh_path.empty()) {
+        std::string error;
+        if(!load_obj(mesh_path,state.mesh,error)){std::cerr<<error<<'\n';return 2;}
+        state.title+=" — "+mesh_path;
+    }
     if(!glfwInit()){std::cerr<<"GLFW initialization failed\n";return 2;}
 #ifdef __APPLE__
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,2);glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,1);
@@ -129,7 +214,7 @@ int main(int argc,char** argv) {
         glMatrixMode(GL_PROJECTION);glLoadIdentity();const double aspect=static_cast<double>(width)/height;const double nearp=0.05,farp=500.0,top=nearp*std::tan(60.0*3.141592653589793/360.0);
         glFrustum(-top*aspect,top*aspect,-top,top,nearp,farp);
         glMatrixMode(GL_MODELVIEW);glLoadIdentity();glTranslatef(0,0,-state.distance);glRotatef(state.pitch,1,0,0);glRotatef(state.yaw,0,1,0);
-        draw_grid();if(!state.mesh.triangles.empty())draw_mesh(state.mesh);
+        draw_grid();if(state.scene_loaded)draw_scene_instances(state.scene_instances);else if(!state.mesh.triangles.empty())draw_mesh(state.mesh);
         glfwSwapBuffers(window);glfwPollEvents();
     }
     glfwDestroyWindow(window);glfwTerminate();return 0;
