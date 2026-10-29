@@ -1,5 +1,6 @@
 #include "ecos_studio/render.hpp"
 #include "ecos_studio/platform.hpp"
+#include "ecos_studio/world_content_runtime.hpp"
 
 #include <algorithm>
 #include <array>
@@ -11,6 +12,7 @@
 #include <system_error>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 namespace ecos::studio {
 namespace {
@@ -116,67 +118,163 @@ Result<std::string> render_scene_to_ppm(
 }
 
 
+namespace {
+bool path_is_within(const std::filesystem::path& base, const std::filesystem::path& candidate) {
+    auto a = base.begin();
+    auto b = candidate.begin();
+    for (; a != base.end(); ++a, ++b) {
+        if (b == candidate.end() || *a != *b) return false;
+    }
+    return true;
+}
+
+Result<void> append_scene_graph_instances(
+    const SceneGraph& scene, const AssetRegistry& assets,
+    const std::filesystem::path& root, const Matrix4& parent_transform,
+    std::vector<MeshData>& meshes, std::vector<RenderMeshInstance>& instances,
+    std::unordered_map<std::string, std::size_t>& mesh_cache) {
+    constexpr std::uintmax_t max_asset_bytes = 16U * 1024U * 1024U;
+    for (const auto& node : scene.nodes()) {
+        if (node.mesh_asset_id.empty()) continue;
+        const auto* asset = assets.find(node.mesh_asset_id);
+        if (!asset) {
+            return Result<void>::failure({ErrorCode::not_found,
+                "Scene node '" + node.name + "' references missing mesh asset '" + node.mesh_asset_id + "'"});
+        }
+        if (asset->type != "mesh.obj") {
+            return Result<void>::failure({ErrorCode::unsupported,
+                "Asset '" + asset->id + "' is not a supported mesh.obj asset"});
+        }
+
+        auto cached = mesh_cache.find(asset->id);
+        if (cached == mesh_cache.end()) {
+            auto relative = platform::safe_relative_path(asset->path);
+            if (!relative) return Result<void>::failure(relative.error());
+            std::error_code ec;
+            const auto source = std::filesystem::canonical(root / relative.value(), ec);
+            if (ec) return Result<void>::failure({ErrorCode::io_error,
+                "Cannot resolve mesh asset '" + asset->id + "': " + ec.message()});
+            if (!path_is_within(root, source)) {
+                return Result<void>::failure({ErrorCode::path_escape,
+                    "Mesh asset resolves outside the configured asset root"});
+            }
+            const auto size = std::filesystem::file_size(source, ec);
+            if (ec || size > max_asset_bytes) {
+                return Result<void>::failure({ErrorCode::invalid_argument,
+                    "Mesh asset is unreadable or exceeds the 16 MiB import limit"});
+            }
+            std::ifstream input(source, std::ios::binary);
+            if (!input) return Result<void>::failure({ErrorCode::io_error,
+                "Cannot open mesh asset: " + asset->id});
+            std::string contents(static_cast<std::size_t>(size), '\0');
+            if (size) input.read(contents.data(), static_cast<std::streamsize>(size));
+            if (!input || input.peek() != std::char_traits<char>::eof()) {
+                return Result<void>::failure({ErrorCode::io_error,
+                    "Failed to read complete mesh asset: " + asset->id});
+            }
+            auto imported = import_obj_mesh(contents);
+            if (!imported) return Result<void>::failure({imported.error().code,
+                "Invalid mesh asset '" + asset->id + "': " + imported.error().message});
+            const auto index = meshes.size();
+            meshes.push_back(std::move(imported.value()));
+            cached = mesh_cache.emplace(asset->id, index).first;
+        }
+
+        auto local_world = scene.world_matrix(node.id);
+        if (!local_world) return Result<void>::failure(local_world.error());
+        instances.push_back(RenderMeshInstance{
+            &meshes[cached->second], multiply(parent_transform, local_world.value())});
+    }
+    return Result<void>::success();
+}
+
+Result<std::filesystem::path> canonical_asset_root(const std::filesystem::path& asset_root) {
+    if (asset_root.empty()) {
+        return Result<std::filesystem::path>::failure(
+            {ErrorCode::invalid_argument, "Asset root must not be empty"});
+    }
+    std::error_code ec;
+    const auto root = std::filesystem::canonical(asset_root, ec);
+    if (ec || !std::filesystem::is_directory(root)) {
+        return Result<std::filesystem::path>::failure(
+            {ErrorCode::io_error, "Cannot resolve asset root"});
+    }
+    return Result<std::filesystem::path>::success(root);
+}
+} // namespace
+
 Result<std::string> render_scene_graph_to_ppm(
     const SceneGraph& scene, const AssetRegistry& assets,
     const std::filesystem::path& asset_root,
     std::uint32_t width, std::uint32_t height) {
-    if (asset_root.empty())
-        return Result<std::string>::failure({ErrorCode::invalid_argument, "Asset root must not be empty"});
-    std::error_code ec;
-    const auto root = std::filesystem::canonical(asset_root, ec);
-    if (ec || !std::filesystem::is_directory(root))
-        return Result<std::string>::failure({ErrorCode::io_error, "Cannot resolve asset root"});
-    auto within_root = [](const std::filesystem::path& base, const std::filesystem::path& candidate) {
-        auto a = base.begin(); auto b = candidate.begin();
-        for (; a != base.end(); ++a, ++b) if (b == candidate.end() || *a != *b) return false;
-        return true;
-    };
+    auto root = canonical_asset_root(asset_root);
+    if (!root) return Result<std::string>::failure(root.error());
     const auto nodes = scene.nodes();
     std::vector<MeshData> meshes;
     std::vector<RenderMeshInstance> instances;
     meshes.reserve(nodes.size());
     instances.reserve(nodes.size());
-    constexpr std::uintmax_t max_asset_bytes = 16U * 1024U * 1024U;
-    for (const auto& node : nodes) {
-        if (node.mesh_asset_id.empty()) continue;
-        const auto* asset = assets.find(node.mesh_asset_id);
-        if (!asset)
-            return Result<std::string>::failure({ErrorCode::not_found,
-                "Scene node '" + node.name + "' references missing mesh asset '" + node.mesh_asset_id + "'"});
-        if (asset->type != "mesh.obj")
-            return Result<std::string>::failure({ErrorCode::unsupported,
-                "Asset '" + asset->id + "' is not a supported mesh.obj asset"});
-        auto relative = platform::safe_relative_path(asset->path);
-        if (!relative) return Result<std::string>::failure(relative.error());
-        const auto source = std::filesystem::canonical(root / relative.value(), ec);
-        if (ec) return Result<std::string>::failure({ErrorCode::io_error,
-            "Cannot resolve mesh asset '" + asset->id + "': " + ec.message()});
-        if (!within_root(root, source))
-            return Result<std::string>::failure({ErrorCode::path_escape,
-                "Mesh asset resolves outside the configured asset root"});
-        const auto size = std::filesystem::file_size(source, ec);
-        if (ec || size > max_asset_bytes)
-            return Result<std::string>::failure({ErrorCode::invalid_argument,
-                "Mesh asset is unreadable or exceeds the 16 MiB import limit"});
-        std::ifstream input(source, std::ios::binary);
-        if (!input) return Result<std::string>::failure({ErrorCode::io_error,
-            "Cannot open mesh asset: " + asset->id});
-        std::string contents(static_cast<std::size_t>(size), '\0');
-        if (size) input.read(contents.data(), static_cast<std::streamsize>(size));
-        if (!input || input.peek() != std::char_traits<char>::eof())
-            return Result<std::string>::failure({ErrorCode::io_error,
-                "Failed to read complete mesh asset: " + asset->id});
-        auto mesh = import_obj_mesh(contents);
-        if (!mesh) return Result<std::string>::failure({mesh.error().code,
-            "Invalid mesh asset '" + asset->id + "': " + mesh.error().message});
-        auto world = scene.world_matrix(node.id);
-        if (!world) return Result<std::string>::failure(world.error());
-        meshes.push_back(std::move(mesh.value()));
-        instances.push_back(RenderMeshInstance{&meshes.back(), world.value()});
-    }
-    if (instances.empty())
+    std::unordered_map<std::string, std::size_t> mesh_cache;
+    auto appended = append_scene_graph_instances(scene, assets, root.value(),
+        Matrix4::identity(), meshes, instances, mesh_cache);
+    if (!appended) return Result<std::string>::failure(appended.error());
+    if (instances.empty()) {
         return Result<std::string>::failure({ErrorCode::invalid_state,
             "Scene has no nodes referencing renderable mesh assets"});
+    }
+    return render_scene_to_ppm(instances, width, height);
+}
+
+Result<std::string> render_world_content_runtime_to_ppm(
+    const WorldContentRuntime& runtime, const AssetRegistry& assets,
+    const std::filesystem::path& asset_root,
+    std::uint32_t width, std::uint32_t height) {
+    auto root = canonical_asset_root(asset_root);
+    if (!root) return Result<std::string>::failure(root.error());
+
+    struct ResidentScene {
+        SceneGraph graph;
+        Matrix4 world_transform;
+        std::size_t node_count;
+    };
+    std::vector<ResidentScene> scenes;
+    std::size_t total_nodes = 0;
+    for (const auto& cell : runtime.manifest().cells) {
+        const auto* status = runtime.world().find(cell.id);
+        if (!status || status->state != CellState::loaded) continue;
+        auto snapshot = runtime.scene_snapshot(cell.id);
+        if (!snapshot) return Result<std::string>::failure(snapshot.error());
+        const auto count = snapshot.value().size();
+        if (count > std::numeric_limits<std::size_t>::max() - total_nodes) {
+            return Result<std::string>::failure({ErrorCode::invalid_argument,
+                "Resident world contains too many scene nodes"});
+        }
+        total_nodes += count;
+        auto cell_transform = Matrix4::identity();
+        cell_transform.values[3] = static_cast<float>(cell.coord.x);
+        cell_transform.values[7] = static_cast<float>(cell.coord.y);
+        cell_transform.values[11] = static_cast<float>(cell.coord.z);
+        scenes.push_back({std::move(snapshot.value()), cell_transform, count});
+    }
+    if (scenes.empty()) {
+        return Result<std::string>::failure({ErrorCode::invalid_state,
+            "Cannot render a world with no loaded scene cells"});
+    }
+
+    std::vector<MeshData> meshes;
+    std::vector<RenderMeshInstance> instances;
+    meshes.reserve(total_nodes);
+    instances.reserve(total_nodes);
+    std::unordered_map<std::string, std::size_t> mesh_cache;
+    for (const auto& scene : scenes) {
+        auto appended = append_scene_graph_instances(scene.graph, assets, root.value(),
+            scene.world_transform, meshes, instances, mesh_cache);
+        if (!appended) return Result<std::string>::failure(appended.error());
+    }
+    if (instances.empty()) {
+        return Result<std::string>::failure({ErrorCode::invalid_state,
+            "Loaded world cells contain no nodes referencing renderable mesh assets"});
+    }
     return render_scene_to_ppm(instances, width, height);
 }
 
