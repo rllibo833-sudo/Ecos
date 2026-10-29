@@ -32,7 +32,8 @@ void print_usage() {
               << "  ecos-studio world-inspect <world.ecworld>\n"
               << "  ecos-studio world-validate-content <world.ecworld>\n"
               << "  ecos-studio mesh-render <mesh.obj> <output.ppm> [width height]\n"
-              << "  ecos-studio scene-render <project-directory> <scene.ecscene> <output.ppm> [width height]\n";
+              << "  ecos-studio scene-render <project-directory> <scene.ecscene> <output.ppm> [width height]\n"
+              << "  ecos-studio world-render <world.ecworld> <project-directory> <output.ppm> [width height]\\n";
 }
 int print_result(const ecos::studio::ValidationResult& result) {
     for (const auto& warning : result.warnings) std::cout << "info: " << warning << '\n';
@@ -182,10 +183,10 @@ int main(int argc, char** argv) {
             std::move(manifest.value()), jobs);
         if (!created) { std::cerr << "error: " << created.error().message << '\\n'; return 2; }
         auto runtime = std::move(created.value());
-        auto scheduled = runtime->update(center, 0, 0);
+        auto scheduled = runtime->update(center, 1, 1);
         if (!scheduled) { std::cerr << "error: " << scheduled.error().message << '\\n'; return 2; }
         jobs.wait_idle();
-        auto completed = runtime->update(center, 0, 0);
+        auto completed = runtime->update(center, 1, 1);
         if (!completed) { std::cerr << "error: " << completed.error().message << '\\n'; return 2; }
         if (runtime->world().loaded_count() == 0) {
             std::cerr << "error: first world cell failed to load";
