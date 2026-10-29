@@ -94,6 +94,12 @@ Result<std::string> render_scene_to_ppm(
                     "Scene mesh transform contains non-finite matrix values"});
             }
         }
+        for (const float component : {instance.diffuse_color.x, instance.diffuse_color.y, instance.diffuse_color.z}) {
+            if (!std::isfinite(component) || component < 0.0F || component > 1.0F) {
+                return Result<std::string>::failure({ErrorCode::invalid_argument,
+                    "Scene material diffuse color components must be finite and within [0, 1]"});
+            }
+        }
 
         const auto vertex_offset = static_cast<std::uint32_t>(combined.positions.size());
         for (const auto& position : mesh.positions) {
@@ -115,6 +121,14 @@ Result<std::string> render_scene_to_ppm(
         }
         for (const auto index : mesh.indices) {
             combined.indices.push_back(vertex_offset + index);
+        }
+        const auto triangle_count = mesh.indices.size() / 3U;
+        if (!mesh.triangle_diffuse_colors.empty() && mesh.triangle_diffuse_colors.size() != triangle_count) {
+            return Result<std::string>::failure({ErrorCode::invalid_argument,
+                "Mesh triangle material color count does not match its triangle count"});
+        }
+        for (std::size_t triangle = 0; triangle < triangle_count; ++triangle) {
+            combined.triangle_diffuse_colors.push_back(instance.diffuse_color);
         }
     }
     return render_mesh_to_ppm(combined, width, height);
@@ -562,6 +576,10 @@ Result<std::string> render_mesh_to_ppm(const MeshData& mesh, std::uint32_t width
         return Result<std::string>::failure({ErrorCode::invalid_argument,
             "Renderer requires vertices and a triangle index buffer"});
     }
+    if (!mesh.triangle_diffuse_colors.empty() && mesh.triangle_diffuse_colors.size() != mesh.indices.size() / 3U) {
+        return Result<std::string>::failure({ErrorCode::invalid_argument,
+            "Mesh triangle material color count does not match its triangle count"});
+    }
     for (const auto index : mesh.indices) {
         if (index >= mesh.positions.size()) {
             return Result<std::string>::failure({ErrorCode::invalid_argument,
@@ -629,10 +647,19 @@ Result<std::string> render_mesh_to_ppm(const MeshData& mesh, std::uint32_t width
         if (normal_len <= 1.0e-8F) continue;
         normal={normal.x/normal_len,normal.y/normal_len,normal.z/normal_len};
         const float illumination=0.24F+0.76F*std::max(0.0F,dot(normal,light));
+        const Vec3 albedo = mesh.triangle_diffuse_colors.empty()
+            ? Vec3{55.0F / 255.0F, 170.0F / 255.0F, 235.0F / 255.0F}
+            : mesh.triangle_diffuse_colors[tri / 3U];
+        if (!std::isfinite(albedo.x) || !std::isfinite(albedo.y) || !std::isfinite(albedo.z) ||
+            albedo.x < 0.0F || albedo.x > 1.0F || albedo.y < 0.0F || albedo.y > 1.0F ||
+            albedo.z < 0.0F || albedo.z > 1.0F) {
+            return Result<std::string>::failure({ErrorCode::invalid_argument,
+                "Triangle diffuse color components must be finite and within [0, 1]"});
+        }
         const std::array<std::uint8_t,3> color{
-            static_cast<std::uint8_t>(std::clamp(55.0F*illumination,0.0F,255.0F)),
-            static_cast<std::uint8_t>(std::clamp(170.0F*illumination,0.0F,255.0F)),
-            static_cast<std::uint8_t>(std::clamp(235.0F*illumination,0.0F,255.0F))};
+            static_cast<std::uint8_t>(std::clamp(albedo.x * illumination * 255.0F, 0.0F, 255.0F)),
+            static_cast<std::uint8_t>(std::clamp(albedo.y * illumination * 255.0F, 0.0F, 255.0F)),
+            static_cast<std::uint8_t>(std::clamp(albedo.z * illumination * 255.0F, 0.0F, 255.0F))};
         const float area=(b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);
         if (std::abs(area) < 1.0e-8F) continue;
         const int x0=std::max(0,static_cast<int>(std::floor(std::min({a.x,b.x,c.x}))));
