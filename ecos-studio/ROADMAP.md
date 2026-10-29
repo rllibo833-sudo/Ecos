@@ -27,15 +27,17 @@ This roadmap describes product milestones, not guaranteed delivery dates. Checkb
 - [x] Backend-neutral keyboard/mouse input snapshots and per-frame transient reset.
 - [x] Bounded fixed-step frame clock with interpolation alpha.
 - [x] Callback-driven frame loop with fixed updates, shared input snapshot, and render callback.
-- [ ] Native window and OS input adapter.
-- [ ] GPU renderer backend and frame lifecycle.
-- [ ] Mesh/material GPU upload and visible interactive scene viewport.
+- [x] First native GLFW/OpenGL window and interactive depth-tested OBJ viewport (orbit, zoom, grid, axes).
+- [~] Native Windows/macOS/Linux build and package jobs; artifact validation pending CI completion.
+- [ ] Modern GPU renderer backend and frame lifecycle (current viewport uses legacy OpenGL).
+- [ ] Scene/asset registry integration, persistent asset browser, and GPU mesh/material upload.
 - [ ] OS audio-device output, decoding/resampling, and spatial audio.
 - [ ] Collision/rigid-body integration.
 - [ ] One small offline game built and packaged by the toolchain.
 
 ## S3 — Creator tools
-- [~] Browser visual scene editor: hierarchy, transform inspector, create/delete, undo/redo, .ecscene open/save, and session-based OBJ mesh preview; native desktop shell and production engine-rendered viewport still planned.
+- [~] Browser visual scene editor: hierarchy, transform inspector, create/delete, undo/redo, .ecscene open/save, and session-based OBJ mesh preview.
+- [~] Native desktop viewport: real OpenGL window and OBJ rendering; full scene hierarchy/inspector integration remains planned.
 - [~] Initial inspector, mesh/material ID assignment, and OBJ preview import; persistent visual asset browser and production workflow still planned.
 - [ ] Material editor, import pipeline, and reproducible game packaging.
 - [ ] Scripting and debugging workflow.
