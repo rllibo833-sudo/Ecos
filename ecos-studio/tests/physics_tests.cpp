@@ -35,6 +35,39 @@ void test_ray_sphere(){
  check(limited&&!limited.value().hit,"respects maximum ray distance");
  check(!intersect_ray_sphere({{0,0,0},{1,0,0},},Sphere{{0,0,0},-1}),"rejects negative sphere radius");
 }
+void test_ecs_collision_detection(){
+ using namespace ecos::studio;
+ EntityRegistry entities;
+ const auto a=entities.create(), b=entities.create(), c=entities.create();
+ Transform ta; ta.position={0,0,0};
+ Transform tb; tb.position={0.75F,0,0};
+ Transform tc; tc.position={5,0,0};
+ entities.emplace<SceneNodeComponent>(a,SceneNodeComponent{"A","",ta,{},{}});
+ entities.emplace<SceneNodeComponent>(b,SceneNodeComponent{"B","",tb,{},{}});
+ entities.emplace<SceneNodeComponent>(c,SceneNodeComponent{"C","",tc,{},{}});
+ ColliderComponent sphere; sphere.shape=ColliderShape::sphere; sphere.radius=1.0F;
+ entities.emplace<ColliderComponent>(a,sphere);
+ ColliderComponent box; box.shape=ColliderShape::box; box.half_extents={0.5F,0.5F,0.5F};
+ entities.emplace<ColliderComponent>(b,box);
+ entities.emplace<ColliderComponent>(c,sphere);
+ auto pairs=CollisionSystem::detect(entities);
+ check(pairs&&pairs.value().size()==1,"detects sphere-box overlap and excludes distant collider");
+ if(pairs&&pairs.value().size()==1){
+  check(pairs.value()[0].first==a&&pairs.value()[0].second==b,"collision pairs are deterministic by entity index");
+  check(pairs.value()[0].penetration>0&&pairs.value()[0].normal.x>0,"returns penetration and first-to-second normal");
+ }
+ entities.get<ColliderComponent>(b)->layer=2U;
+ entities.get<ColliderComponent>(a)->mask=1U;
+ pairs=CollisionSystem::detect(entities);
+ check(pairs&&pairs.value().empty(),"filters collisions using symmetric layer and mask bits");
+ entities.get<ColliderComponent>(a)->mask=0xFFFFFFFFU;
+ entities.get<ColliderComponent>(b)->layer=1U;
+ entities.get<ColliderComponent>(b)->trigger=true;
+ pairs=CollisionSystem::detect(entities);
+ check(pairs&&pairs.value().size()==1&&pairs.value()[0].trigger,"marks trigger overlaps without resolving them");
+ entities.get<ColliderComponent>(c)->radius=-1;
+ check(!CollisionSystem::detect(entities),"rejects invalid collider data");
+}
 void test_ecs_physics_integration(){
  using namespace ecos::studio;
  EntityRegistry entities;
@@ -67,4 +100,4 @@ void test_ecs_physics_integration(){
  check(!PhysicsSystem::step(entities,-0.1),"rejects negative delta time");
 }
 }
-int main(){test_overlaps();test_ray_aabb();test_ray_sphere();test_ecs_physics_integration();if(failures){std::cerr<<failures<<" physics test(s) failed.\n";return 1;}std::cout<<"ECOS Studio collision and ECS physics tests passed.\n";return 0;}
+int main(){test_overlaps();test_ray_aabb();test_ray_sphere();test_ecs_collision_detection();test_ecs_physics_integration();if(failures){std::cerr<<failures<<" physics test(s) failed.\n";return 1;}std::cout<<"ECOS Studio collision and ECS physics tests passed.\n";return 0;}

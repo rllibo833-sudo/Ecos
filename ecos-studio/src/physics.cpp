@@ -1,5 +1,6 @@
 #include "ecos_studio/physics.hpp"
 #include "ecos_studio/world_content_runtime.hpp"
+#include "ecos_studio/world_transform.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -74,6 +75,131 @@ Result<std::size_t> PhysicsSystem::step(EntityRegistry& entities, double delta_s
         entities.get<SceneNodeComponent>(update.entity)->local_transform.position = update.position;
     }
     return Result<std::size_t>::success(updates.size());
+}
+
+
+namespace {
+struct WorldCollider {
+    Entity entity;
+    ColliderShape shape;
+    Vec3 center;
+    Vec3 half_extents;
+    float radius;
+    std::uint32_t layer;
+    std::uint32_t mask;
+    bool trigger;
+};
+float component_scale_x(const Matrix4& m) {
+    return std::sqrt(m.values[0]*m.values[0]+m.values[4]*m.values[4]+m.values[8]*m.values[8]);
+}
+float component_scale_y(const Matrix4& m) {
+    return std::sqrt(m.values[1]*m.values[1]+m.values[5]*m.values[5]+m.values[9]*m.values[9]);
+}
+float component_scale_z(const Matrix4& m) {
+    return std::sqrt(m.values[2]*m.values[2]+m.values[6]*m.values[6]+m.values[10]*m.values[10]);
+}
+bool valid_collider(const ColliderComponent& c) {
+    return std::isfinite(c.radius) && c.radius >= 0.0F &&
+        finite(c.half_extents) && c.half_extents.x >= 0.0F &&
+        c.half_extents.y >= 0.0F && c.half_extents.z >= 0.0F &&
+        (c.shape == ColliderShape::sphere || c.shape == ColliderShape::box);
+}
+bool contact(const WorldCollider& a, const WorldCollider& b, Vec3& normal, float& penetration) {
+    if (a.shape == ColliderShape::sphere && b.shape == ColliderShape::sphere) {
+        const Vec3 delta = subtract(b.center, a.center);
+        const float distance_squared = dot(delta, delta);
+        const float radii = a.radius + b.radius;
+        if (distance_squared > radii*radii) return false;
+        const float distance = std::sqrt(std::max(0.0F, distance_squared));
+        normal = distance > 1.0e-7F ? scale(delta, 1.0F/distance) : Vec3{1.0F,0.0F,0.0F};
+        penetration = radii - distance;
+        return true;
+    }
+    const Vec3 a_min = subtract(a.center, a.half_extents);
+    const Vec3 a_max = add(a.center, a.half_extents);
+    const Vec3 b_min = subtract(b.center, b.half_extents);
+    const Vec3 b_max = add(b.center, b.half_extents);
+    if (a.shape == ColliderShape::box && b.shape == ColliderShape::box) {
+        const float ox = std::min(a_max.x,b_max.x)-std::max(a_min.x,b_min.x);
+        const float oy = std::min(a_max.y,b_max.y)-std::max(a_min.y,b_min.y);
+        const float oz = std::min(a_max.z,b_max.z)-std::max(a_min.z,b_min.z);
+        if (ox < 0.0F || oy < 0.0F || oz < 0.0F) return false;
+        penetration = ox; normal = {b.center.x >= a.center.x ? 1.0F : -1.0F,0,0};
+        if (oy < penetration) { penetration=oy; normal={0,b.center.y >= a.center.y ? 1.0F : -1.0F,0}; }
+        if (oz < penetration) { penetration=oz; normal={0,0,b.center.z >= a.center.z ? 1.0F : -1.0F}; }
+        return true;
+    }
+    const bool sphere_first = a.shape == ColliderShape::sphere;
+    const auto& sphere = sphere_first ? a : b;
+    const auto& box = sphere_first ? b : a;
+    const Vec3 box_min = subtract(box.center, box.half_extents);
+    const Vec3 box_max = add(box.center, box.half_extents);
+    const Vec3 closest{
+        std::clamp(sphere.center.x,box_min.x,box_max.x),
+        std::clamp(sphere.center.y,box_min.y,box_max.y),
+        std::clamp(sphere.center.z,box_min.z,box_max.z)};
+    Vec3 delta = subtract(closest,sphere.center);
+    float distance = length(delta);
+    if (distance > sphere.radius) return false;
+    if (distance > 1.0e-7F) {
+        normal = scale(delta,1.0F/distance);
+        penetration = sphere.radius-distance;
+    } else {
+        const float dx=std::min(sphere.center.x-box_min.x,box_max.x-sphere.center.x);
+        const float dy=std::min(sphere.center.y-box_min.y,box_max.y-sphere.center.y);
+        const float dz=std::min(sphere.center.z-box_min.z,box_max.z-sphere.center.z);
+        if (dx<=dy && dx<=dz) { normal={sphere.center.x>=box.center.x ? 1.0F : -1.0F,0,0}; penetration=sphere.radius+dx; }
+        else if (dy<=dz) { normal={0,sphere.center.y>=box.center.y ? 1.0F : -1.0F,0}; penetration=sphere.radius+dy; }
+        else { normal={0,0,sphere.center.z>=box.center.z ? 1.0F : -1.0F}; penetration=sphere.radius+dz; }
+    }
+    if (sphere_first) normal=scale(normal,-1.0F);
+    return true;
+}
+}
+
+Result<std::vector<CollisionPair>> CollisionSystem::detect(EntityRegistry& entities) {
+    auto transformed = WorldTransformSystem::update(entities);
+    if (!transformed) return Result<std::vector<CollisionPair>>::failure(transformed.error());
+    std::vector<WorldCollider> colliders;
+    const auto collider_entities = entities.entities_with<ColliderComponent>();
+    colliders.reserve(collider_entities.size());
+    for (const auto entity : collider_entities) {
+        const auto* collider = entities.get<ColliderComponent>(entity);
+        const auto* world = entities.get<WorldTransformComponent>(entity);
+        if (!collider || !world || !valid_collider(*collider)) {
+            return Result<std::vector<CollisionPair>>::failure(
+                {ErrorCode::invalid_argument, "Collision entity has invalid collider data or no world transform"});
+        }
+        const auto& m = world->matrix.values;
+        const Vec3 center{m[3],m[7],m[11]};
+        const Vec3 scales{component_scale_x(world->matrix),component_scale_y(world->matrix),component_scale_z(world->matrix)};
+        if (!finite(center) || !finite(scales)) {
+            return Result<std::vector<CollisionPair>>::failure(
+                {ErrorCode::invalid_argument, "Collision transform contains non-finite values"});
+        }
+        Vec3 extents{collider->half_extents.x*scales.x,collider->half_extents.y*scales.y,collider->half_extents.z*scales.z};
+        float radius=collider->radius*std::max({scales.x,scales.y,scales.z});
+        if (collider->shape == ColliderShape::box) {
+            // Transform the local box basis to a conservative world AABB,
+            // including rotation and non-uniform scale.
+            extents={
+                std::abs(m[0])*collider->half_extents.x+std::abs(m[1])*collider->half_extents.y+std::abs(m[2])*collider->half_extents.z,
+                std::abs(m[4])*collider->half_extents.x+std::abs(m[5])*collider->half_extents.y+std::abs(m[6])*collider->half_extents.z,
+                std::abs(m[8])*collider->half_extents.x+std::abs(m[9])*collider->half_extents.y+std::abs(m[10])*collider->half_extents.z};
+        }
+        colliders.push_back({entity,collider->shape,center,extents,radius,collider->layer,collider->mask,collider->trigger});
+    }
+    std::vector<CollisionPair> pairs;
+    for (std::size_t i=0;i<colliders.size();++i) {
+        for (std::size_t j=i+1;j<colliders.size();++j) {
+            const auto& a=colliders[i]; const auto& b=colliders[j];
+            if ((a.mask & b.layer)==0U || (b.mask & a.layer)==0U) continue;
+            Vec3 normal{}; float penetration=0.0F;
+            if (contact(a,b,normal,penetration))
+                pairs.push_back({a.entity,b.entity,normal,penetration,a.trigger||b.trigger});
+        }
+    }
+    return Result<std::vector<CollisionPair>>::success(std::move(pairs));
 }
 
 bool overlaps(const Aabb& a,const Aabb& b) noexcept {

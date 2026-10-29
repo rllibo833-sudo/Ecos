@@ -5,6 +5,8 @@
 #include "ecos_studio/scene.hpp"
 
 #include <cstddef>
+#include <cstdint>
+#include <vector>
 
 namespace ecos::studio {
 
@@ -38,6 +40,34 @@ struct RigidBodyComponent {
 };
 
 struct SceneNodeComponent;
+
+enum class ColliderShape { sphere, box };
+
+struct ColliderComponent {
+    ColliderShape shape{ColliderShape::sphere};
+    // Sphere radius or box half-extents in local space.
+    float radius{0.5F};
+    Vec3 half_extents{0.5F, 0.5F, 0.5F};
+    std::uint32_t layer{1U};
+    std::uint32_t mask{0xFFFFFFFFU};
+    bool trigger{false};
+};
+
+struct CollisionPair {
+    Entity first{};
+    Entity second{};
+    // Contact normal points from first toward second.
+    Vec3 normal{};
+    float penetration{0.0F};
+    bool trigger{false};
+};
+
+class CollisionSystem {
+public:
+    // Updates hierarchical transforms, then returns deterministic overlapping
+    // pairs. Layer/mask filtering is symmetric; triggers report but don't resolve.
+    [[nodiscard]] static Result<std::vector<CollisionPair>> detect(EntityRegistry& entities);
+};
 
 // Integrates ECS rigid bodies into scene-local transforms. Validation is
 // transactional: invalid body data prevents every body from being modified.
