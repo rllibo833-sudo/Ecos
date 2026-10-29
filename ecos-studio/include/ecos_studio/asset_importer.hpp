@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ecos_studio/mesh.hpp"
+#include "ecos_studio/material.hpp"
+#include "ecos_studio/asset_registry.hpp"
 #include "ecos_studio/project.hpp"
 #include "ecos_studio/result.hpp"
 
@@ -8,6 +10,13 @@
 #include <string>
 
 namespace ecos::studio {
+
+struct ImportedMaterialAsset {
+    std::string id;
+    std::filesystem::path relative_path;
+    std::string content_sha256;
+    std::size_t material_count{};
+};
 
 struct ImportedAsset {
     std::string id;
@@ -25,7 +34,17 @@ struct ImportedAsset {
     const std::filesystem::path& source_path,
     const std::string& asset_id);
 
-// Verifies imported-asset metadata, safe paths, content hashes, and parsed mesh statistics.
+// Imports validated Wavefront MTL files into assets/imported with versioned metadata.
+[[nodiscard]] Result<ImportedMaterialAsset> import_mtl_asset(
+    const std::filesystem::path& project_root,
+    const std::filesystem::path& source_path,
+    const std::string& asset_id);
+
+// Builds a render-ready registry from validated project .ecasset sidecars.
+[[nodiscard]] Result<AssetRegistry> load_imported_asset_registry(
+    const std::filesystem::path& project_root);
+
+// Verifies imported-asset metadata, safe paths, content hashes, and parsed source statistics.
 [[nodiscard]] ValidationResult validate_imported_assets(
     const std::filesystem::path& project_root);
 
