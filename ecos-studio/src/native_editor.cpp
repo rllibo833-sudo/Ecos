@@ -445,8 +445,7 @@ static void draw_mesh(const Mesh& mesh) {
                 const auto& p=mesh.vertices[idx];vertices.push_back({{p.x,p.y,p.z},{nx,ny,nz}});indices.push_back(static_cast<std::uint32_t>(indices.size()));
             }
         }
-        GpuMesh cached;gpu.GenBuffers(2,&cached.vertex_buffer);
-        cached.index_buffer=0;
+        GpuMesh cached;gpu.GenBuffers(1,&cached.vertex_buffer);
         gpu.BindBuffer(GL_ARRAY_BUFFER,cached.vertex_buffer);
         gpu.BufferData(GL_ARRAY_BUFFER,static_cast<GLsizeiptr>(vertices.size()*sizeof(GpuVertex)),vertices.data(),GL_STATIC_DRAW);
         gpu.GenBuffers(1,&cached.index_buffer);
