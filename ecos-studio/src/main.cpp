@@ -157,6 +157,32 @@ int main(int argc, char** argv) {
         std::cout << "Validated " << manifest.value().cells.size() << " cell(s), " << nodes << " total scene node(s).\n";
         return 0;
     }
+    if (command == "scene-render") {
+        if (argc != 5 && argc != 7) { print_usage(); return 1; }
+        std::uint32_t width = 640, height = 480;
+        if (argc == 7 && (!parse_dimension(argv[5], width) ||
+            !parse_dimension(argv[6], height) || width == 0 || height == 0)) {
+            std::cerr << "error: width and height must be positive integers\\n";
+            return 2;
+        }
+        const std::filesystem::path project_root(argv[2]);
+        auto source = ecos::studio::platform::read_text_file(std::filesystem::path(argv[3]));
+        if (!source) { std::cerr << "error: " << source.error().message << '\\n'; return 2; }
+        auto scene = ecos::studio::deserialize_scene(source.value());
+        if (!scene) { std::cerr << "error: " << scene.error().message << '\\n'; return 2; }
+        auto assets = ecos::studio::load_imported_asset_registry(project_root);
+        if (!assets) { std::cerr << "error: " << assets.error().message << '\\n'; return 2; }
+        auto image = ecos::studio::render_scene_graph_to_ppm(
+            scene.value(), assets.value(), project_root, width, height);
+        if (!image) { std::cerr << "error: " << image.error().message << '\\n'; return 2; }
+        std::ofstream output(std::filesystem::path(argv[4]), std::ios::binary);
+        if (!output) { std::cerr << "error: cannot open output image for writing\\n"; return 2; }
+        output.write(image.value().data(), static_cast<std::streamsize>(image.value().size()));
+        if (!output) { std::cerr << "error: failed while writing output image\\n"; return 2; }
+        std::cout << "Rendered scene with " << scene.value().size() << " node(s) to "
+                  << argv[4] << " (" << width << "x" << height << ").\\n";
+        return 0;
+    }
     if (command == "mesh-render") {
         if (argc != 4 && argc != 6) { print_usage(); return 1; }
         std::uint32_t width=640, height=480;
