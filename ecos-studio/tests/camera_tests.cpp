@@ -1,4 +1,6 @@
 #include "ecos_studio/camera.hpp"
+#include "ecos_studio/camera_controller.hpp"
+#include "ecos_studio/engine_loop.hpp"
 #include <cmath>
 #include <iostream>
 namespace {
@@ -27,6 +29,44 @@ void test_perspective(){
  check(!perspective(1,0,0.1F,100),"rejects zero aspect ratio");
  check(!perspective(1,1,100,10),"rejects reversed clipping planes");
 }
+
+void test_input_driven_camera_runtime(){
+ using namespace ecos::studio;
+ CameraController camera({0,0,3},1.5F);
+ const auto start=camera.position();
+ InputSnapshot input; input.keys[static_cast<std::size_t>(InputKey::W)]=true;
+ auto moved=camera.update(0.5,input);
+ check(static_cast<bool>(moved),"updates runtime camera from movement input");
+ const auto after=camera.position();
+ check(std::abs(after.z-(start.z-2.5F))<1.0e-4F,"W moves camera forward at configured units per second");
+ input={}; input.keys[static_cast<std::size_t>(InputKey::Right)]=true;
+ const float old_yaw=camera.yaw();
+ check(static_cast<bool>(camera.update(0.25,input)),"updates yaw from arrow-key input");
+ check(camera.yaw()>old_yaw,"right arrow rotates camera yaw");
+ input={}; input.mouse_delta_x=100.0; input.mouse_delta_y=-10000.0;
+ const float yaw_before_mouse=camera.yaw();
+ check(static_cast<bool>(camera.update(0.01,input)),"accepts mouse look delta");
+ check(camera.yaw()<yaw_before_mouse,"mouse horizontal delta changes camera heading");
+ check(camera.pitch()<1.56F&&camera.pitch()>-1.56F,"mouse look clamps pitch away from singularity");
+ auto vp=camera.view_projection_matrix();
+ check(static_cast<bool>(vp),"produces a view-projection matrix from runtime camera state");
+ check(!camera.set_aspect_ratio(0.0F),"rejects zero camera aspect ratio");
+ check(!camera.update(-0.1,InputSnapshot{}),"rejects negative frame delta");
+ check(!camera.update(2.0,InputSnapshot{}),"rejects unbounded frame delta");
+
+ EngineLoop loop;
+ CameraController loop_camera({0,0,3},1.5F);
+ check(static_cast<bool>(loop.input().key_event(InputKey::W,InputAction::Press)),"queues camera movement in engine input state");
+ FrameCallbacks callbacks;
+ callbacks.fixed_update=[&](double dt,const InputSnapshot& snapshot){
+  auto result=loop_camera.update(dt,snapshot);
+  check(static_cast<bool>(result),"engine fixed update drives runtime camera");
+ };
+ const auto report=loop.frame(1.0/60.0,callbacks);
+ check(report.update_callbacks==1&&loop_camera.position().z<3.0F,
+  "engine frame input moves camera during fixed update");
+}
+
 void test_orthographic(){
  using namespace ecos::studio;
  auto projection=orthographic(-2,2,-1,1,0.1F,10);
@@ -38,4 +78,4 @@ void test_orthographic(){
  check(!orthographic(1,1,-1,1,0.1F,10),"rejects degenerate horizontal bounds");
 }
 }
-int main(){test_view_matrix();test_perspective();test_orthographic();if(failures){std::cerr<<failures<<" camera test(s) failed.\n";return 1;}std::cout<<"ECOS Studio camera math tests passed.\n";return 0;}
+int main(){test_view_matrix();test_perspective();test_orthographic();test_input_driven_camera_runtime();if(failures){std::cerr<<failures<<" camera test(s) failed.\n";return 1;}std::cout<<"ECOS Studio camera math tests passed.\n";return 0;}
