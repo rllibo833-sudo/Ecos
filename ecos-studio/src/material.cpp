@@ -43,7 +43,7 @@ Result<std::vector<MaterialData>> import_mtl_materials(std::string_view source){
    if(!current)return Result<std::vector<MaterialData>>::failure({ErrorCode::invalid_argument,"MTL property before newmtl at line "+std::to_string(line_number)});
    if(key=="Kd"){
     std::string sx,sy,sz;float x{},y{},z{};
-    if(!(row>>sx>>sy>>sz)||!parse_float(sx,x)||!parse_float(sy,y)||!parse_float(sz,z)||x<0||y<0||z<0)
+    if(!(row>>sx>>sy>>sz)||!parse_float(sx,x)||!parse_float(sy,y)||!parse_float(sz,z)||x<0||y<0||z<0||x>1||y>1||z>1)
      return Result<std::vector<MaterialData>>::failure({ErrorCode::invalid_argument,"Invalid MTL diffuse color at line "+std::to_string(line_number)});
     current->diffuse_color={x,y,z};
    }else if(key=="d"||key=="Tr"){
