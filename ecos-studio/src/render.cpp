@@ -1,4 +1,5 @@
 #include "ecos_studio/render.hpp"
+#include "ecos_studio/material.hpp"
 #include "ecos_studio/platform.hpp"
 #include "ecos_studio/camera.hpp"
 #include "ecos_studio/engine_loop.hpp"
@@ -304,7 +305,8 @@ Result<void> append_scene_graph_instances(
     const SceneGraph& scene, const AssetRegistry& assets,
     const std::filesystem::path& root, const Matrix4& parent_transform,
     std::vector<MeshData>& meshes, std::vector<RenderMeshInstance>& instances,
-    std::unordered_map<std::string, std::size_t>& mesh_cache) {
+    std::unordered_map<std::string, std::size_t>& mesh_cache,
+    std::unordered_map<std::string, MaterialData>& material_cache) {
     constexpr std::uintmax_t max_asset_bytes = 16U * 1024U * 1024U;
     for (const auto& node : scene.nodes()) {
         if (node.mesh_asset_id.empty()) continue;
@@ -354,8 +356,52 @@ Result<void> append_scene_graph_instances(
 
         auto local_world = scene.world_matrix(node.id);
         if (!local_world) return Result<void>::failure(local_world.error());
+        Vec3 material_color{55.0F / 255.0F, 170.0F / 255.0F, 235.0F / 255.0F};
+        if (!node.material_asset_id.empty()) {
+            auto material = material_cache.find(node.material_asset_id);
+            if (material == material_cache.end()) {
+                const auto* material_asset = assets.find(node.material_asset_id);
+                if (!material_asset) {
+                    return Result<void>::failure({ErrorCode::not_found,
+                        "Scene node '" + node.name + "' references missing material asset '" + node.material_asset_id + "'"});
+                }
+                if (material_asset->type != "material.mtl") {
+                    return Result<void>::failure({ErrorCode::unsupported,
+                        "Asset '" + material_asset->id + "' is not a supported material.mtl asset"});
+                }
+                auto relative = platform::safe_relative_path(material_asset->path);
+                if (!relative) return Result<void>::failure(relative.error());
+                std::error_code ec;
+                const auto source = std::filesystem::canonical(root / relative.value(), ec);
+                if (ec) return Result<void>::failure({ErrorCode::io_error,
+                    "Cannot resolve material asset '" + material_asset->id + "': " + ec.message()});
+                if (!path_is_within(root, source)) {
+                    return Result<void>::failure({ErrorCode::path_escape,
+                        "Material asset resolves outside the configured asset root"});
+                }
+                const auto size = std::filesystem::file_size(source, ec);
+                if (ec || size > max_asset_bytes) {
+                    return Result<void>::failure({ErrorCode::invalid_argument,
+                        "Material asset is unreadable or exceeds the 16 MiB import limit"});
+                }
+                std::ifstream input(source, std::ios::binary);
+                if (!input) return Result<void>::failure({ErrorCode::io_error,
+                    "Cannot open material asset: " + material_asset->id});
+                std::string contents(static_cast<std::size_t>(size), '\0');
+                if (size) input.read(contents.data(), static_cast<std::streamsize>(size));
+                if (!input || input.peek() != std::char_traits<char>::eof()) {
+                    return Result<void>::failure({ErrorCode::io_error,
+                        "Failed to read complete material asset: " + material_asset->id});
+                }
+                auto imported = import_mtl_materials(contents);
+                if (!imported) return Result<void>::failure({imported.error().code,
+                    "Invalid material asset '" + material_asset->id + "': " + imported.error().message});
+                material = material_cache.emplace(node.material_asset_id, imported.value().front()).first;
+            }
+            material_color = material->second.diffuse_color;
+        }
         instances.push_back(RenderMeshInstance{
-            &meshes[cached->second], multiply(parent_transform, local_world.value())});
+            &meshes[cached->second], multiply(parent_transform, local_world.value()), material_color});
     }
     return Result<void>::success();
 }
@@ -387,8 +433,9 @@ Result<std::string> render_scene_graph_to_ppm(
     meshes.reserve(nodes.size());
     instances.reserve(nodes.size());
     std::unordered_map<std::string, std::size_t> mesh_cache;
+    std::unordered_map<std::string, MaterialData> material_cache;
     auto appended = append_scene_graph_instances(scene, assets, root.value(),
-        Matrix4::identity(), meshes, instances, mesh_cache);
+        Matrix4::identity(), meshes, instances, mesh_cache, material_cache);
     if (!appended) return Result<std::string>::failure(appended.error());
     if (instances.empty()) {
         return Result<std::string>::failure({ErrorCode::invalid_state,
@@ -438,9 +485,10 @@ Result<std::string> render_world_content_runtime_to_ppm(
     meshes.reserve(total_nodes);
     instances.reserve(total_nodes);
     std::unordered_map<std::string, std::size_t> mesh_cache;
+    std::unordered_map<std::string, MaterialData> material_cache;
     for (const auto& scene : scenes) {
         auto appended = append_scene_graph_instances(scene.graph, assets, root.value(),
-            scene.world_transform, meshes, instances, mesh_cache);
+            scene.world_transform, meshes, instances, mesh_cache, material_cache);
         if (!appended) return Result<std::string>::failure(appended.error());
     }
     if (instances.empty()) {
