@@ -28,7 +28,8 @@ void print_usage() {
               << "  ecos-studio world-validate <world.ecworld>\n"
               << "  ecos-studio world-inspect <world.ecworld>\n"
               << "  ecos-studio world-validate-content <world.ecworld>\n"
-              << "  ecos-studio mesh-render <mesh.obj> <output.ppm> [width height]\n";
+              << "  ecos-studio mesh-render <mesh.obj> <output.ppm> [width height]\n"
+              << "  ecos-studio scene-render <project-directory> <scene.ecscene> <output.ppm> [width height]\n";
 }
 int print_result(const ecos::studio::ValidationResult& result) {
     for (const auto& warning : result.warnings) std::cout << "info: " << warning << '\n';
