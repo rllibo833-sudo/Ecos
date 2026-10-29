@@ -54,6 +54,9 @@ struct ColliderComponent {
     std::uint32_t layer{1U};
     std::uint32_t mask{0xFFFFFFFFU};
     bool trigger{false};
+    // Coulomb friction coefficients used by rigid-body contact resolution.
+    float static_friction{0.6F};
+    float dynamic_friction{0.4F};
 };
 
 struct ColliderRayHit {

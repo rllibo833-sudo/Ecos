@@ -149,6 +149,25 @@ void test_collision_resolution(){
  check(near(entities.get<RigidBodyComponent>(falling)->velocity.y,1.5F),
        "restitution produces a bounded bounce away from the contact surface");
 
+ // A sliding sphere against a rough static floor loses tangential speed.
+ EntityRegistry friction_entities;
+ const auto rough_floor=friction_entities.create(), sliding=friction_entities.create();
+ Transform rough_transform; rough_transform.position={0,0,0};
+ Transform slide_transform; slide_transform.position={0,0.75F,0};
+ friction_entities.emplace<SceneNodeComponent>(rough_floor,SceneNodeComponent{"rough-floor","",rough_transform,{},{}});
+ friction_entities.emplace<SceneNodeComponent>(sliding,SceneNodeComponent{"sliding","",slide_transform,{},{}});
+ ColliderComponent rough_box; rough_box.shape=ColliderShape::box; rough_box.half_extents={3,0.5F,3};
+ rough_box.static_friction=0.9F; rough_box.dynamic_friction=0.7F;
+ friction_entities.emplace<ColliderComponent>(rough_floor,rough_box);
+ ColliderComponent sliding_sphere; sliding_sphere.shape=ColliderShape::sphere; sliding_sphere.radius=0.5F;
+ sliding_sphere.static_friction=0.9F; sliding_sphere.dynamic_friction=0.7F;
+ friction_entities.emplace<ColliderComponent>(sliding,sliding_sphere);
+ RigidBodyComponent sliding_body; sliding_body.velocity={4,-2,0};
+ friction_entities.emplace<RigidBodyComponent>(sliding,sliding_body);
+ auto friction_result=PhysicsSystem::resolve_collisions(friction_entities,2U);
+ check(friction_result && friction_entities.get<RigidBodyComponent>(sliding)->velocity.x < 4.0F,
+       "contact friction reduces tangential sliding velocity");
+
  const auto trigger_entity=entities.create();
  Transform trigger_transform; trigger_transform.position={0,0.75F,0};
  entities.emplace<SceneNodeComponent>(trigger_entity,SceneNodeComponent{"trigger","",trigger_transform,{},{}});

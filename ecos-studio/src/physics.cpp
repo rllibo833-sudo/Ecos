@@ -103,6 +103,9 @@ bool valid_collider(const ColliderComponent& c) {
     return std::isfinite(c.radius) && c.radius >= 0.0F &&
         finite(c.half_extents) && c.half_extents.x >= 0.0F &&
         c.half_extents.y >= 0.0F && c.half_extents.z >= 0.0F &&
+        std::isfinite(c.static_friction) && c.static_friction >= 0.0F &&
+        std::isfinite(c.dynamic_friction) && c.dynamic_friction >= 0.0F &&
+        c.dynamic_friction <= c.static_friction &&
         (c.shape == ColliderShape::sphere || c.shape == ColliderShape::box);
 }
 bool contact(const WorldCollider& a, const WorldCollider& b, Vec3& normal, float& penetration) {
@@ -271,11 +274,42 @@ Result<std::size_t> PhysicsSystem::resolve_collisions(EntityRegistry& entities, 
                 const float first_restitution = first_body && inv_first > 0.0F ? first_body->restitution : 0.0F;
                 const float second_restitution = second_body && inv_second > 0.0F ? second_body->restitution : 0.0F;
                 const float restitution = std::max(first_restitution, second_restitution);
-                const float impulse = -(1.0F + restitution) * inward_speed / inv_total;
+                const float normal_impulse = -(1.0F + restitution) * inward_speed / inv_total;
                 if (inv_first > 0.0F)
-                    first_body->velocity = subtract(first_body->velocity, scale(pair.normal, impulse * inv_first));
+                    first_body->velocity = subtract(first_body->velocity, scale(pair.normal, normal_impulse * inv_first));
                 if (inv_second > 0.0F)
-                    second_body->velocity = add(second_body->velocity, scale(pair.normal, impulse * inv_second));
+                    second_body->velocity = add(second_body->velocity, scale(pair.normal, normal_impulse * inv_second));
+
+                // Coulomb friction: oppose tangential relative motion, bounded by
+                // static friction and then sliding friction when static grip fails.
+                first_velocity = first_body ? first_body->velocity : Vec3{};
+                second_velocity = second_body ? second_body->velocity : Vec3{};
+                const Vec3 relative_velocity = subtract(second_velocity, first_velocity);
+                const Vec3 tangent_velocity = subtract(relative_velocity,
+                    scale(pair.normal, dot(relative_velocity, pair.normal)));
+                const float tangent_speed = length(tangent_velocity);
+                if (tangent_speed > 1.0e-7F) {
+                    const Vec3 tangent = scale(tangent_velocity, 1.0F / tangent_speed);
+                    const float tangent_impulse = -dot(relative_velocity, tangent) / inv_total;
+                    const auto* first_collider = entities.get<ColliderComponent>(pair.first);
+                    const auto* second_collider = entities.get<ColliderComponent>(pair.second);
+                    const float first_static = first_collider ? first_collider->static_friction : 0.0F;
+                    const float second_static = second_collider ? second_collider->static_friction : 0.0F;
+                    const float first_dynamic = first_collider ? first_collider->dynamic_friction : 0.0F;
+                    const float second_dynamic = second_collider ? second_collider->dynamic_friction : 0.0F;
+                    const float static_friction = std::sqrt(first_static * second_static);
+                    const float dynamic_friction = std::sqrt(first_dynamic * second_dynamic);
+                    const float max_static_impulse = normal_impulse * static_friction;
+                    const float applied_tangent_impulse = std::abs(tangent_impulse) <= max_static_impulse
+                        ? tangent_impulse
+                        : -std::copysign(normal_impulse * dynamic_friction, dot(relative_velocity, tangent));
+                    if (inv_first > 0.0F)
+                        first_body->velocity = subtract(first_body->velocity,
+                            scale(tangent, applied_tangent_impulse * inv_first));
+                    if (inv_second > 0.0F)
+                        second_body->velocity = add(second_body->velocity,
+                            scale(tangent, applied_tangent_impulse * inv_second));
+                }
             }
             ++resolved_contacts;
             changed = true;
