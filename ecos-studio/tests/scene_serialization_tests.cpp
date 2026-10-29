@@ -105,8 +105,20 @@ void test_mesh_asset_reference_round_trip_and_v1_compatibility() {
     check(root && mesh_node, "creates mesh asset scene nodes");
     if (!root || !mesh_node) return;
     check(graph.set_mesh_asset(mesh_node.value(), "crate.mesh"), "assigns mesh asset reference");
+    auto v2_serialized = serialize_scene("asset-scene-v2", graph);
+    check(v2_serialized && v2_serialized.value().find("format_version=2\n") == 0,
+          "uses scene format v2 when only mesh refs exist");
+    if (v2_serialized) {
+        auto v2 = deserialize_scene(v2_serialized.value());
+        check(v2 && v2.value().find(mesh_node.value())->mesh_asset_id == "crate.mesh",
+              "round trips v2 mesh asset references");
+        check(v2 && v2.value().find(mesh_node.value())->material_asset_id.empty(),
+              "v2 scene has no material reference");
+    }
+    check(graph.set_material_asset(mesh_node.value(), "painted.mtl"), "assigns material asset reference");
     auto serialized = serialize_scene("asset-scene", graph);
-    check(serialized && serialized.value().find("format_version=2\n") == 0, "uses scene format v2 when mesh refs exist");
+    check(serialized && serialized.value().find("format_version=3\n") == 0,
+          "uses scene format v3 when material refs exist");
     if (!serialized) return;
     auto loaded = deserialize_scene(serialized.value());
     check(loaded, "loads scene format v3");
@@ -119,8 +131,6 @@ void test_mesh_asset_reference_round_trip_and_v1_compatibility() {
     check(legacy && legacy.value().find(1)->mesh_asset_id.empty(), "v1 scene remains compatible");
     check(!graph.set_mesh_asset(mesh_node.value(), "bad|asset"), "rejects delimiters in mesh asset ID");
     check(!graph.set_material_asset(mesh_node.value(), "bad|material"), "rejects delimiters in material asset ID");
-    auto v2 = deserialize_scene("format_version=2\\nscene_id=v2\\nnode=1|-|Mesh|0,0,0|0,0,0|1,1,1|crate.mesh\\n");
-    check(v2 && v2.value().find(1)->mesh_asset_id == "crate.mesh" && v2.value().find(1)->material_asset_id.empty(), "v2 scenes remain compatible");
 }
 void test_rejects_bad_documents() {
     using namespace ecos::studio;
