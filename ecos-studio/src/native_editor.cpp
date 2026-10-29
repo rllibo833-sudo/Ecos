@@ -111,6 +111,7 @@ static bool init_gpu_renderer(std::string& error) {
  if(!linked){GLint n=0;gpu.GetProgramiv(gpu.program,GL_INFO_LOG_LENGTH,&n);std::string log(static_cast<std::size_t>(std::max(n,1)), '\0');gpu.GetProgramInfoLog(gpu.program,n,nullptr,log.data());error="GPU renderer link failed: "+log;return false;}
  gpu.mvp=gpu.GetUniformLocation(gpu.program,"uMvp");gpu.model=gpu.GetUniformLocation(gpu.program,"uModel");gpu.albedo=gpu.GetUniformLocation(gpu.program,"uAlbedo");gpu.position=gpu.GetAttribLocation(gpu.program,"aPosition");gpu.normal=gpu.GetAttribLocation(gpu.program,"aNormal");if(gpu.position<0||gpu.normal<0){error="GPU shader attributes were optimized out or not linked";return false;}gpu.ready=true;return true;
 }
+struct Mesh;
 struct GpuVertex { float p[3]; float n[3]; };
 struct GpuMesh { GLuint vertex_buffer{}, index_buffer{}; GLsizei index_count{}; };
 static std::unordered_map<const Mesh*, GpuMesh> gpu_mesh_cache;
