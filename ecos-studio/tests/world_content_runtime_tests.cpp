@@ -24,9 +24,9 @@ std::filesystem::path make_world(const std::string& name, bool broken = false) {
         "cell=origin|region|0,0,0|cells/origin.ecell\n"
         "cell=east|region|10,0,0|cells/east.ecell\n");
     write_file(root / "cells/origin.ecell",
-        "format_version=1\nscene_id=origin\n"
-        "node=1|-|Spawn|0,0,0|0,0,0|1,1,1\n"
-        "node=2|1|Gate|2,0,0|0,0,0|1,1,1\n");
+        "format_version=3\nscene_id=origin\n"
+        "node=1|-|Spawn|0,0,0|0,0,0|1,1,1|-|spawn.mtl\n"
+        "node=2|1|Gate|2,0,0|0,0,0|1,1,1|-|gate.mtl\n");
     write_file(root / "cells/east.ecell", broken
         ? "format_version=77\nscene_id=broken\n"
         : "format_version=1\nscene_id=east\nnode=1|-|East Landmark|0,0,0|0,0,0|1,1,1\n");
@@ -58,6 +58,7 @@ void test_load_resident_snapshot_unload_and_reload() {
                 const auto* node = runtime->entities().get<SceneNodeComponent>(*spawn_entity);
                 check(tag && tag->cell_id == "origin" && tag->scene_node_id == 1, "tags runtime entities with source cell and node");
                 check(node && node->name == "Spawn", "copies scene node data into ECS component");
+                check(node && node->material_asset_id == "spawn.mtl", "preserves material asset references in streamed ECS components");
                 auto gate_entity = runtime->entity_for_node("origin", 2);
                 const auto* gate = gate_entity ? runtime->entities().get<SceneNodeComponent>(*gate_entity) : nullptr;
                 check(gate && gate->parent_entity == spawn_entity, "resolves scene parent links to runtime entity handles");
