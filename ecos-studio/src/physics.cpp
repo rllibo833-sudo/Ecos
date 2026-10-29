@@ -52,7 +52,8 @@ Result<std::size_t> PhysicsSystem::step(EntityRegistry& entities, double delta_s
         }
         if (!finite(body->velocity) || !finite(body->acceleration) ||
             !std::isfinite(body->gravity_scale) || !std::isfinite(body->linear_damping) ||
-            body->linear_damping < 0.0F || !finite(node->local_transform.position)) {
+            !std::isfinite(body->restitution) || body->linear_damping < 0.0F ||
+            body->restitution < 0.0F || body->restitution > 1.0F || !finite(node->local_transform.position)) {
             return Result<std::size_t>::failure(
                 {ErrorCode::invalid_argument, "Rigid body contains non-finite values or negative damping"});
         }
@@ -219,7 +220,9 @@ Result<std::size_t> PhysicsSystem::resolve_collisions(EntityRegistry& entities, 
             return Result<std::size_t>::failure(
                 {ErrorCode::invalid_state, "Rigid body requires a live scene-node component"});
         }
-        if (!finite(body->velocity) || !finite(node->local_transform.position)) {
+        if (!finite(body->velocity) || !std::isfinite(body->restitution) ||
+            body->restitution < 0.0F || body->restitution > 1.0F ||
+            !finite(node->local_transform.position)) {
             return Result<std::size_t>::failure(
                 {ErrorCode::invalid_argument, "Collision resolution encountered non-finite body data"});
         }
@@ -265,7 +268,10 @@ Result<std::size_t> PhysicsSystem::resolve_collisions(EntityRegistry& entities, 
             Vec3 second_velocity = second_body ? second_body->velocity : Vec3{};
             const float inward_speed = dot(subtract(second_velocity, first_velocity), pair.normal);
             if (inward_speed < 0.0F) {
-                const float impulse = -inward_speed / inv_total;
+                const float first_restitution = first_body && inv_first > 0.0F ? first_body->restitution : 0.0F;
+                const float second_restitution = second_body && inv_second > 0.0F ? second_body->restitution : 0.0F;
+                const float restitution = std::max(first_restitution, second_restitution);
+                const float impulse = -(1.0F + restitution) * inward_speed / inv_total;
                 if (inv_first > 0.0F)
                     first_body->velocity = subtract(first_body->velocity, scale(pair.normal, impulse * inv_first));
                 if (inv_second > 0.0F)

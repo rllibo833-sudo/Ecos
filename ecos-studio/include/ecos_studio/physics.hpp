@@ -37,6 +37,8 @@ struct RigidBodyComponent {
     Vec3 acceleration{};
     float gravity_scale{1.0F};
     float linear_damping{0.0F};
+    // Coefficient of restitution: 0 is inelastic, 1 is perfectly elastic.
+    float restitution{0.0F};
     bool kinematic{false};
 };
 

@@ -140,14 +140,14 @@ void test_collision_resolution(){
  entities.emplace<ColliderComponent>(floor,box);
  ColliderComponent sphere; sphere.shape=ColliderShape::sphere; sphere.radius=0.5F;
  entities.emplace<ColliderComponent>(falling,sphere);
- RigidBodyComponent body; body.velocity={0,-3,0};
+ RigidBodyComponent body; body.velocity={0,-3,0}; body.restitution=0.5F;
  entities.emplace<RigidBodyComponent>(falling,body);
  auto resolved=PhysicsSystem::resolve_collisions(entities,8U);
  check(resolved&&resolved.value()>0,"resolves overlapping dynamic body against static collider");
  check(entities.get<SceneNodeComponent>(falling)->local_transform.position.y>0.98F,
        "positional correction separates dynamic body from static floor");
- check(near(entities.get<RigidBodyComponent>(falling)->velocity.y,0),
-       "collision resolution removes inward normal velocity");
+ check(near(entities.get<RigidBodyComponent>(falling)->velocity.y,1.5F),
+       "restitution produces a bounded bounce away from the contact surface");
 
  const auto trigger_entity=entities.create();
  Transform trigger_transform; trigger_transform.position={0,0.75F,0};
@@ -190,6 +190,8 @@ void test_ecs_physics_integration(){
  check(!stepped&&near(node->local_transform.position.y,before),
        "invalid body aborts the whole physics step without partial movement");
  check(!PhysicsSystem::step(entities,-0.1),"rejects negative delta time");
+ entities.get<RigidBodyComponent>(falling)->restitution=1.1F;
+ check(!PhysicsSystem::step(entities,0.1),"rejects restitution outside the physical range");
 }
 }
 int main(){test_overlaps();test_ray_aabb();test_ray_sphere();test_ecs_collision_detection();test_ecs_raycast();test_collision_event_lifecycle();test_collision_resolution();test_ecs_physics_integration();if(failures){std::cerr<<failures<<" physics test(s) failed.\n";return 1;}std::cout<<"ECOS Studio collision and ECS physics tests passed.\n";return 0;}
