@@ -83,24 +83,6 @@ Result<void> SceneEditorHistory::reparent(NodeId id, std::optional<NodeId> paren
  auto result = apply(command, true); if (!result) return result;
  undo_.push_back(std::move(command)); redo_.clear(); return Result<void>::success();
 }
-Result<void> SceneEditorHistory::set_mesh_asset(NodeId id, std::string asset_id) {
- const auto* node = scene_.find(id);
- if (!node) return Result<void>::failure({ErrorCode::not_found, "Cannot assign mesh asset: scene node does not exist"});
- if (node->mesh_asset_id == asset_id) return Result<void>::success();
- Command command; command.kind = Kind::mesh_asset; command.node = id;
- command.before_asset_id = node->mesh_asset_id; command.after_asset_id = std::move(asset_id);
- auto result = apply(command, true); if (!result) return result;
- undo_.push_back(std::move(command)); redo_.clear(); return Result<void>::success();
-}
-Result<void> SceneEditorHistory::set_material_asset(NodeId id, std::string asset_id) {
- const auto* node = scene_.find(id);
- if (!node) return Result<void>::failure({ErrorCode::not_found, "Cannot assign material asset: scene node does not exist"});
- if (node->material_asset_id == asset_id) return Result<void>::success();
- Command command; command.kind = Kind::material_asset; command.node = id;
- command.before_asset_id = node->material_asset_id; command.after_asset_id = std::move(asset_id);
- auto result = apply(command, true); if (!result) return result;
- undo_.push_back(std::move(command)); redo_.clear(); return Result<void>::success();
-}
 Result<void> SceneEditorHistory::apply(const Command& command, bool forward) {
  switch (command.kind) {
  case Kind::create:
@@ -113,10 +95,6 @@ Result<void> SceneEditorHistory::apply(const Command& command, bool forward) {
   return scene_.set_local_transform(command.node, forward ? command.after_transform : command.before_transform);
  case Kind::parent:
   return scene_.set_parent(command.node, forward ? command.after_parent : command.before_parent);
- case Kind::mesh_asset:
-  return scene_.set_mesh_asset(command.node, forward ? command.after_asset_id : command.before_asset_id);
- case Kind::material_asset:
-  return scene_.set_material_asset(command.node, forward ? command.after_asset_id : command.before_asset_id);
  }
  return Result<void>::failure({ErrorCode::internal_error, "Unknown scene editor command"});
 }

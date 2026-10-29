@@ -1,6 +1,7 @@
 #include "ecos_studio/asset_importer.hpp"
 
 #include "ecos_studio/content_hash.hpp"
+#include "ecos_studio/material.hpp"
 #include "ecos_studio/platform.hpp"
 #include "ecos_studio/project.hpp"
 
@@ -215,6 +216,68 @@ Result<ImportedAsset> import_obj_asset(const fs::path& project_root,
     return Result<ImportedAsset>::success(std::move(result));
 }
 
+Result<ImportedMaterialAsset> import_mtl_asset(const fs::path& project_root,
+                                         const fs::path& source_path,
+                                         const std::string& asset_id) {
+    if (!valid_asset_id(asset_id)) {
+        return Result<ImportedMaterialAsset>::failure({ErrorCode::invalid_argument,
+            "Asset ID must start with a letter or digit and contain only lowercase letters, digits, '.', '-' or '_'."});
+    }
+    const auto project = validate_project(project_root);
+    if (!project.ok) {
+        const std::string reason = project.errors.empty() ? "Project validation failed" : project.errors.front();
+        return Result<ImportedMaterialAsset>::failure({ErrorCode::invalid_state,
+            "Cannot import into an invalid ECOS Studio project: " + reason});
+    }
+    std::error_code ec;
+    if (!fs::is_regular_file(source_path, ec) || ec) {
+        return Result<ImportedMaterialAsset>::failure({ErrorCode::not_found,
+            "MTL source is not a readable regular file: " + source_path.string()});
+    }
+    auto source = platform::read_text_file(source_path);
+    if (!source) return Result<ImportedMaterialAsset>::failure(source.error());
+    auto materials = import_mtl_materials(source.value());
+    if (!materials) return Result<ImportedMaterialAsset>::failure(materials.error());
+    const auto canonical_root = fs::canonical(project_root, ec);
+    if (ec) return Result<ImportedMaterialAsset>::failure({ErrorCode::io_error,
+        "Cannot resolve project root: " + ec.message()});
+    const fs::path relative_path = fs::path("assets") / "imported" / (asset_id + ".mtl");
+    const fs::path assets_dir = canonical_root / "assets";
+    const fs::path import_dir = assets_dir / "imported";
+    const fs::path destination = import_dir / (asset_id + ".mtl");
+    const fs::path sidecar = import_dir / (asset_id + ".ecasset");
+    std::string directory_error;
+    if (!reject_symlink_or_non_directory(assets_dir, directory_error) ||
+        !reject_symlink_or_non_directory(import_dir, directory_error)) {
+        return Result<ImportedMaterialAsset>::failure({ErrorCode::path_escape, directory_error});
+    }
+    auto directory = platform::ensure_directory(import_dir);
+    if (!directory) return Result<ImportedMaterialAsset>::failure(directory.error());
+    if (!reject_symlink_or_non_directory(assets_dir, directory_error) ||
+        !reject_symlink_or_non_directory(import_dir, directory_error)) {
+        return Result<ImportedMaterialAsset>::failure({ErrorCode::path_escape, directory_error});
+    }
+    const auto digest = sha256_hex(source.value());
+    std::ostringstream metadata;
+    metadata << "# ECOS Studio imported asset metadata v1\n"
+             << "format_version=1\n"
+             << "id=" << asset_id << "\n"
+             << "type=material.mtl\n"
+             << "source=" << relative_path.generic_string() << "\n"
+             << "content_sha256=" << digest << "\n"
+             << "material_count=" << materials.value().size() << "\n";
+    std::string write_error;
+    if (!write_new_file(destination, source.value(), write_error)) {
+        return Result<ImportedMaterialAsset>::failure({ErrorCode::io_error, write_error});
+    }
+    if (!write_new_file(sidecar, metadata.str(), write_error)) {
+        fs::remove(destination, ec);
+        return Result<ImportedMaterialAsset>::failure({ErrorCode::io_error, write_error});
+    }
+    return Result<ImportedMaterialAsset>::success(
+        ImportedMaterialAsset{asset_id, relative_path, digest, materials.value().size()});
+}
+
 ValidationResult validate_imported_assets(const fs::path& project_root) {
     ValidationResult result;
     const auto project = validate_project(project_root);
@@ -290,77 +353,73 @@ ValidationResult validate_imported_assets(const fs::path& project_root) {
             result.errors.push_back(sidecar_path.filename().string() + ": " + error);
             continue;
         }
-        std::string id, type, source_path, digest, version, vertex_text, triangle_text, bounds_min, bounds_max;
+        std::string id, type, source_path, digest, version;
         bool fields_ok = true;
-        for (const auto* key : {"id", "type", "source", "content_sha256", "format_version",
-                                "vertex_count", "triangle_count", "bounds_min", "bounds_max"}) {
+        for (const auto* key : {"id", "type", "source", "content_sha256", "format_version"}) {
             std::string ignored;
             if (!read_required(fields, key, ignored, error)) {
-                result.ok = false;
-                result.errors.push_back(sidecar_path.filename().string() + ": " + error);
+                result.ok = false; result.errors.push_back(sidecar_path.filename().string() + ": " + error);
                 fields_ok = false;
             }
         }
         if (!fields_ok) continue;
         id = fields["id"]; type = fields["type"]; source_path = fields["source"];
         digest = fields["content_sha256"]; version = fields["format_version"];
-        vertex_text = fields["vertex_count"]; triangle_text = fields["triangle_count"];
-        bounds_min = fields["bounds_min"]; bounds_max = fields["bounds_max"];
-
         if (!valid_asset_id(id) || id != sidecar_path.stem().string()) {
-            result.ok = false;
-            result.errors.push_back(sidecar_path.filename().string() + ": invalid or mismatched asset ID");
-            continue;
+            result.ok = false; result.errors.push_back(sidecar_path.filename().string() + ": invalid or mismatched asset ID"); continue;
         }
         if (!ids.emplace(id, sidecar_path).second) {
-            result.ok = false;
-            result.errors.push_back("Duplicate imported asset ID: " + id);
-            continue;
+            result.ok = false; result.errors.push_back("Duplicate imported asset ID: " + id); continue;
         }
-        if (version != "1" || type != "mesh.obj") {
-            result.ok = false;
-            result.errors.push_back(id + ": unsupported asset metadata version or type");
-            continue;
+        if (version != "1" || (type != "mesh.obj" && type != "material.mtl")) {
+            result.ok = false; result.errors.push_back(id + ": unsupported asset metadata version or type"); continue;
         }
-        const fs::path expected_relative = fs::path("assets") / "imported" / (id + ".obj");
+        const std::string extension = type == "mesh.obj" ? ".obj" : ".mtl";
+        const fs::path expected_relative = fs::path("assets") / "imported" / (id + extension);
         auto safe = platform::safe_relative_path(fs::path(source_path));
         if (!safe || safe.value() != expected_relative) {
-            result.ok = false;
-            result.errors.push_back(id + ": source path must be the expected project-relative OBJ path");
-            continue;
+            result.ok = false; result.errors.push_back(id + ": source path must match its expected project-relative asset path"); continue;
         }
-        const auto mesh_path = canonical_root / safe.value();
-        const auto mesh_status = fs::symlink_status(mesh_path, ec);
-        if (ec || fs::is_symlink(mesh_status) || !fs::is_regular_file(mesh_status)) {
-            result.ok = false;
-            result.errors.push_back(id + ": source mesh is missing or not a regular non-symlink file");
-            ec.clear();
-            continue;
+        const auto source_file = canonical_root / safe.value();
+        const auto source_status = fs::symlink_status(source_file, ec);
+        if (ec || fs::is_symlink(source_status) || !fs::is_regular_file(source_status)) {
+            result.ok = false; result.errors.push_back(id + ": source asset is missing or not a regular non-symlink file"); ec.clear(); continue;
         }
-        const auto mesh_text = platform::read_text_file(mesh_path);
-        if (!mesh_text) {
-            result.ok = false;
-            result.errors.push_back(id + ": " + mesh_text.error().message);
-            continue;
+        const auto source_text = platform::read_text_file(source_file);
+        if (!source_text) { result.ok = false; result.errors.push_back(id + ": " + source_text.error().message); continue; }
+        if (sha256_hex(source_text.value()) != digest) {
+            result.ok = false; result.errors.push_back(id + ": content SHA-256 does not match metadata"); continue;
         }
-        if (sha256_hex(mesh_text.value()) != digest) {
-            result.ok = false;
-            result.errors.push_back(id + ": content SHA-256 does not match metadata");
-            continue;
-        }
-        auto mesh = import_obj_mesh(mesh_text.value());
-        if (!mesh) {
-            result.ok = false;
-            result.errors.push_back(id + ": imported OBJ is no longer valid: " + mesh.error().message);
-            continue;
-        }
-        std::size_t vertices{}, triangles{};
-        if (!parse_count(vertex_text, vertices) || !parse_count(triangle_text, triangles) ||
-            vertices != mesh.value().positions.size() || triangles != mesh.value().indices.size() / 3U ||
-            bounds_min != vector_text(mesh.value().bounds.minimum) ||
-            bounds_max != vector_text(mesh.value().bounds.maximum)) {
-            result.ok = false;
-            result.errors.push_back(id + ": stored mesh statistics do not match the source geometry");
+        if (type == "mesh.obj") {
+            std::string vertex_text, triangle_text, bounds_min, bounds_max;
+            bool mesh_fields_ok = true;
+            for (const auto* key : {"vertex_count", "triangle_count", "bounds_min", "bounds_max"}) {
+                std::string ignored;
+                if (!read_required(fields, key, ignored, error)) {
+                    result.ok = false; result.errors.push_back(id + ": " + error); mesh_fields_ok = false;
+                }
+            }
+            if (!mesh_fields_ok) continue;
+            vertex_text = fields["vertex_count"]; triangle_text = fields["triangle_count"];
+            bounds_min = fields["bounds_min"]; bounds_max = fields["bounds_max"];
+            auto mesh = import_obj_mesh(source_text.value());
+            if (!mesh) { result.ok = false; result.errors.push_back(id + ": imported OBJ is no longer valid: " + mesh.error().message); continue; }
+            std::size_t vertices{}, triangles{};
+            if (!parse_count(vertex_text, vertices) || !parse_count(triangle_text, triangles) ||
+                vertices != mesh.value().positions.size() || triangles != mesh.value().indices.size() / 3U ||
+                bounds_min != vector_text(mesh.value().bounds.minimum) || bounds_max != vector_text(mesh.value().bounds.maximum)) {
+                result.ok = false; result.errors.push_back(id + ": stored mesh statistics do not match the source geometry");
+            }
+        } else {
+            std::string count_text;
+            if (!read_required(fields, "material_count", count_text, error)) {
+                result.ok = false; result.errors.push_back(id + ": " + error); continue;
+            }
+            auto materials = import_mtl_materials(source_text.value());
+            std::size_t count{};
+            if (!materials || !parse_count(count_text, count) || count != materials.value().size()) {
+                result.ok = false; result.errors.push_back(id + ": stored material count does not match valid MTL source");
+            }
         }
     }
     return result;

@@ -59,6 +59,24 @@ int main() {
         check(validated.ok, "validates freshly imported asset and metadata");
     }
 
+    const auto mtl_path = root / "surface.mtl";
+    const std::string mtl = "newmtl stone\nKd 0.4 0.5 0.6\nNs 24\nnewmtl glass\nd 0.4\n";
+    write(mtl_path, mtl);
+    auto imported_materials = ecos::studio::import_mtl_asset(project_root, mtl_path, "demo.materials");
+    check(static_cast<bool>(imported_materials), "imports valid MTL material library");
+    if (imported_materials) {
+        check(imported_materials.value().material_count == 2, "reports material library count");
+        check(read(project_root / "assets/imported/demo.materials.mtl") == mtl, "preserves MTL source bytes");
+        check(read(project_root / "assets/imported/demo.materials.ecasset").find("type=material.mtl") != std::string::npos,
+              "writes typed material asset metadata");
+        check(ecos::studio::validate_imported_assets(project_root).ok, "validates mesh and material assets together");
+    }
+    auto duplicate_materials = ecos::studio::import_mtl_asset(project_root, mtl_path, "demo.materials");
+    check(!duplicate_materials, "refuses to overwrite an existing MTL import");
+    write(mtl_path, "newmtl invalid\nKd 2 0 0\n");
+    check(!ecos::studio::import_mtl_asset(project_root, mtl_path, "invalid.material"),
+          "rejects malformed MTL without creating an asset");
+
     auto duplicate = ecos::studio::import_obj_asset(project_root, source_path, "demo.triangle");
     check(!duplicate, "refuses to overwrite an existing import");
     check(!ecos::studio::import_obj_asset(project_root, source_path, "../escape"), "rejects unsafe asset IDs");
