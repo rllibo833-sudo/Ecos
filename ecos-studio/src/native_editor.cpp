@@ -83,6 +83,7 @@ struct GpuApi {
  GLuint program{}; GLint mvp{-1}, model{-1}, albedo{-1}, position{-1}, normal{-1}; GLint instance0{-1},instance1{-1},instance2{-1},instance3{-1}; GLuint instance_buffer{}; bool instancing_ready{false}; bool ready{false};
 };
 static GpuApi gpu;
+static std::array<float,3> current_material_color{0.28F,0.58F,0.95F};
 static bool init_gpu_renderer(std::string& error) {
 #define LOAD_GL(member, type, symbol) gpu.member = reinterpret_cast<type>(glfwGetProcAddress(symbol)); if (!gpu.member) { error = "OpenGL driver missing " symbol; return false; }
  LOAD_GL(CreateShader,PFNGLCREATESHADERPROC,"glCreateShader")
@@ -476,6 +477,7 @@ static void draw_scene_instances(const std::vector<SceneInstance>& instances) {
         for(const auto& batch:batches) {
             if(batch.second.empty()) continue;
             const auto color=asset_color(batch.second.front()->mesh_asset_id);
+            current_material_color=color;
             gpu.Uniform3f(gpu.albedo,color[0],color[1],color[2]);
             auto found=gpu_mesh_cache.find(batch.first);
             if(found==gpu_mesh_cache.end()) { draw_mesh(*batch.second.front()->mesh); continue; }
@@ -503,6 +505,7 @@ static void draw_scene_instances(const std::vector<SceneInstance>& instances) {
     } else {
         for(const auto& batch:batches) for(const auto* instance:batch.second) {
             const auto color=asset_color(instance->mesh_asset_id);
+            current_material_color=color;
             gpu.Uniform3f(gpu.albedo,color[0],color[1],color[2]);
             GLfloat model[16]{},mvp[16]{};
             for(int row=0;row<4;++row)for(int col=0;col<4;++col) {
@@ -590,7 +593,7 @@ static void draw_mesh(const Mesh& mesh) {
     GLfloat model[16]{},projection[16]{},mvp[16]{};
     glGetFloatv(GL_MODELVIEW_MATRIX,model);glGetFloatv(GL_PROJECTION_MATRIX,projection);
     for(int row=0;row<4;++row)for(int col=0;col<4;++col){mvp[col*4+row]=0;for(int k=0;k<4;++k)mvp[col*4+row]+=projection[k*4+row]*model[col*4+k];}
-    gpu.UniformMatrix4fv(gpu.mvp,1,GL_FALSE,mvp);gpu.UniformMatrix4fv(gpu.model,1,GL_FALSE,model);gpu.Uniform3f(gpu.albedo,0.28F,0.58F,0.95F);
+    gpu.UniformMatrix4fv(gpu.mvp,1,GL_FALSE,mvp);gpu.UniformMatrix4fv(gpu.model,1,GL_FALSE,model);gpu.Uniform3f(gpu.albedo,current_material_color[0],current_material_color[1],current_material_color[2]);
     if(gpu.instance0>=0)gpu.VertexAttrib4f(static_cast<GLuint>(gpu.instance0),1,0,0,0);if(gpu.instance1>=0)gpu.VertexAttrib4f(static_cast<GLuint>(gpu.instance1),0,1,0,0);if(gpu.instance2>=0)gpu.VertexAttrib4f(static_cast<GLuint>(gpu.instance2),0,0,1,0);if(gpu.instance3>=0)gpu.VertexAttrib4f(static_cast<GLuint>(gpu.instance3),0,0,0,1);
     gpu.DrawElements(GL_TRIANGLES,cached.index_count,GL_UNSIGNED_INT,nullptr);
     gpu.DisableVertexAttribArray(static_cast<GLuint>(gpu.position));gpu.DisableVertexAttribArray(static_cast<GLuint>(gpu.normal));
