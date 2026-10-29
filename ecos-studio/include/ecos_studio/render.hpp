@@ -17,6 +17,8 @@ class WorldContentRuntime;
 struct RenderMeshInstance {
     const MeshData* mesh{};
     Matrix4 world_transform{Matrix4::identity()};
+    // Linear diffuse albedo in [0, 1], independent for each mesh instance.
+    Vec3 diffuse_color{55.0F / 255.0F, 170.0F / 255.0F, 235.0F / 255.0F};
 };
 
 // Deterministic CPU reference renderer. Returns a binary PPM (P6) image.
