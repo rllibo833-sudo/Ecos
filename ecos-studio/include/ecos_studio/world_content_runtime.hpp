@@ -22,10 +22,11 @@ struct WorldCellEntityComponent {
 struct SceneNodeComponent {
     std::string name;
     std::string mesh_asset_id;
-    std::string material_asset_id;
     Transform local_transform{};
     std::optional<NodeId> parent;
     std::optional<Entity> parent_entity;
+    // Appended to preserve existing aggregate initialization order.
+    std::string material_asset_id;
 };
 
 // Owns the manifest-backed world lifecycle and keeps parsed scene graphs resident
