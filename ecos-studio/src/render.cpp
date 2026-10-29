@@ -147,13 +147,13 @@ Result<std::string> render_scene_to_ppm(
     };
     // OpenGL-style homogeneous clip volume: -w <= x,y,z <= w.
     const auto clip_polygon = [&interpolate](std::vector<ClipVertex> polygon) {
-        const auto planes = std::array{
-            [](const ClipVertex& v){ return v.x+v.w; },
-            [](const ClipVertex& v){ return v.w-v.x; },
-            [](const ClipVertex& v){ return v.y+v.w; },
-            [](const ClipVertex& v){ return v.w-v.y; },
-            [](const ClipVertex& v){ return v.z+v.w; },
-            [](const ClipVertex& v){ return v.w-v.z; }};
+        const std::array<float(*)(const ClipVertex&), 6> planes{
+            +[](const ClipVertex& v){ return v.x+v.w; },
+            +[](const ClipVertex& v){ return v.w-v.x; },
+            +[](const ClipVertex& v){ return v.y+v.w; },
+            +[](const ClipVertex& v){ return v.w-v.y; },
+            +[](const ClipVertex& v){ return v.z+v.w; },
+            +[](const ClipVertex& v){ return v.w-v.z; }};
         for (const auto& distance : planes) {
             if (polygon.empty()) break;
             std::vector<ClipVertex> output;
