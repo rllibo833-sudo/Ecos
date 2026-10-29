@@ -86,7 +86,7 @@ int main() {
                 check(static_cast<bool>(scene.set_material_asset(node.value(), "demo.materials")), "assigns imported material");
                 auto frame = ecos::studio::render_scene_graph_to_ppm(scene, registry.value(), project_root, 48, 48);
                 check(static_cast<bool>(frame), "renders imported mesh with imported material through scene pipeline");
-                if (frame) check(frame.value().starts_with("P6\\n48 48\\n255\\n"),
+                if (frame) check(frame.value().starts_with("P6\n48 48\n255\n"),
                                  "imported asset pipeline produces a render frame");
             }
         }
