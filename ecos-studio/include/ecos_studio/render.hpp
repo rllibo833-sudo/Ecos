@@ -11,6 +11,8 @@
 
 namespace ecos::studio {
 
+class WorldContentRuntime;
+
 // Non-owning render input. Each instance contributes geometry transformed into a shared scene frame.
 struct RenderMeshInstance {
     const MeshData* mesh{};
@@ -30,6 +32,10 @@ struct RenderMeshInstance {
 
 [[nodiscard]] Result<std::string> render_scene_graph_to_ppm(
     const SceneGraph& scene, const AssetRegistry& assets,
+    const std::filesystem::path& asset_root,
+    std::uint32_t width, std::uint32_t height);
+[[nodiscard]] Result<std::string> render_world_content_runtime_to_ppm(
+    const WorldContentRuntime& runtime, const AssetRegistry& assets,
     const std::filesystem::path& asset_root,
     std::uint32_t width, std::uint32_t height);
 
