@@ -1,6 +1,6 @@
 # CPU Reference Renderer v0
 
-The reference renderer turns indexed triangle meshes into binary PPM (P6) images without external libraries or a GPU. It includes a bounded image size, mesh/index/finite-coordinate validation, orthographic framing from mesh bounds, triangle rasterization, a depth buffer, and deterministic directional diffuse shading.
+The reference renderer turns indexed triangle meshes into binary PPM (P6) images without external libraries or a GPU. It includes bounded image sizing, mesh/index/finite-coordinate validation, orthographic framing from mesh bounds, triangle rasterization, a depth buffer, and deterministic directional diffuse shading.
 
 Example:
 
@@ -8,4 +8,6 @@ Example:
 ecos-studio mesh-render examples/hello-world/assets/triangle.obj triangle.ppm 640 480
 ```
 
-The output can be opened by common image viewers or converted by standard image tools. The renderer is intended for automated verification, asset previews, and as a deterministic reference implementation. It is not the production desktop viewport: no window, GPU acceleration, perspective camera, textures, material system, anti-aliasing, or clipping pipeline is provided. The planned desktop renderer remains a separate GPU-backed subsystem.
+The output is intended for automated verification, deterministic reference output, and basic asset previews. This CPU tool is separate from the native desktop viewport: the viewport now has an experimental GLFW/OpenGL GPU path, but that path is not a production renderer.
+
+The CPU renderer does not provide a window, GPU acceleration, perspective camera, textures, full material binding, anti-aliasing, or a production clipping pipeline. Keep this reference path useful for tests even as the GPU renderer evolves.
