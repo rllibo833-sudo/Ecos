@@ -25,6 +25,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 #ifndef GL_ARRAY_BUFFER
 #define GL_ARRAY_BUFFER 0x8892
@@ -109,6 +110,15 @@ static bool init_gpu_renderer(std::string& error) {
  gpu.mvp=gpu.GetUniformLocation(gpu.program,"uMvp");gpu.model=gpu.GetUniformLocation(gpu.program,"uModel");gpu.albedo=gpu.GetUniformLocation(gpu.program,"uAlbedo");gpu.position=gpu.GetAttribLocation(gpu.program,"aPosition");gpu.normal=gpu.GetAttribLocation(gpu.program,"aNormal");if(gpu.position<0||gpu.normal<0){error="GPU shader attributes were optimized out or not linked";return false;}gpu.ready=true;return true;
 }
 struct GpuVertex { float p[3]; float n[3]; };
+struct GpuMesh { GLuint vertex_buffer{}, index_buffer{}; GLsizei index_count{}; };
+static std::unordered_map<const Mesh*, GpuMesh> gpu_mesh_cache;
+static void clear_gpu_mesh_cache() {
+    if (gpu.ready) for (const auto& entry : gpu_mesh_cache) {
+        const GLuint buffers[2]{entry.second.vertex_buffer, entry.second.index_buffer};
+        gpu.DeleteBuffers(2,buffers);
+    }
+    gpu_mesh_cache.clear();
+}
 struct Vertex { float x{}, y{}, z{}; };
 struct Mesh { std::vector<Vertex> vertices; std::vector<std::uint32_t> triangles; };
 struct SceneInstance { Mesh mesh; ecos::studio::Matrix4 world{ecos::studio::Matrix4::identity()}; std::string name; ecos::studio::NodeId node_id{}; };
@@ -260,6 +270,7 @@ static void refresh_scene_meshes(EditorState& state) {
         state.status = error;
         return;
     }
+    clear_gpu_mesh_cache();
     state.scene_instances = std::move(next);
     state.available_mesh_assets = std::move(asset_ids);
 }
@@ -417,34 +428,45 @@ static void draw_grid() {
 }
 static void draw_mesh(const Mesh& mesh) {
     if (!gpu.ready || mesh.triangles.empty()) return;
-    std::vector<GpuVertex> vertices;
-    vertices.reserve(mesh.triangles.size());
-    std::vector<std::uint32_t> indices;
-    indices.reserve(mesh.triangles.size());
-    for(std::size_t i=0;i+2<mesh.triangles.size();i+=3){
-        const auto a=mesh.vertices[mesh.triangles[i]],b=mesh.vertices[mesh.triangles[i+1]],c=mesh.vertices[mesh.triangles[i+2]];
-        const float ux=b.x-a.x,uy=b.y-a.y,uz=b.z-a.z,vx=c.x-a.x,vy=c.y-a.y,vz=c.z-a.z;
-        float nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;const float len=std::sqrt(nx*nx+ny*ny+nz*nz);
-        if(len>1e-8F){nx/=len;ny/=len;nz/=len;}else{nx=0;ny=1;nz=0;}
-        for(auto idx:{mesh.triangles[i],mesh.triangles[i+1],mesh.triangles[i+2]}){
-            const auto& p=mesh.vertices[idx];vertices.push_back({{p.x,p.y,p.z},{nx,ny,nz}});indices.push_back(static_cast<std::uint32_t>(indices.size()));
+    auto found=gpu_mesh_cache.find(&mesh);
+    if(found==gpu_mesh_cache.end()) {
+        std::vector<GpuVertex> vertices;
+        vertices.reserve(mesh.triangles.size());
+        std::vector<std::uint32_t> indices;
+        indices.reserve(mesh.triangles.size());
+        for(std::size_t i=0;i+2<mesh.triangles.size();i+=3){
+            const auto a=mesh.vertices[mesh.triangles[i]],b=mesh.vertices[mesh.triangles[i+1]],c=mesh.vertices[mesh.triangles[i+2]];
+            const float ux=b.x-a.x,uy=b.y-a.y,uz=b.z-a.z,vx=c.x-a.x,vy=c.y-a.y,vz=c.z-a.z;
+            float nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;const float len=std::sqrt(nx*nx+ny*ny+nz*nz);
+            if(len>1e-8F){nx/=len;ny/=len;nz/=len;}else{nx=0;ny=1;nz=0;}
+            for(auto idx:{mesh.triangles[i],mesh.triangles[i+1],mesh.triangles[i+2]}){
+                const auto& p=mesh.vertices[idx];vertices.push_back({{p.x,p.y,p.z},{nx,ny,nz}});indices.push_back(static_cast<std::uint32_t>(indices.size()));
+            }
         }
+        GpuMesh cached;gpu.GenBuffers(2,&cached.vertex_buffer);
+        cached.index_buffer=0;
+        gpu.BindBuffer(GL_ARRAY_BUFFER,cached.vertex_buffer);
+        gpu.BufferData(GL_ARRAY_BUFFER,static_cast<GLsizeiptr>(vertices.size()*sizeof(GpuVertex)),vertices.data(),GL_STATIC_DRAW);
+        gpu.GenBuffers(1,&cached.index_buffer);
+        gpu.BindBuffer(GL_ELEMENT_ARRAY_BUFFER,cached.index_buffer);
+        gpu.BufferData(GL_ELEMENT_ARRAY_BUFFER,static_cast<GLsizeiptr>(indices.size()*sizeof(std::uint32_t)),indices.data(),GL_STATIC_DRAW);
+        cached.index_count=static_cast<GLsizei>(indices.size());
+        found=gpu_mesh_cache.emplace(&mesh,cached).first;
     }
-    GLuint buffers[2]{};gpu.GenBuffers(2,buffers);
-    gpu.BindBuffer(GL_ARRAY_BUFFER,buffers[0]);gpu.BufferData(GL_ARRAY_BUFFER,static_cast<GLsizeiptr>(vertices.size()*sizeof(GpuVertex)),vertices.data(),GL_DYNAMIC_DRAW);
-    gpu.BindBuffer(GL_ELEMENT_ARRAY_BUFFER,buffers[1]);gpu.BufferData(GL_ELEMENT_ARRAY_BUFFER,static_cast<GLsizeiptr>(indices.size()*sizeof(std::uint32_t)),indices.data(),GL_DYNAMIC_DRAW);
-    gpu.EnableVertexAttribArray(0);gpu.EnableVertexAttribArray(1);
-    gpu.VertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,sizeof(GpuVertex),reinterpret_cast<const void*>(offsetof(GpuVertex,p)));
-    gpu.VertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,sizeof(GpuVertex),reinterpret_cast<const void*>(offsetof(GpuVertex,n)));
+    const auto& cached=found->second;
+    gpu.BindBuffer(GL_ARRAY_BUFFER,cached.vertex_buffer);
+    gpu.BindBuffer(GL_ELEMENT_ARRAY_BUFFER,cached.index_buffer);
+    gpu.EnableVertexAttribArray(static_cast<GLuint>(gpu.position));gpu.EnableVertexAttribArray(static_cast<GLuint>(gpu.normal));
+    gpu.VertexAttribPointer(static_cast<GLuint>(gpu.position),3,GL_FLOAT,GL_FALSE,sizeof(GpuVertex),reinterpret_cast<const void*>(offsetof(GpuVertex,p)));
+    gpu.VertexAttribPointer(static_cast<GLuint>(gpu.normal),3,GL_FLOAT,GL_FALSE,sizeof(GpuVertex),reinterpret_cast<const void*>(offsetof(GpuVertex,n)));
     gpu.UseProgram(gpu.program);
-    // Projection/model-view matrices are supplied by the fixed-function compatibility matrix state.
-    GLfloat mvp[16]{},model[16]{};
-    glGetFloatv(GL_MODELVIEW_MATRIX,model);
-    GLfloat projection[16]{};glGetFloatv(GL_PROJECTION_MATRIX,projection);
+    GLfloat model[16]{},projection[16]{},mvp[16]{};
+    glGetFloatv(GL_MODELVIEW_MATRIX,model);glGetFloatv(GL_PROJECTION_MATRIX,projection);
     for(int row=0;row<4;++row)for(int col=0;col<4;++col){mvp[col*4+row]=0;for(int k=0;k<4;++k)mvp[col*4+row]+=projection[k*4+row]*model[col*4+k];}
     gpu.UniformMatrix4fv(gpu.mvp,1,GL_FALSE,mvp);gpu.UniformMatrix4fv(gpu.model,1,GL_FALSE,model);gpu.Uniform3f(gpu.albedo,0.28F,0.58F,0.95F);
-    gpu.DrawElements(GL_TRIANGLES,static_cast<GLsizei>(indices.size()),GL_UNSIGNED_INT,nullptr);
-    gpu.DisableVertexAttribArray(static_cast<GLuint>(gpu.position));gpu.DisableVertexAttribArray(static_cast<GLuint>(gpu.normal));gpu.UseProgram(0);gpu.BindBuffer(GL_ARRAY_BUFFER,0);gpu.BindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);gpu.DeleteBuffers(2,buffers);
+    gpu.DrawElements(GL_TRIANGLES,cached.index_count,GL_UNSIGNED_INT,nullptr);
+    gpu.DisableVertexAttribArray(static_cast<GLuint>(gpu.position));gpu.DisableVertexAttribArray(static_cast<GLuint>(gpu.normal));
+    gpu.UseProgram(0);gpu.BindBuffer(GL_ARRAY_BUFFER,0);gpu.BindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
 }
 static Mesh starter_cube() {
     Mesh m;
@@ -525,5 +547,7 @@ int main(int argc,char** argv) {
     ImGui_ImplOpenGL2_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+    clear_gpu_mesh_cache();
+    if(gpu.program){glDeleteProgram(gpu.program);}
     glfwDestroyWindow(window);glfwTerminate();return 0;
 }
