@@ -30,14 +30,14 @@ This roadmap describes product milestones, not guaranteed delivery dates. Checkb
 - [x] First native GLFW/OpenGL window and interactive depth-tested OBJ viewport (orbit, zoom, grid, axes).
 - [~] Native Windows/macOS/Linux build and package jobs; artifact validation pending CI completion.
 - [ ] Modern GPU renderer backend and frame lifecycle (current viewport uses legacy OpenGL).
-- [ ] Scene/asset registry integration, persistent asset browser, and GPU mesh/material upload.
+- [~] Read-only native .ecscene loading through the existing scene graph and imported-asset registry; persistent asset browser and GPU mesh/material upload remain.
 - [ ] OS audio-device output, decoding/resampling, and spatial audio.
 - [ ] Collision/rigid-body integration.
 - [ ] One small offline game built and packaged by the toolchain.
 
 ## S3 — Creator tools
 - [~] Browser visual scene editor: hierarchy, transform inspector, create/delete, undo/redo, .ecscene open/save, and session-based OBJ mesh preview.
-- [~] Native desktop viewport: real OpenGL window and OBJ rendering; full scene hierarchy/inspector integration remains planned.
+- [~] Native desktop viewport: standalone OBJ preview plus read-only project scene rendering with hierarchical transforms; native hierarchy/inspector editing remains planned.
 - [~] Initial inspector, mesh/material ID assignment, and OBJ preview import; persistent visual asset browser and production workflow still planned.
 - [ ] Material editor, import pipeline, and reproducible game packaging.
 - [ ] Scripting and debugging workflow.
