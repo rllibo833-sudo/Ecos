@@ -15,6 +15,12 @@
 #include <iostream>
 #include <memory>
 #include <cstdio>
+#ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+#endif
 #include <sstream>
 #include <string>
 #include <vector>
@@ -31,6 +37,8 @@ struct EditorState {
     std::filesystem::path project_root, scene_path;
     ecos::studio::NodeId selected_node{};
     std::string status;
+    ecos::studio::NodeId inspector_name_node{};
+    char inspector_name[256]{};
     float yaw{25.0F}, pitch{18.0F}, distance{5.0F};
     double last_x{}, last_y{};
     bool dragging{false};
@@ -127,13 +135,16 @@ static bool save_scene_file(EditorState& state) {
         if (!output) { state.status = "Failed writing scene save file"; return false; }
     }
     std::error_code ec;
-    std::filesystem::rename(temporary, state.scene_path, ec);
-    if (ec) {
-        std::filesystem::remove(state.scene_path, ec);
-        ec.clear();
-        std::filesystem::rename(temporary, state.scene_path, ec);
+#ifdef _WIN32
+    if (!MoveFileExW(std::filesystem::path(temporary).c_str(), state.scene_path.c_str(),
+                     MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)) {
+        state.status = "Cannot replace scene file (Windows error " + std::to_string(GetLastError()) + ")";
+        return false;
     }
+#else
+    std::filesystem::rename(temporary, state.scene_path, ec);
     if (ec) { state.status = "Cannot replace scene file: " + ec.message(); return false; }
+#endif
     auto marked_saved = state.document->save();
     if (!marked_saved) { state.status = marked_saved.error().message; return false; }
     state.status = "Scene saved";
@@ -187,13 +198,13 @@ static void draw_editor_ui(EditorState& state) {
             if (ImGui::Button("Undo")) {
                 auto result = state.document->undo();
                 state.status = result ? "Undo applied" : result.error().message;
-                refresh_scene_instance_transforms(state);
+                if (result) refresh_scene_meshes(state);
             }
             ImGui::SameLine();
             if (ImGui::Button("Redo")) {
                 auto result = state.document->redo();
                 state.status = result ? "Redo applied" : result.error().message;
-                refresh_scene_instance_transforms(state);
+                if (result) refresh_scene_meshes(state);
             }
             if (ImGui::Button("Add Entity")) {
                 auto created = state.document->create_node("Entity");
@@ -205,7 +216,7 @@ static void draw_editor_ui(EditorState& state) {
                 auto result = state.document->delete_subtree(state.selected_node);
                 state.status = result ? "Entity deleted" : result.error().message;
                 state.selected_node = 0;
-                refresh_scene_instance_transforms(state);
+                if (result) refresh_scene_meshes(state);
             }
             ImGui::Separator();
             for (const auto root : state.document->scene().roots()) draw_hierarchy_node(state, root);
@@ -225,10 +236,12 @@ static void draw_editor_ui(EditorState& state) {
             if (!node) ImGui::TextUnformatted("Select an entity in the World Outliner.");
             else {
                 ImGui::Text("Entity ID: %llu", static_cast<unsigned long long>(node->id));
-                char name[256]{};
-                std::snprintf(name, sizeof(name), "%s", node->name.c_str());
-                if (ImGui::InputText("Name", name, sizeof(name))) {
-                    auto result = state.document->rename_node(node->id, name);
+                if (state.inspector_name_node != node->id) {
+                    state.inspector_name_node = node->id;
+                    std::snprintf(state.inspector_name, sizeof(state.inspector_name), "%s", node->name.c_str());
+                }
+                if (ImGui::InputText("Name", state.inspector_name, sizeof(state.inspector_name))) {
+                    auto result = state.document->rename_node(node->id, state.inspector_name);
                     state.status = result ? "Entity renamed" : result.error().message;
                 }
                 ImGui::Separator();
