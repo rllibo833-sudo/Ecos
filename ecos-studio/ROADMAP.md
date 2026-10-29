@@ -1,62 +1,74 @@
-# ECOS Studio Roadmap
+# ECOS Studio — Engineering Roadmap
 
-This roadmap describes product milestones, not guaranteed delivery dates. Checkboxes represent code that exists, not aspirations.
+Dokumen ini adalah satu-satunya roadmap engineering kanonis untuk branch `ecos-studio`. Status menggambarkan source saat ini; CI dan validasi visual dicatat terpisah. Target produk adalah studio editor mandiri dengan cakupan kemampuan kelas Unreal Engine untuk game berambisi AAA, bukan klaim bahwa parity sudah tercapai.
 
-## S0 — Repository foundation
-- [x] C++20/CMake bootstrap CLI and project scaffolding.
-- [x] Data-only mod scaffold creation and validation.
-- [x] CI build and smoke workflow.
+## R0 — Core dan format data
 
-## S1 — Runtime, scene, and asset foundations (in progress)
-- [x] Runtime lifecycle, logging, typed errors/results, portable platform helpers.
-- [x] In-memory scene graph with hierarchical transforms and cycle-safe reparenting.
-- [x] Versioned scene serialization/deserialization and scene validation CLI.
-- [x] Asset registry with stable IDs, safe paths, dependency validation, and cycle diagnostics.
-- [x] SHA-256 content fingerprints for exact asset bytes.
-- [x] OBJ importer with triangulation, independent UV/normal indices, seam expansion, validation, bounds, and generated normals.
-- [x] MTL material text parser for diffuse color, opacity/transparency, shininess, and illumination model.
-- [x] World cell records, lifecycle transitions, resident-cell budget, and spatial radius query.
-- [x] Headless .ecworld manifest validator and sample region/cell metadata.
+- [x] C++20/CMake bootstrap dan project scaffold.
+- [x] Manifest project dan data-only mod package.
+- [x] Scene graph, transform hierarkis, serialisasi scene, dan validator.
+- [x] Registry asset, dependency validation, fingerprint SHA-256.
+- [x] OBJ import, triangulasi, UV/normals, validasi geometri, dan local bounds.
+- [x] Parser teks MTL dasar.
+- [x] CI lintas platform dan automated regression tests.
 
-## S2 — First renderable desktop slice (in progress)
-- [x] Deterministic CPU reference rasterizer and OBJ-to-PPM CLI path.
-- [x] Platform-neutral input event/state abstraction.
-- [x] Camera view/projection and world-to-NDC math.
-- [x] AABB/sphere overlap and ray intersection query primitives.
-- [x] Deterministic software PCM mixer with mono/stereo, gain, pan, loops, and voice state.
-- [x] Backend-neutral keyboard/mouse input snapshots and per-frame transient reset.
-- [x] Bounded fixed-step frame clock with interpolation alpha.
-- [x] Callback-driven frame loop with fixed updates, shared input snapshot, and render callback.
-- [x] First native GLFW/OpenGL window and interactive depth-tested OBJ viewport (orbit, zoom, grid, axes).
-- [~] Native Windows/macOS/Linux build and package jobs; artifact validation pending CI completion.
-- [ ] Modern GPU renderer backend and frame lifecycle (current viewport uses legacy OpenGL).
-- [~] Native .ecscene loading through the existing scene graph and imported-asset registry; GPU mesh/material upload and persistent asset browser remain.
-- [ ] OS audio-device output, decoding/resampling, and spatial audio.
-- [ ] Collision/rigid-body integration.
-- [ ] One small offline game built and packaged by the toolchain.
+## R1 — Native editor dan viewport (partial/experimental)
 
-## S3 — Creator tools
-- [~] Browser visual scene editor: hierarchy, transform inspector, create/delete, undo/redo, .ecscene open/save, and session-based OBJ mesh preview.
-- [x] Native desktop World Outliner and transform Inspector with entity create/delete, undo/redo, and scene save through SceneDocument.
-- [~] Native desktop viewport: standalone OBJ preview plus project scene rendering with hierarchical transforms; native mesh/material assignment remains planned.
-- [~] Initial inspector, mesh/material ID assignment, and OBJ preview import; persistent visual asset browser and production workflow still planned.
-- [ ] Material editor, import pipeline, and reproducible game packaging.
-- [ ] Scripting and debugging workflow.
+- [x] Native GLFW/OpenGL window, grid, axes, depth-tested viewport, orbit/zoom.
+- [x] Preview mesh OBJ dan render scene project melalui registry asset.
+- [x] World Outliner/Inspector dasar, entity create/delete, transform editing, undo/redo, save.
+- [x] GPU mesh cache, frustum culling, batching/instancing path dan fallback.
+- [x] Viewport position memicu update awal world-cell runtime.
+- [x] LOD jauh menggunakan box proxy dari local mesh bounds, bukan ukuran tetap.
+- [x] Shader directional shading sederhana dengan formula `uAlbedo * (0.7 + 0.3 * NdotL)`.
+- [ ] Verifikasi visual di perangkat target dan regression checks untuk ukuran proxy, warna, normals, serta jalur instancing/fallback.
+- [ ] Renderer modern dengan resource/material pipeline yang tahan produksi.
 
-## S4 — Large-world runtime
-- [ ] Asynchronous cell I/O, worker queue, cancellation, prioritization, and eviction.
-- [ ] LOD and floating-origin integration.
-- [ ] Tiered simulation and streaming budget telemetry.
+## R2 — Material dan rendering
 
-## S5 — Mod SDK
-- [ ] Data-only mod package schema, dependency/compatibility resolver, load order, and conflict reports.
-- [ ] Permission model before executable extensions.
+- [ ] Material resources dan assignment UI di editor.
+- [ ] Texture import, sampling, color-space handling, dan asset references.
+- [ ] Normal/tangent pipeline yang konsisten untuk model transform dan lighting.
+- [ ] PBR workflow, shadow maps, environment lighting, tone mapping, anti-aliasing.
+- [ ] Renderer profiling dan visual regression scenes.
 
-## S6 — ECOS flagship integration
-- [ ] Import selected ECOS canon/world data.
-- [ ] Build a representative small region with public tools.
-- [ ] Expand regions and simulation systems incrementally.
+## R3 — World runtime skala besar
 
-## Quality bar
+- [~] World manifest dan cell lifecycle foundation.
+- [~] Viewport-driven initial cell update dan LOD proxy path.
+- [ ] Async disk I/O, worker scheduling, prioritization, cancellation, retries, eviction.
+- [ ] Floating origin, region hierarchy, streaming budgets, telemetry.
+- [ ] Multi-tier simulation untuk objek jauh dan deterministik world persistence.
+- [ ] Stress test untuk banyak cell/mesh dan world berskala besar.
 
-A capability remains labelled planned until source and automation support it. CI does not substitute for visual or performance validation on target PCs.
+## R4 — Workflow studio
+
+- [x] Scene hierarchy dan transform inspector dasar.
+- [ ] Asset browser persisten, import queue, validation reports.
+- [ ] Transform gizmos, selection/picking, multi-select dan editor camera workflow.
+- [ ] Material editor dan preview.
+- [ ] Undo/redo yang mencakup seluruh operasi konten dan recovery/autosave.
+- [ ] World/terrain authoring tools dan prefab/instancing workflow.
+
+## R5 — Runtime gameplay
+
+- [x] Frame loop, input snapshots, camera math, query collision dasar, software PCM mixer.
+- [ ] Physics simulation dan collision response.
+- [ ] Audio device backend, decoding, spatial audio.
+- [ ] Sandboxed scripting, gameplay APIs, hot reload, debugging.
+- [ ] Play-in-editor, runtime inspection, profiling dan crash diagnostics.
+
+## R6 — Creator ecosystem dan production pipeline
+
+- [x] Data-only mod scaffold dan dependency resolver lokal.
+- [ ] API/format version compatibility, mount rules, conflict reports dan permission model.
+- [ ] Build cook pipeline, reproducible game builds dan target platform validation.
+- [ ] Sample game end-to-end yang dibuat, dijalankan, diuji, dan didokumentasikan memakai toolchain.
+- [ ] Creator SDK docs dan migration policy yang mengikuti implementasi.
+
+## Kriteria kemajuan
+
+- Fitur baru menambah kemampuan nyata, bukan hanya dokumen atau tes tambahan.
+- Setiap perubahan menjaga fitur lama dan mencatat bukti verifikasi.
+- Status CI terbaru dilaporkan dari workflow aktual, bukan diasumsikan dari roadmap.
+- Klaim kualitas AAA memerlukan profiling, pengujian visual, stabilitas, konten dan workflow produksi—bukan sekadar build hijau.

@@ -1,17 +1,23 @@
-# Scene Graph and Asset Registry v1
+# Scene Graph and Asset Registry
 
 ## Scene graph
-A scene is a hierarchy of nodes. Each node has a runtime ID, a name, a local transform (position, Euler rotation in radians, and scale), an optional parent, and child IDs. The runtime computes world transforms by multiplying parent and local matrices. Matrices use row-major storage and translation in the final column. Rotation composition uses Z * Y * X Euler order.
 
-The in-memory graph supports node creation, reparenting, cycle rejection, transform updates, world-matrix calculation, and recursive subtree removal.
+A scene is a hierarchy of nodes with runtime IDs, names, local transforms, optional parents, and child IDs. The runtime computes world transforms from parent/local transforms. Matrices use row-major storage and translation in the final column; Euler composition uses Z * Y * X order.
 
-## Scene document
-Scene text documents use `format_version=1`, a `scene_id`, and node rows in the form `node=id|parent-id-or--|name|position(x,y,z)|rotation(x,y,z)|scale(x,y,z)`. Scene names and IDs cannot contain the pipe delimiter or newlines in version 1. Deserialization validates IDs, numeric transforms, schema version, parent references, and hierarchy cycles. Runtime IDs are regenerated on load while serialized IDs preserve the parent relationship.
+The graph supports node creation, reparenting, cycle rejection, transform updates, world-matrix calculation, and recursive subtree removal. The versioned `.ecscene` document is used by the native editor scene workflow; serialized IDs preserve hierarchy while runtime IDs may be regenerated on load.
 
-Example scene: `examples/hello-world/scenes/main.ecscene`.
+## Asset registry and import
 
-## Asset registry
-Assets have stable string IDs, a type label, a project-relative path, and declared dependencies. Paths are normalized and absolute/path-traversal paths are rejected. Dependency validation reports unresolved references. Asset files are not imported or decoded yet; content hashing, cache invalidation, serialization, and importers remain future work.
+Assets have stable string IDs, type labels, project-relative paths, and declared dependencies. Unsafe paths are rejected. The registry validates references/dependencies and uses SHA-256 content fingerprints where applicable.
 
-## Compatibility
-This is an early internal format/API and is not a frozen commercial SDK. Future format revisions require explicit schema migrations before public compatibility is promised.
+OBJ import reads positions, UVs, normals, faces, triangulates polygons, expands attribute seams, generates missing normals, validates finite values and indices, and calculates axis-aligned local-space mesh bounds. Imported project assets use versioned `.ecasset` metadata and integrity validation. The native viewport resolves scene mesh IDs through the validated imported-asset registry.
+
+The GPU renderer cache stores GPU buffers and the mesh bounds used by the native viewport path. Distant LOD proxies derive their local box dimensions from those mesh bounds. This does not yet imply a general-purpose asset cache invalidation/reimport service.
+
+## Format compatibility
+
+These are early internal formats, not a frozen commercial SDK. Future format revisions require explicit schema migrations before public compatibility is promised.
+
+## Still incomplete
+
+Full material/texture binding, OBJ `mtllib/usemtl` submesh integration, glTF, persistent import jobs, automatic reimport, and production asset-cache invalidation remain planned.

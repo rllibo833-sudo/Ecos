@@ -1,11 +1,23 @@
 # ECOS — Game, Studio, dan Dunia
 
-ECOS memiliki dua sasaran produk yang dibangun bersama:
+ECOS mengembangkan dua produk yang saling terhubung:
 
-1. **ECOS Studio** — engine dan studio game PC untuk developer, studio, dan modder; ditujukan menjadi produk komersial yang terus berkembang.
-2. **ECOS** — game open-world PC unggulan dengan dunia negara fiksi sekitar 1,7 juta km², dibangun di atas teknologi ECOS Studio.
+- **ECOS Studio** — engine, editor, dan toolkit modding general-purpose untuk developer eksternal dan pembuat game.
+- **ECOS** — game open-world unggulan dengan visi dunia fiksi sekitar **1,7 juta km²**, sebagai salah satu konsumen teknologi ECOS Studio.
 
-Branch ini mengawali fondasi source code ECOS Studio. Implementasi saat ini masih berupa C++20 command-line bootstrap untuk membuat dan memvalidasi scaffold proyek game serta paket mod data-only. Ini **belum** merupakan editor 3D, renderer, physics/audio runtime, atau game playable. Lihat [ECOS Studio README](ecos-studio/README.md), [arsitektur](ecos-studio/ARCHITECTURE.md), dan [roadmap](ecos-studio/ROADMAP.md).
+## Status engineering
+
+Branch `ecos-studio` sudah melewati tahap CLI-only. Saat ini source mencakup fondasi C++20, scene graph dan format scene, import mesh OBJ, parsing material MTL dasar, CPU reference renderer, native desktop viewport berbasis GLFW/OpenGL, World Outliner/Inspector dasar, serta awal viewport world-cell streaming dan LOD proxy.
+
+Dokumentasi status dan batas implementasi yang menjadi rujukan utama:
+
+- [ECOS Studio — kemampuan dan batas saat ini](ecos-studio/README.md)
+- [Arsitektur engine](ecos-studio/ARCHITECTURE.md)
+- [Roadmap engineering kanonis](ecos-studio/ROADMAP.md)
+- [Native viewport, streaming, LOD, dan shading](ecos-studio/docs/NATIVE-VIEWPORT-LOD.md)
+- [Indeks dokumentasi teknis](ecos-studio/docs/README.md)
+
+**Visi:** membangun studio editor mandiri dengan kedalaman workflow dan target kemampuan kelas Unreal Engine, untuk membuat game berambisi AAA. Ini adalah arah produk, bukan klaim bahwa ECOS Studio saat ini sudah setara UE atau siap produksi AAA. Setiap kemampuan ditandai sesuai bukti implementasi aktual.
 
 ## Lore dan kanon ECOS
 
@@ -15,17 +27,6 @@ Branch ini mengawali fondasi source code ECOS Studio. Implementasi saat ini masi
 - [Teknologi identitas ECOS](lore-final/06-teknologi-dan-sistem/README.md)
 - [Roadmap worldbuilding](lore-final/ROADMAP-WORLDBUILDING.md)
 
-## Kanon ringkas
+## Prinsip repository
 
-- ECOS: negara fiksi sekitar 1,7 juta km² dengan beberapa wilayah terpisah.
-- Wilayah inti desain: 10.000 ha; kawasan masjid 1.000 ha berada di dalamnya.
-- Empat provinsi kerja: Arunika, Wanasera, Tirta Nusa, Giriwana. Ibu kota nasional: Nawasena.
-- Juailin adalah kota kecil asal Rezman, dengan arus informasi sangat cepat.
-- Rezman adalah peternak dan pekebun yang kesulitan mengikuti arus informasi; ia menggunakan perangkat genggam dengan LynOS dan bekerja di bidang digital forensik.
-- Living Shared Knowledge Graph menghubungkan informasi dan bukti, tetapi bukan sistem mahatahu.
-- Bahasa .cuk, PusingCuk AI, Cuk Reality Engine, dan Mnemos-RLI adalah teknologi fiksional yang harus memiliki fungsi, batas, risiko, dan konsekuensi.
-- ECOS bukan cyberpunk. Dunia harus terasa hidup, beragam, dan tidak sempurna.
-
-## Prinsip pengembangan
-
-Lore, spesifikasi teknis, dan implementasi nyata adalah tiga hal berbeda. Fitur engine hanya boleh disebut selesai jika kode implementasinya tersedia dan kemampuan tersebut benar-benar dibuktikan. ECOS Studio ditujukan untuk developer eksternal juga, sehingga format proyek, SDK, dokumentasi, dan keamanan mod menjadi bagian dari produk—bukan hanya kebutuhan internal game ECOS.
+Lore, rencana produk, kode yang sudah diimplementasikan, dan hasil verifikasi adalah kategori berbeda. Markdown teknis harus mengikuti source terkini; roadmap tidak boleh menandai aspirasi sebagai fitur selesai. Dokumen lama yang bertentangan harus diperbarui atau dipindahkan ke arsip historis dengan penanda yang jelas, bukan dibiarkan seolah-olah menggambarkan engine saat ini.

@@ -1,109 +1,72 @@
 # ECOS Studio
 
-**ECOS Studio** is an independent C++20 engine foundation and modding toolkit for creators and the ECOS PC flagship game, whose world concept spans approximately **1.7 million km²**.
+**ECOS Studio** adalah engine dan studio editor game general-purpose berbasis C++20. Tujuan jangka panjangnya adalah membangun workflow editor dengan kedalaman dan cakupan kelas Unreal Engine untuk game berambisi AAA, sambil tetap mandiri dalam arsitektur dan implementasi. Ini merupakan target, bukan klaim parity atau kesiapan produksi saat ini.
 
-It is not yet a complete Unreal Engine 5-equivalent product. Implemented capabilities below are source-backed and covered by automated tests where noted.
+## Status saat ini
 
-## Native editor viewport (first desktop slice)
+Branch ini bukan lagi CLI-only: terdapat native desktop editor awal dengan viewport OpenGL, pemuatan scene project, mesh import, scene editing dasar, dan jalur awal untuk menampilkan isi world-cell.
 
-Build `ecos-studio-editor` for a native Windows executable, macOS `.app`, or Linux executable. It opens a native desktop window with a depth-tested 3D viewport, grid and XYZ axes, orbit by dragging the left mouse button, zoom by scrolling, and camera reset with **R**. Project-backed scene mode reads `.ecscene`, resolves mesh IDs through the validated imported-asset registry, imports OBJ geometry through the engine importer, and applies hierarchical world transforms. The native World Outliner and Inspector support selecting/creating/deleting entities, editing names and local transforms, undo/redo, and saving the scene.
+### Editor dan viewport native — Partial/Experimental
 
-```
-# Standalone mesh preview
-ecos-studio-editor examples/hello-world/assets/triangle.obj
+- Native GLFW/OpenGL desktop window dengan depth-tested 3D viewport, grid, sumbu XYZ, orbit/zoom, dan reset kamera.
+- Mode preview mesh OBJ dan rendering scene `.ecscene` melalui scene graph serta registry asset yang tervalidasi.
+- Native World Outliner dan Inspector dasar: pilih, buat, hapus entity; edit nama dan transform lokal; undo/redo; simpan scene.
+- Jalur viewport menggunakan GPU mesh cache, frustum culling, batching/instancing bila tersedia, dan fallback non-instanced.
+- World-cell runtime dapat diperbarui berdasarkan posisi viewport; konten cell yang termuat diproyeksikan ke koordinat dunia.
+- LOD jarak jauh menggunakan box proxy berdasarkan bounds mesh dan shader directional shading sederhana.
+- Detail rendering masih eksperimental: kompatibilitas OpenGL, bukan renderer produksi modern.
 
-# Open an ECOS project scene with imported mesh assets
-ecos-studio-editor --project ../MyGame --scene ../MyGame/scenes/main.ecscene
-```
+Dokumen teknis untuk implementasi terakhir: [Native viewport, world streaming, LOD, dan shading](docs/NATIVE-VIEWPORT-LOD.md).
 
-The project CI builds Windows, macOS, and Linux targets; CI packaging is a delivery mechanism, not the engine implementation.
+### Fondasi engine yang sudah tersedia
 
-This is an **early native editor slice, not an Unreal Engine 5 equivalent**. The viewport still uses the OpenGL compatibility pipeline, scene asset assignment is not yet exposed in the native inspector, and production PBR/materials, play-in-editor, scripting, and complete game packaging workflow remain unfinished. The browser editor remains available under `editor/index.html`.
+- C++20/CMake project scaffold dan validator.
+- Data-only mod package bootstrap serta resolver dependensi lokal.
+- Scene graph, hierarchical transforms, serialisasi scene berversi, dan validasi.
+- Registry asset, validasi referensi/dependensi, fingerprint SHA-256, serta importer OBJ dengan UV, normal, triangulasi, dan bounds.
+- Parser teks MTL untuk properti material dasar; hubungan OBJ `mtllib/usemtl`, texture import, dan material binding penuh belum selesai.
+- CPU reference rasterizer dengan depth buffer dan directional shading untuk output PPM.
+- World-cell lifecycle model dan validator manifest `.ecworld`; jalur viewport streaming adalah lapisan awal, belum sistem world streaming produksi.
+- Camera/projection math, input abstraction, bounded fixed-step frame clock, engine frame loop.
+- Query collision AABB/sphere dan software PCM mixer; physics simulation dan audio-device output belum tersedia.
+- CI build dan automated tests lintas Linux, Windows, dan macOS.
 
-## Implemented
+## Roadmap prioritas
 
-- Project and data-only mod scaffold creation/validation CLI, with validated dependency declarations for third-party creators.
-- Deterministic mod dependency resolver with installed-package discovery, missing-dependency diagnostics, cycle detection, and stable dependency-first ordering.
-- OBJ asset import into an existing project, with geometry validation, preserved source bytes, SHA-256 content fingerprint, mesh bounds/counts, and a versioned `.ecasset` sidecar.
-- Imported-asset integrity validation: metadata schema, path confinement, source hashes, OBJ re-parsing, and geometry-statistic verification.
-- Runtime lifecycle, thread-safe logging, typed errors/results, and safe relative-path/filesystem helpers.
-- Scene graph with hierarchical transforms, cycle prevention, subtree removal, versioned serialization, and validation CLI.
-- Asset registry with stable IDs, dependency reference/cycle validation, and SHA-256 content fingerprints.
-- Wavefront OBJ importer supporting positions, UVs, explicit/generated normals, independent positive/negative indices, polygon fan triangulation, UV seam expansion, finite-value validation, and mesh bounds.
-- Wavefront MTL text importer for named materials, diffuse color, opacity/transparency, shininess, and illumination model.
-- Deterministic CPU reference triangle rasterizer with depth buffering, simple directional lighting, and PPM output.
-- Native editor viewport with standalone OBJ preview and project .ecscene rendering through the existing scene graph and validated imported-asset registry; native World Outliner, transform inspector, entity create/delete, undo/redo, and scene save are wired to SceneDocument. This is a starting renderer, not a production AAA pipeline.
-- World-cell lifecycle model, resident/loading budgets, failure/retry/unload, and radius queries.
-- .ecworld manifest validator for schema version, unique cell IDs/coordinates, and safe content paths.
-- Platform-neutral input event queue/state for keys, mouse buttons, pointer movement, wheel deltas, and focus-loss releases.
-- Camera view, perspective/orthographic projection, and projection of points to NDC with validation.
-- Collision query foundation with AABB/sphere overlap, ray-versus-AABB, and ray-versus-sphere tests.
-- Deterministic software PCM mixer for mono/stereo clips, gain, pan, looping, stopping voices, and output clipping; no device output yet.
-- Backend-neutral input snapshots for keyboard, mouse, cursor delta, scroll, and quit events.
-- Bounded fixed-step frame clock with delta clamping, catch-up limits, and render interpolation alpha.
-- Backend-neutral frame loop integrating fixed updates, stable input snapshots, and one render callback per frame.
-- CMake build, subsystem tests, and GitHub Actions automation.
+1. **Stabilkan jalur viewport dan world LOD:** verifikasi build lintas platform, bounds proxy, shading, culling, dan fallback rendering.
+2. **Material dan lighting:** mesh normals yang benar, material assignment, tekstur, pencahayaan, lalu pipeline PBR.
+3. **World runtime produksi:** asynchronous I/O, worker scheduling, cancellation, eviction, floating origin, streaming telemetry, dan budget.
+4. **Workflow editor:** asset browser/import UI, material editor, transform/gizmo workflow, save/recovery, undo/redo yang tahan lama.
+5. **Runtime gameplay:** physics simulation, audio backend, scripting sandbox, play-in-editor, debugging/profiling.
+6. **Pipeline konten dan mod SDK:** format berversi, validasi, permission model, compatibility checks, dan tooling bagi developer eksternal.
+7. **Skala dan kualitas AAA:** stress tests, profiling target PC, rendering modern, kualitas aset, stabilitas, dan game contoh end-to-end.
 
-## Modding for every creator
+Roadmap detail tunggal: [ROADMAP.md](ROADMAP.md).
 
-ECOS Studio is intended as a general-purpose engine and creator toolkit, not an ECOS-game-only editor. Mod packages use `mod.ecos`; declare dependencies as `dependencies=none` or a comma-separated list such as `dependencies=com.vendor.base,com.example.content`.
+## Modding
 
-The `mod-resolve` command scans immediate child directories under a mods root, validates each discovered package, reports missing dependencies and dependency cycles, and prints a deterministic dependency-first order:
+ECOS Studio ditujukan untuk game ECOS dan game pihak ketiga. Mod saat ini tetap data-only; belum ada eksekusi kode mod, download marketplace, atau runtime plugin tanpa sandbox. Lihat [Mod SDK bootstrap](modding/MOD-SDK.md).
 
-~~~
-ecos-studio mod-resolve ../MyGame/mods
-~~~
+## Build dan verifikasi
 
-Resolution is local-only: packages must already exist on disk. There is no package download, version-range solver, runtime loading, or executable scripting yet. Mods remain data-only for safety.
+Membutuhkan CMake 3.20+ dan compiler C++20.
 
-## Importing and validating assets
-
-Import a valid Wavefront OBJ into a project. The importer copies the original file into `assets/imported/` and creates a `.ecasset` metadata file containing the asset ID, type, SHA-256 fingerprint, vertex/triangle counts, and bounds.
-
-~~~
-ecos-studio asset-import ../MyGame ./models/character.obj character.mesh
-ecos-studio asset-validate ../MyGame
-~~~
-
-Validation re-hashes source bytes, reparses the OBJ, checks stored geometry statistics, and rejects unsafe metadata paths and symlink entries. Imports refuse to overwrite existing files. MTL parsing is available as a separate foundation; automatic OBJ-to-MTL linking and texture import are not yet wired into this command.
-
-## Not implemented yet
-
-The native viewport currently uses legacy OpenGL. A modern production GPU renderer, native mesh/material assignment workflow, play-in-editor, production physics runtime, audio device backend, scripting VM, asynchronous disk streaming/LOD, and complete material/import pipeline remain unimplemented.
-
-## Build
-
-Requires CMake 3.20+ and a C++20 compiler.
-
-~~~
+```sh
 cmake -S ecos-studio -B build
 cmake --build build --config Release
 ctest --test-dir build --output-on-failure
-# Run the native editor with a mesh
-build/ecos-studio-editor examples/hello-world/assets/triangle.obj
-# Open a project scene (project must contain valid imported .ecasset sidecars)
-build/ecos-studio-editor --project ../MyGame --scene ../MyGame/scenes/main.ecscene
-~~~
+```
 
-## CLI
+Jalankan command sesuai target yang dibangun. Status CI terkini harus diperiksa pada workflow GitHub; dokumentasi ini tidak mengasumsikan semua job selalu hijau.
 
-~~~
-ecos-studio --help
-ecos-studio new ../MyGame "My Game"
-ecos-studio validate ../MyGame
-ecos-studio mod-init ../MyGameMod com.example.my-mod
-ecos-studio mod-validate ../MyGameMod
-ecos-studio mod-resolve ../MyGame/mods
-ecos-studio asset-import ../MyGame ./models/character.obj character.mesh
-ecos-studio asset-validate ../MyGame
-ecos-studio scene-validate examples/hello-world/scenes/main.ecscene
-ecos-studio world-validate examples/large-world/world.ecworld
-~~~
+## Batas yang belum tercapai
 
-## Engineering principles
+Belum ada klaim bahwa ECOS Studio sudah setara Unreal Engine atau mampu memproduksi game AAA secara penuh. Renderer modern dengan PBR/texture pipeline, material editor lengkap, asynchronous world streaming produksi, physics simulation, scripting/gameplay runtime, play-in-editor, profiling suite, dan workflow distribusi matang masih menjadi pekerjaan terbuka.
 
-1. Build an independent architecture; do not copy Unreal Engine source.
-2. Stream large worlds instead of keeping the whole country active in RAM.
-3. Use versioned data formats and explicit migrations before freezing public APIs.
-4. Keep mods data-only until a proper extension trust model exists.
-5. Mark every capability implemented, experimental, or planned honestly.
+## Prinsip engineering
+
+- Pertahankan fitur yang ada; perubahan harus menambah kemampuan dan menjaga regresi.
+- Jangan menulis ulang subsystem stabil tanpa kebutuhan teknis dan verifikasi.
+- Jadikan CI penjaga regresi, bukan satu-satunya ukuran kemajuan.
+- Sinkronkan source, tests, dan Markdown dalam perubahan yang sama.
+- Gunakan Unreal Engine sebagai target kemampuan produk, bukan sumber kode untuk disalin.

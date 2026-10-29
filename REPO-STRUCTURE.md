@@ -1,48 +1,42 @@
 # Struktur Repository ECOS
 
-## Prinsip
-1. `lore-final/` adalah sumber kanon naratif aktif.
-2. Lore aktif, arsip, data dunia, dan dokumentasi pengembangan harus dibedakan.
-3. Konsep teknologi fiksional ECOS berada di domain lore aktif, bukan hanya di arsip historis.
-4. Jangan mengubah ide terbuka menjadi fakta tanpa keputusan yang tercatat.
-5. Jangan mengklaim sistem nyata terintegrasi atau fitur game berjalan tanpa bukti.
-6. Engine game tidak termasuk ruang lingkup aktif saat ini.
+## Sumber kebenaran
+
+- `ecos-studio/README.md`: ringkasan produk dan kemampuan aktual.
+- `ecos-studio/ARCHITECTURE.md`: batas subsystem dan arah arsitektur.
+- `ecos-studio/ROADMAP.md`: satu roadmap engineering kanonis.
+- `ecos-studio/docs/`: spesifikasi teknis per subsystem; indeks berada di `ecos-studio/docs/README.md`.
+- `lore-final/`: kanon naratif ECOS, terpisah dari status implementasi engine.
+- Riwayat Git: arsip perubahan; bukan pengganti dokumentasi status terkini.
 
 ## Struktur utama
+
 ```text
 /
 ├── README.md
 ├── REPO-STRUCTURE.md
-├── lore-final/
-│   ├── 00-KANON-FINAL-DAN-KONTINUITAS.md
-│   ├── ROADMAP-WORLDBUILDING.md
-│   ├── 01-visi-dan-narasi/
-│   ├── 02-dunia-dan-geografi/
-│   ├── 03-gameplay-dan-aktivitas/
-│   ├── 04-karakter-dan-komunitas/
-│   ├── 05-ekonomi-dan-pekerjaan/
-│   ├── 06-teknologi-dan-sistem/
-│   ├── 07-integrasi-proyek/
-│   ├── 08-misteri-dan-legenda/
-│   ├── 09-cerita/
-│   ├── 90-audit-dan-keputusan/
-│   └── 99-arsip/
-├── world/          # Kerangka data dunia; bukan peta final
-├── systems/        # Kerangka spesifikasi domain; bukan implementasi
-├── assets/         # Aset yang belum seluruhnya diklasifikasikan
-├── docs/           # Dokumentasi proses dan keputusan non-kanon
-└── tests/          # Pemeriksaan artefak saat data terstruktur tersedia
+├── ecos-studio/
+│   ├── README.md
+│   ├── ARCHITECTURE.md
+│   ├── ROADMAP.md
+│   ├── src/ and include/       # implementasi C++20
+│   ├── tests/                  # automated regression tests
+│   ├── examples/               # contoh yang harus cocok dengan format aktif
+│   ├── docs/                   # dokumentasi teknis kanonis
+│   └── modding/                # kontrak mod SDK saat ini
+├── lore-final/                 # kanon naratif aktif dan arsip lore
+├── world/                      # kerangka data dunia, bukan bukti runtime
+├── systems/                    # spesifikasi domain
+├── assets/                     # aset dan referensi
+├── docs/                       # dokumentasi repository umum
+└── tests/                      # validasi artefak repository
 ```
 
-## Aturan per folder
-- `lore-final/01`–`09`: keputusan naratif dan domain dunia.
-- `lore-final/90`: audit, konflik kanon, dan keputusan yang masih perlu dibuat.
-- `lore-final/99`: arsip historis; berguna sebagai sumber, tetapi bukan otoritas kanon.
-- `world/`: kelak menyimpan skema/data peta setelah geometri dan format disepakati.
-- `systems/`: spesifikasi domain dan hubungan antar-sistem, bukan kode game.
-- `assets/`: gambar dan referensi visual; asal serta tujuan aset harus jelas.
-- `docs/`: proses pengembangan dan status kerja.
-- `tests/`: validasi konsistensi yang benar-benar dapat dijalankan terhadap artefak.
+## Kebijakan dokumentasi
 
-## Kebijakan branch
-Satu branch utama harus cukup untuk membaca kanon terbaru. Branch eksperimen tidak menjadi sumber lore hanya karena memiliki kode atau commit tambahan. Sebelum branch lain dihapus oleh pemilik repo, informasi non-Godot yang unik harus dipindahkan ke main dan diperiksa. Riwayat Git lama tetap dapat menjadi arsip, tetapi bukan sumber keputusan harian.
+1. Tandai kemampuan sebagai **Implemented**, **Partial/Experimental**, atau **Planned** berdasarkan source dan bukti yang ada.
+2. Ketika source berubah, perbarui README/arsitektur/roadmap atau dokumen subsystem terkait pada commit yang sama.
+3. Jangan mempertahankan kalimat lama seperti “GPU renderer planned” jika viewport GPU sudah ada; jelaskan batas aktualnya.
+4. Jangan menghapus spesifikasi subsystem yang masih akurat hanya karena kecil. Perbarui dokumen yang kedaluwarsa; pindahkan hanya draf atau rencana yang benar-benar digantikan ke direktori arsip dengan alasan dan tautan ke dokumen kanonis.
+5. Lore, target visi, dan roadmap bukan bukti bahwa fitur sudah berjalan.
+6. Jangan menyatakan setara Unreal Engine atau siap AAA sampai workflow produksi, kualitas visual, performa, stabilitas, dan kompatibilitas terbukti.

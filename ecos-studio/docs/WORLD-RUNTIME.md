@@ -1,11 +1,15 @@
-# World Runtime Foundation v0
+# World Runtime and Viewport Streaming
 
-The initial world runtime models world cells as project-relative content records with stable IDs, region IDs, and integer 3D cell coordinates. A cell lifecycle is:
+## Runtime foundation
 
-`unloaded → loading → loaded`
+The world runtime models cells as project-relative content records with stable IDs, region IDs, and integer 3D cell coordinates. Lifecycle transitions include unloaded, loading, loaded and failed states; retries, unloading, resident/loading budgets and deterministic radius queries are supported by the foundational model.
 
-Failures move `loading → failed`; failed cells can be retried, and loaded/failed cells can be returned to unloaded. Loading requests enforce a configurable resident/loading-cell budget. A radius query returns matching cell IDs in deterministic lexical order.
+## Native viewport integration — experimental
 
-This is the data and lifecycle foundation for streaming, not asynchronous I/O yet. The caller is responsible for loading cell contents and reporting completion. Future work includes a versioned serialized manifest, region hierarchy, worker queue, cancellation, prioritization, eviction policy, LOD, and streaming telemetry.
+The native editor updates the world-content runtime from the viewport target position. World coordinates in meters are converted to 1 km cell coordinates before updating the requested resident neighborhood. Loaded cell scene snapshots are rendered with cell offsets applied to local transforms. A distance-based LOD path substitutes a box proxy for far meshes, with local dimensions derived from the source mesh's axis-aligned bounds.
 
-The model uses integer cell coordinates to avoid accumulating precision loss across the country-scale ECOS world. Rendering will later convert local coordinates relative to a floating origin.
+This is an initial integration, not production streaming. Asynchronous disk I/O, worker scheduling, cancellation, prioritization, robust eviction, floating origin, streaming telemetry, and distant simulation tiers remain open work. Do not interpret manifest validation as proof that all referenced cell payloads exist or are loaded.
+
+## Large-world precision
+
+Integer cell coordinates limit precision loss across the country-scale ECOS world. A future production renderer must define floating-origin behavior and explicit memory, entity, and streaming budgets.

@@ -1,52 +1,54 @@
 # ECOS Studio Architecture
 
-## Product split
+## Product intent
 
-- **ECOS Core:** runtime services shared by editor and shipped games.
-- **ECOS Studio Editor:** desktop application for scenes, world regions, assets, scripts, debugging, profiling, and packaging.
-- **ECOS Mod SDK:** stable, versioned interfaces for creators.
-- **ECOS Game:** flagship game and demanding consumer of the engine.
+ECOS Studio is a general-purpose game engine and creator-facing desktop editor. Its long-term target is a workflow and capability set in the class of Unreal Engine, suitable for ambitious AAA projects. This is a direction, not a claim of current parity.
 
-The editor must not be required to run a packaged game. Runtime and editor share project and asset formats but have separate launch targets.
+## Product layers
 
-## Implemented foundation
+- **Engine Core:** lifecycle, platform services, scene model, assets, jobs, input, time, and runtime APIs.
+- **Renderer:** GPU resources, visibility, draw submission, materials, lighting, and render diagnostics.
+- **World Runtime:** hierarchical regions/cells, streaming, LOD, floating origin, budgets, and simulation tiers.
+- **Studio Editor:** viewport, hierarchy/outliner, inspectors, asset browser, import and material tools, undo/redo, debugging, profiling.
+- **Game Runtime:** gameplay, physics, audio, scripting, and standalone execution independent of the editor.
+- **Creator/Mod SDK:** versioned content formats, validation, compatibility and security boundaries.
+- **Build and Validation:** reproducible builds, automated checks, sample game and platform validation.
 
-The C++20 core includes project/mod scaffold tools, runtime lifecycle/logging, typed errors, filesystem helpers, scene graph and serialization, asset dependency validation and cycle detection, SHA-256 content fingerprints, OBJ import with UVs/normals, a basic MTL material parser, a CPU reference rasterizer, world-cell lifecycle and manifest validation, a platform-neutral input event queue/state, and validated camera/projection math, collision overlap/ray queries for AABBs and spheres, deterministic PCM audio mixer, backend-neutral input state, bounded fixed-step frame clock, and callback-driven engine frame loop.
+## Implemented source-backed foundation
 
-CI builds the code and runs automated tests, renders a sample mesh to PPM, and validates sample project/mod/scene/world artifacts. This is a growing engine foundation, not a production desktop editor or GPU renderer.
+C++20 core and CLI; project/mod manifests; scene graph and serialization; asset registry and SHA-256 fingerprints; OBJ importer with generated normals and local mesh bounds; basic MTL parser; CPU reference renderer; native GLFW/OpenGL viewport; basic native Outliner/Inspector and scene persistence; input/camera/frame-loop primitives; AABB/sphere collision queries; software PCM mixer; world-cell lifecycle/manifest validation.
 
-## Subsystem boundaries
+The native viewport has an early GPU path with shared mesh cache, frustum culling, instanced drawing where supported, a non-instanced fallback, viewport-driven cell updates, distant box proxies generated from local mesh bounds, and a simple directional shader term. Treat this as experimental until CI and visual/runtime validation are complete.
 
-| Subsystem | Responsibility | Status |
+## Subsystem status
+
+| Subsystem | Current state | Next meaningful capability |
 |---|---|---|
-| Runtime/platform | Lifecycle, logging, errors, filesystem basics | Initial implementation |
-| Scene graph | Nodes, local/world transforms, hierarchy, serialization | Initial implementation |
-| Asset registry | Stable IDs, safe paths, dependency references and cycles | Initial implementation |
-| Content identity | SHA-256 fingerprints of exact bytes | Implemented utility; cache not yet integrated |
-| World runtime | Cell lifecycle, budgets, spatial query | Initial implementation; async I/O planned |
-| Project/mod manifests | Scaffold creation and validation | Bootstrap implemented |
-| Mesh import | OBJ positions, UVs, normals, triangulation, bounds | Initial implementation |
-| Reference renderer | CPU rasterization, depth buffer, simple diffuse lighting, PPM | Initial implementation |
-| Input | Platform-neutral queued events and per-frame state | Initial implementation; no OS adapter |
-| Camera math | View, perspective/orthographic projection, NDC conversion | Initial implementation |
-| GPU renderer/window | Graphics backend, frame pipeline, native window | Planned |
-| Physics queries | AABB/sphere overlap and ray intersection | Initial implementation |
-| Physics simulation | Rigid bodies, constraints, collision response and stepping | Planned |
-| Audio | Software PCM mixing, gain, pan and voice state | Initial implementation; device output/spatialization planned |
-| Asset pipeline | OBJ import, basic MTL material parsing, content hashes | Partial foundation; OBJ/MTL linkage, textures and cache planned |
-| Editor | Viewport, inspectors, undo/redo, world tools | Planned |
-| Scripting | Gameplay API, sandbox and reload workflow | Planned |
-| Mod runtime | Version checks, content mounts and permissions | Planned |
-| Packaging | Reproducible builds and platform bundles | Planned |
+| Core/project | Initial implementation | Stable runtime APIs, diagnostics and migration policy |
+| Scene graph | Implemented foundation | Editor-facing scene tools and robust serialization workflow |
+| Asset import | OBJ and basic MTL parser | Material linkage, textures, glTF and import diagnostics |
+| GPU renderer | Experimental OpenGL compatibility path | Modern backend, resource lifetime and renderer tests |
+| Visibility/draw | Cache, frustum culling, batching/instancing path | Profiling, correctness tests and scalable submission |
+| Materials/lighting | Per-asset flat albedo and simple directional shader | Normal correctness, material resources, textures, PBR |
+| World runtime | Cell lifecycle plus viewport-driven initial loading and LOD | Async I/O, scheduling, eviction, floating origin and telemetry |
+| Editor | Native viewport, Outliner/Inspector basics, save and undo/redo | Asset browser, gizmos, material editor and reliable workflows |
+| Physics | AABB/sphere query primitives | Simulation, contacts, constraints and stepping |
+| Audio | Software PCM mixer | Device output, decoding and spatial audio |
+| Scripting/gameplay | Not implemented as a complete runtime | Sandboxed API, reload, debugging and play-in-editor |
+| Mod SDK | Data-only bootstrap and dependency resolution | Version compatibility, permissions and runtime mounts |
+| Build/QA | CMake and multi-platform CI | Performance/visual regression and end-to-end sample game |
 
-## Large-world constraints
+## Large-world architecture
 
-The ECOS country-scale world (~1.7 million km²) must not be fully resident in RAM or simulated at full fidelity. The intended hierarchy is country → region → cell → local scene, with asynchronous streaming, LOD, floating-origin coordinates, region-level distant simulation, and explicit memory/entity/streaming budgets. Current world code establishes cell IDs, integer coordinates, state transitions, a resident budget, and radius queries; asynchronous disk I/O and production LOD are not implemented.
+The intended hierarchy is country → region → cell → local scene. The full ~1.7 million km² concept must never be loaded or simulated at uniform maximum fidelity. The renderer should prioritize nearby detailed meshes, represent distant content with cheaper LOD, and unload content outside budget. Integer cell coordinates help preserve precision; floating-origin integration and production async streaming remain future work.
 
 ## Mod security
 
-Mods start as data-only packages with schema validation, dependency declarations, version constraints, and explicit asset mount permissions. Executable extensions require a separate trust model.
+Community mods remain data-only until a trust model defines permissions, API compatibility, signing/trust prompts, and isolation. Do not execute arbitrary mod code in the editor or game runtime by default.
 
-## Implementation rule
+## Engineering rules
 
-Unreal Engine 5 is a capability target, not a codebase to copy or a parity claim. Each subsystem is built and documented independently.
+1. Keep editor and shipped game runtime separate; the editor must not be required to run a game.
+2. Do not rewrite stable cache/culling/streaming paths without a demonstrated reason.
+3. A capability is not complete merely because its design is documented.
+4. CI passing proves only the checks it executes; it does not prove visual quality or AAA performance.
