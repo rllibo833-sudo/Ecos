@@ -38,9 +38,22 @@ jobs:
           build/ecos-studio/ecos-studio new /tmp/ecos-studio-world-project "World Render Smoke"
           build/ecos-studio/ecos-studio asset-import /tmp/ecos-studio-world-project ecos-studio/examples/hello-world/assets/triangle.obj world-triangle
           mkdir -p /tmp/ecos-studio-world-project/world/cells
-          printf 'format_version=1\\nworld_id=render-smoke\\ncell=origin|region|0,0,0|cells/origin.ecell\\ncell=east|region|1,0,0|cells/east.ecell\\n' > /tmp/ecos-studio-world-project/world/world.ecworld
-          printf 'format_version=1\\nscene_id=origin\\nnode=1|-|Origin Triangle|0,0,0|0,0,0|1,1,1|world-triangle\\n' > /tmp/ecos-studio-world-project/world/cells/origin.ecell
-          printf 'format_version=1\\nscene_id=east\\nnode=1|-|East Triangle|0,0,0|0,0,0|1,1,1|world-triangle\\n' > /tmp/ecos-studio-world-project/world/cells/east.ecell
+          cat > /tmp/ecos-studio-world-project/world/world.ecworld <<'EOF'
+          format_version=1
+          world_id=render-smoke
+          cell=origin|region|0,0,0|cells/origin.ecell
+          cell=east|region|1,0,0|cells/east.ecell
+          EOF
+          cat > /tmp/ecos-studio-world-project/world/cells/origin.ecell <<'EOF'
+          format_version=1
+          scene_id=origin
+          node=1|-|Origin Triangle|0,0,0|0,0,0|1,1,1|world-triangle
+          EOF
+          cat > /tmp/ecos-studio-world-project/world/cells/east.ecell <<'EOF'
+          format_version=1
+          scene_id=east
+          node=1|-|East Triangle|0,0,0|0,0,0|1,1,1|world-triangle
+          EOF
           build/ecos-studio/ecos-studio world-render /tmp/ecos-studio-world-project/world/world.ecworld /tmp/ecos-studio-world-project /tmp/ecos-studio-world.ppm 160 120
           test -s /tmp/ecos-studio-world.ppm
       - name: Validate sample world manifest
