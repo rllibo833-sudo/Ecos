@@ -70,12 +70,13 @@ using PFNGLVERTEXATTRIBPOINTERPROC = void (APIENTRY*)(GLuint, GLint, GLenum, GLb
 using PFNGLDRAWELEMENTSPROC = void (APIENTRY*)(GLenum, GLsizei, GLenum, const void*);
 using PFNGLDRAWELEMENTSINSTANCEDPROC = void (APIENTRY*)(GLenum, GLsizei, GLenum, const void*, GLsizei);
 using PFNGLVERTEXATTRIBDIVISORPROC = void (APIENTRY*)(GLuint, GLuint);
+using PFNGLVERTEXATTRIB4FPROC = void (APIENTRY*)(GLuint, GLfloat, GLfloat, GLfloat, GLfloat);
 struct GpuApi {
  PFNGLCREATESHADERPROC CreateShader{}; PFNGLSHADERSOURCEPROC ShaderSource{}; PFNGLCOMPILESHADERPROC CompileShader{}; PFNGLGETSHADERIVPROC GetShaderiv{}; PFNGLGETSHADERINFOLOGPROC GetShaderInfoLog{};
  PFNGLCREATEPROGRAMPROC CreateProgram{}; PFNGLDELETEPROGRAMPROC DeleteProgram{}; PFNGLATTACHSHADERPROC AttachShader{}; PFNGLLINKPROGRAMPROC LinkProgram{}; PFNGLGETPROGRAMIVPROC GetProgramiv{}; PFNGLGETPROGRAMINFOLOGPROC GetProgramInfoLog{}; PFNGLUSEPROGRAMPROC UseProgram{};
  PFNGLGETUNIFORMLOCATIONPROC GetUniformLocation{}; PFNGLGETATTRIBLOCATIONPROC GetAttribLocation{}; PFNGLUNIFORMMATRIX4FVPROC UniformMatrix4fv{}; PFNGLUNIFORM3FPROC Uniform3f{};
  PFNGLGENBUFFERSPROC GenBuffers{}; PFNGLBINDBUFFERPROC BindBuffer{}; PFNGLBUFFERDATAPROC BufferData{}; PFNGLDELETEBUFFERSPROC DeleteBuffers{};
- PFNGLENABLEVERTEXATTRIBARRAYPROC EnableVertexAttribArray{}; PFNGLDISABLEVERTEXATTRIBARRAYPROC DisableVertexAttribArray{}; PFNGLVERTEXATTRIBPOINTERPROC VertexAttribPointer{}; PFNGLDRAWELEMENTSPROC DrawElements{}; PFNGLDRAWELEMENTSINSTANCEDPROC DrawElementsInstanced{}; PFNGLVERTEXATTRIBDIVISORPROC VertexAttribDivisor{};
+ PFNGLENABLEVERTEXATTRIBARRAYPROC EnableVertexAttribArray{}; PFNGLDISABLEVERTEXATTRIBARRAYPROC DisableVertexAttribArray{}; PFNGLVERTEXATTRIBPOINTERPROC VertexAttribPointer{}; PFNGLDRAWELEMENTSPROC DrawElements{}; PFNGLDRAWELEMENTSINSTANCEDPROC DrawElementsInstanced{}; PFNGLVERTEXATTRIBDIVISORPROC VertexAttribDivisor{}; PFNGLVERTEXATTRIB4FPROC VertexAttrib4f{};
  GLuint program{}; GLint mvp{-1}, model{-1}, albedo{-1}, position{-1}, normal{-1}; GLint instance0{-1},instance1{-1},instance2{-1},instance3{-1}; GLuint instance_buffer{}; bool instancing_ready{false}; bool ready{false};
 };
 static GpuApi gpu;
@@ -105,6 +106,7 @@ static bool init_gpu_renderer(std::string& error) {
  LOAD_GL(DisableVertexAttribArray,PFNGLDISABLEVERTEXATTRIBARRAYPROC,"glDisableVertexAttribArray")
  LOAD_GL(VertexAttribPointer,PFNGLVERTEXATTRIBPOINTERPROC,"glVertexAttribPointer")
  LOAD_GL(DrawElements,PFNGLDRAWELEMENTSPROC,"glDrawElements")
+ LOAD_GL(VertexAttrib4f,PFNGLVERTEXATTRIB4FPROC,"glVertexAttrib4f")
  gpu.DrawElementsInstanced=reinterpret_cast<PFNGLDRAWELEMENTSINSTANCEDPROC>(glfwGetProcAddress("glDrawElementsInstanced"));
  gpu.VertexAttribDivisor=reinterpret_cast<PFNGLVERTEXATTRIBDIVISORPROC>(glfwGetProcAddress("glVertexAttribDivisor")); gpu.instancing_ready=gpu.DrawElementsInstanced&&gpu.VertexAttribDivisor;
 #undef LOAD_GL
@@ -456,7 +458,7 @@ static void draw_scene_instances(const std::vector<SceneInstance>& instances) {
             if(found==gpu_mesh_cache.end()) { draw_mesh(*batch.second.front()->mesh); continue; }
             std::vector<float> matrices; matrices.reserve(batch.second.size()*16);
             for(const auto* instance:batch.second)
-                for(int row=0;row<4;++row) for(int col=0;col<4;++col)
+                for(int col=0;col<4;++col) for(int row=0;row<4;++row)
                     matrices.push_back(instance->world.values[static_cast<std::size_t>(row*4+col)]);
             const auto& cached=found->second;
             gpu.BindBuffer(GL_ARRAY_BUFFER,cached.vertex_buffer);gpu.BindBuffer(GL_ELEMENT_ARRAY_BUFFER,cached.index_buffer);
@@ -560,6 +562,7 @@ static void draw_mesh(const Mesh& mesh) {
     glGetFloatv(GL_MODELVIEW_MATRIX,model);glGetFloatv(GL_PROJECTION_MATRIX,projection);
     for(int row=0;row<4;++row)for(int col=0;col<4;++col){mvp[col*4+row]=0;for(int k=0;k<4;++k)mvp[col*4+row]+=projection[k*4+row]*model[col*4+k];}
     gpu.UniformMatrix4fv(gpu.mvp,1,GL_FALSE,mvp);gpu.UniformMatrix4fv(gpu.model,1,GL_FALSE,model);gpu.Uniform3f(gpu.albedo,0.28F,0.58F,0.95F);
+    if(gpu.instance0>=0)gpu.VertexAttrib4f(static_cast<GLuint>(gpu.instance0),1,0,0,0);if(gpu.instance1>=0)gpu.VertexAttrib4f(static_cast<GLuint>(gpu.instance1),0,1,0,0);if(gpu.instance2>=0)gpu.VertexAttrib4f(static_cast<GLuint>(gpu.instance2),0,0,1,0);if(gpu.instance3>=0)gpu.VertexAttrib4f(static_cast<GLuint>(gpu.instance3),0,0,0,1);
     gpu.DrawElements(GL_TRIANGLES,cached.index_count,GL_UNSIGNED_INT,nullptr);
     gpu.DisableVertexAttribArray(static_cast<GLuint>(gpu.position));gpu.DisableVertexAttribArray(static_cast<GLuint>(gpu.normal));
     gpu.UseProgram(0);gpu.BindBuffer(GL_ARRAY_BUFFER,0);gpu.BindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
