@@ -94,6 +94,16 @@ int main(int argc, char** argv) {
                   << " triangles, SHA-256 " << asset.content_sha256 << ").\n";
         return 0;
     }
+    if (command == "material-import") {
+        if (argc != 5) { print_usage(); return 1; }
+        auto imported = ecos::studio::import_mtl_asset(std::filesystem::path(argv[2]),
+                                                       std::filesystem::path(argv[3]), argv[4]);
+        if (!imported) { std::cerr << "error: " << imported.error().message << '\\n'; return 2; }
+        const auto& asset = imported.value();
+        std::cout << "Imported material library '" << asset.id << "' to " << asset.relative_path.generic_string()
+                  << " (" << asset.material_count << " material(s), SHA-256 " << asset.content_sha256 << ").\\n";
+        return 0;
+    }
     if (command == "asset-validate") {
         if (argc != 3) { print_usage(); return 1; }
         const auto result = ecos::studio::validate_imported_assets(std::filesystem::path(argv[2]));
