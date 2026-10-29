@@ -7,6 +7,7 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl2.h"
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdint>
 #include <cstddef>
@@ -67,13 +68,15 @@ using PFNGLENABLEVERTEXATTRIBARRAYPROC = void (APIENTRY*)(GLuint);
 using PFNGLDISABLEVERTEXATTRIBARRAYPROC = void (APIENTRY*)(GLuint);
 using PFNGLVERTEXATTRIBPOINTERPROC = void (APIENTRY*)(GLuint, GLint, GLenum, GLboolean, GLsizei, const void*);
 using PFNGLDRAWELEMENTSPROC = void (APIENTRY*)(GLenum, GLsizei, GLenum, const void*);
+using PFNGLDRAWELEMENTSINSTANCEDPROC = void (APIENTRY*)(GLenum, GLsizei, GLenum, const void*, GLsizei);
+using PFNGLVERTEXATTRIBDIVISORPROC = void (APIENTRY*)(GLuint, GLuint);
 struct GpuApi {
  PFNGLCREATESHADERPROC CreateShader{}; PFNGLSHADERSOURCEPROC ShaderSource{}; PFNGLCOMPILESHADERPROC CompileShader{}; PFNGLGETSHADERIVPROC GetShaderiv{}; PFNGLGETSHADERINFOLOGPROC GetShaderInfoLog{};
  PFNGLCREATEPROGRAMPROC CreateProgram{}; PFNGLDELETEPROGRAMPROC DeleteProgram{}; PFNGLATTACHSHADERPROC AttachShader{}; PFNGLLINKPROGRAMPROC LinkProgram{}; PFNGLGETPROGRAMIVPROC GetProgramiv{}; PFNGLGETPROGRAMINFOLOGPROC GetProgramInfoLog{}; PFNGLUSEPROGRAMPROC UseProgram{};
  PFNGLGETUNIFORMLOCATIONPROC GetUniformLocation{}; PFNGLGETATTRIBLOCATIONPROC GetAttribLocation{}; PFNGLUNIFORMMATRIX4FVPROC UniformMatrix4fv{}; PFNGLUNIFORM3FPROC Uniform3f{};
  PFNGLGENBUFFERSPROC GenBuffers{}; PFNGLBINDBUFFERPROC BindBuffer{}; PFNGLBUFFERDATAPROC BufferData{}; PFNGLDELETEBUFFERSPROC DeleteBuffers{};
- PFNGLENABLEVERTEXATTRIBARRAYPROC EnableVertexAttribArray{}; PFNGLDISABLEVERTEXATTRIBARRAYPROC DisableVertexAttribArray{}; PFNGLVERTEXATTRIBPOINTERPROC VertexAttribPointer{}; PFNGLDRAWELEMENTSPROC DrawElements{};
- GLuint program{}; GLint mvp{-1}, model{-1}, albedo{-1}, position{-1}, normal{-1}; bool ready{false};
+ PFNGLENABLEVERTEXATTRIBARRAYPROC EnableVertexAttribArray{}; PFNGLDISABLEVERTEXATTRIBARRAYPROC DisableVertexAttribArray{}; PFNGLVERTEXATTRIBPOINTERPROC VertexAttribPointer{}; PFNGLDRAWELEMENTSPROC DrawElements{}; PFNGLDRAWELEMENTSINSTANCEDPROC DrawElementsInstanced{}; PFNGLVERTEXATTRIBDIVISORPROC VertexAttribDivisor{};
+ GLuint program{}; GLint mvp{-1}, model{-1}, albedo{-1}, position{-1}, normal{-1}; GLint instance0{-1},instance1{-1},instance2{-1},instance3{-1}; GLuint instance_buffer{}; bool instancing_ready{false}; bool ready{false};
 };
 static GpuApi gpu;
 static bool init_gpu_renderer(std::string& error) {
@@ -102,14 +105,16 @@ static bool init_gpu_renderer(std::string& error) {
  LOAD_GL(DisableVertexAttribArray,PFNGLDISABLEVERTEXATTRIBARRAYPROC,"glDisableVertexAttribArray")
  LOAD_GL(VertexAttribPointer,PFNGLVERTEXATTRIBPOINTERPROC,"glVertexAttribPointer")
  LOAD_GL(DrawElements,PFNGLDRAWELEMENTSPROC,"glDrawElements")
+ gpu.DrawElementsInstanced=reinterpret_cast<PFNGLDRAWELEMENTSINSTANCEDPROC>(glfwGetProcAddress("glDrawElementsInstanced"));
+ gpu.VertexAttribDivisor=reinterpret_cast<PFNGLVERTEXATTRIBDIVISORPROC>(glfwGetProcAddress("glVertexAttribDivisor")); gpu.instancing_ready=gpu.DrawElementsInstanced&&gpu.VertexAttribDivisor;
 #undef LOAD_GL
- const char* vs="#version 120\nattribute vec3 aPosition; attribute vec3 aNormal; uniform mat4 uMvp; uniform mat4 uModel; varying vec3 vNormal; void main(){ vNormal=mat3(uModel)*aNormal; gl_Position=uMvp*vec4(aPosition,1.0); }";
+ const char* vs="#version 120\nattribute vec3 aPosition; attribute vec3 aNormal; attribute vec4 aInstance0; attribute vec4 aInstance1; attribute vec4 aInstance2; attribute vec4 aInstance3; uniform mat4 uMvp; uniform mat4 uModel; varying vec3 vNormal; void main(){ mat4 inst=mat4(aInstance0,aInstance1,aInstance2,aInstance3); vNormal=mat3(inst)*aNormal; gl_Position=uMvp*inst*vec4(aPosition,1.0); }";
  const char* fs="#version 120\nvarying vec3 vNormal; uniform vec3 uAlbedo; void main(){ vec3 n=normalize(vNormal); vec3 l=normalize(vec3(-0.4,0.85,0.3)); float diffuse=max(dot(n,l),0.0); float light=0.18+0.82*diffuse; gl_FragColor=vec4(uAlbedo*light,1.0); }";
  auto compile=[&](GLenum type,const char* code)->GLuint { GLuint sh=gpu.CreateShader(type);gpu.ShaderSource(sh,1,&code,nullptr);gpu.CompileShader(sh);GLint ok=0;gpu.GetShaderiv(sh,GL_COMPILE_STATUS,&ok);if(!ok){GLint n=0;gpu.GetShaderiv(sh,GL_INFO_LOG_LENGTH,&n);std::string log(static_cast<std::size_t>(std::max(n,1)), '\0');gpu.GetShaderInfoLog(sh,n,nullptr,log.data());error="Shader compile failed: "+log;return 0;}return sh; };
  GLuint v=compile(GL_VERTEX_SHADER,vs);if(!v)return false;GLuint f=compile(GL_FRAGMENT_SHADER,fs);if(!f)return false;
  gpu.program=gpu.CreateProgram();gpu.AttachShader(gpu.program,v);gpu.AttachShader(gpu.program,f);gpu.LinkProgram(gpu.program);GLint linked=0;gpu.GetProgramiv(gpu.program,GL_LINK_STATUS,&linked);
  if(!linked){GLint n=0;gpu.GetProgramiv(gpu.program,GL_INFO_LOG_LENGTH,&n);std::string log(static_cast<std::size_t>(std::max(n,1)), '\0');gpu.GetProgramInfoLog(gpu.program,n,nullptr,log.data());error="GPU renderer link failed: "+log;return false;}
- gpu.mvp=gpu.GetUniformLocation(gpu.program,"uMvp");gpu.model=gpu.GetUniformLocation(gpu.program,"uModel");gpu.albedo=gpu.GetUniformLocation(gpu.program,"uAlbedo");gpu.position=gpu.GetAttribLocation(gpu.program,"aPosition");gpu.normal=gpu.GetAttribLocation(gpu.program,"aNormal");if(gpu.position<0||gpu.normal<0){error="GPU shader attributes were optimized out or not linked";return false;}gpu.ready=true;return true;
+ gpu.mvp=gpu.GetUniformLocation(gpu.program,"uMvp");gpu.model=gpu.GetUniformLocation(gpu.program,"uModel");gpu.albedo=gpu.GetUniformLocation(gpu.program,"uAlbedo");gpu.position=gpu.GetAttribLocation(gpu.program,"aPosition");gpu.normal=gpu.GetAttribLocation(gpu.program,"aNormal");gpu.instance0=gpu.GetAttribLocation(gpu.program,"aInstance0");gpu.instance1=gpu.GetAttribLocation(gpu.program,"aInstance1");gpu.instance2=gpu.GetAttribLocation(gpu.program,"aInstance2");gpu.instance3=gpu.GetAttribLocation(gpu.program,"aInstance3");if(gpu.position<0||gpu.normal<0){error="GPU shader attributes were optimized out or not linked";return false;}gpu.ready=true;return true;
 }
 struct Mesh;
 struct GpuVertex { float p[3]; float n[3]; };
@@ -395,17 +400,94 @@ static void draw_editor_ui(EditorState& state) {
         ImGui::End();
     }
 }
+struct FrustumPlane { float x{}, y{}, z{}, d{}; };
+static bool sphere_in_frustum(const std::array<FrustumPlane,6>& planes, float x,float y,float z,float radius) {
+    for (const auto& p:planes) if (p.x*x+p.y*y+p.z*z+p.d < -radius) return false;
+    return true;
+}
 static void draw_scene_instances(const std::vector<SceneInstance>& instances) {
-    for (const auto& instance : instances) {
-        float matrix[16]{};
-        for (int row=0; row<4; ++row)
-            for (int col=0; col<4; ++col)
-                matrix[col*4+row] = instance.world.values[static_cast<std::size_t>(row*4+col)];
-        glPushMatrix();
-        glMultMatrixf(matrix);
-        if (instance.mesh) draw_mesh(*instance.mesh);
-        glPopMatrix();
+    if (!gpu.ready) return;
+    GLfloat view[16]{},projection[16]{},view_projection[16]{};
+    glGetFloatv(GL_MODELVIEW_MATRIX,view); glGetFloatv(GL_PROJECTION_MATRIX,projection);
+    for(int row=0;row<4;++row) for(int col=0;col<4;++col) {
+        view_projection[col*4+row]=0;
+        for(int k=0;k<4;++k) view_projection[col*4+row]+=projection[k*4+row]*view[col*4+k];
     }
+    std::array<FrustumPlane,6> planes{};
+    const auto plane=[&](int index,int sign) {
+        FrustumPlane p;
+        p.x=projection[0+index]*sign; // overwritten below from clip matrix
+        return p;
+    };
+    (void)plane;
+    // Extract planes from the combined clip matrix (column-major).
+    const auto row_value=[&](int r,int c)->float { return view_projection[c*4+r]; };
+    for(int axis=0;axis<3;++axis) for(int side=0;side<2;++side) {
+        const int n=axis*2+side, sign=side==0?1:-1;
+        planes[n].x=row_value(3,0)+sign*row_value(axis,0);
+        planes[n].y=row_value(3,1)+sign*row_value(axis,1);
+        planes[n].z=row_value(3,2)+sign*row_value(axis,2);
+        planes[n].d=row_value(3,3)+sign*row_value(axis,3);
+        const float len=std::sqrt(planes[n].x*planes[n].x+planes[n].y*planes[n].y+planes[n].z*planes[n].z);
+        if(len>1e-8F){planes[n].x/=len;planes[n].y/=len;planes[n].z/=len;planes[n].d/=len;}
+    }
+    std::unordered_map<const Mesh*,std::vector<const SceneInstance*>> batches;
+    for(const auto& instance:instances) {
+        if(!instance.mesh||instance.mesh->triangles.empty()) continue;
+        float cx=instance.world.values[3],cy=instance.world.values[7],cz=instance.world.values[11];
+        float scale=0;
+        for(int col=0;col<3;++col) {
+            const float x=instance.world.values[col],y=instance.world.values[4+col],z=instance.world.values[8+col];
+            scale=std::max(scale,std::sqrt(x*x+y*y+z*z));
+        }
+        float radius=0;
+        for(const auto& v:instance.mesh->vertices) radius=std::max(radius,std::sqrt(v.x*v.x+v.y*v.y+v.z*v.z));
+        if(!sphere_in_frustum(planes,cx,cy,cz,radius*scale)) continue;
+        batches[instance.mesh.get()].push_back(&instance);
+    }
+    gpu.UseProgram(gpu.program);
+    gpu.UniformMatrix4fv(gpu.mvp,1,GL_FALSE,view_projection);
+    gpu.Uniform3f(gpu.albedo,0.28F,0.58F,0.95F);
+    if(gpu.instancing_ready) {
+        if(!gpu.instance_buffer) gpu.GenBuffers(1,&gpu.instance_buffer);
+        for(const auto& batch:batches) {
+            if(batch.second.empty()) continue;
+            auto found=gpu_mesh_cache.find(batch.first);
+            if(found==gpu_mesh_cache.end()) { draw_mesh(*batch.second.front()->mesh); continue; }
+            std::vector<float> matrices; matrices.reserve(batch.second.size()*16);
+            for(const auto* instance:batch.second)
+                for(int row=0;row<4;++row) for(int col=0;col<4;++col)
+                    matrices.push_back(instance->world.values[static_cast<std::size_t>(row*4+col)]);
+            const auto& cached=found->second;
+            gpu.BindBuffer(GL_ARRAY_BUFFER,cached.vertex_buffer);gpu.BindBuffer(GL_ELEMENT_ARRAY_BUFFER,cached.index_buffer);
+            gpu.EnableVertexAttribArray(static_cast<GLuint>(gpu.position));gpu.EnableVertexAttribArray(static_cast<GLuint>(gpu.normal));
+            gpu.VertexAttribPointer(static_cast<GLuint>(gpu.position),3,GL_FLOAT,GL_FALSE,sizeof(GpuVertex),reinterpret_cast<const void*>(offsetof(GpuVertex,p)));
+            gpu.VertexAttribPointer(static_cast<GLuint>(gpu.normal),3,GL_FLOAT,GL_FALSE,sizeof(GpuVertex),reinterpret_cast<const void*>(offsetof(GpuVertex,n)));
+            gpu.BindBuffer(GL_ARRAY_BUFFER,gpu.instance_buffer);
+            gpu.BufferData(GL_ARRAY_BUFFER,static_cast<GLsizeiptr>(matrices.size()*sizeof(float)),matrices.data(),GL_DYNAMIC_DRAW);
+            const GLint attrs[4]{gpu.instance0,gpu.instance1,gpu.instance2,gpu.instance3};
+            for(int c=0;c<4;++c) if(attrs[c]>=0) {
+                gpu.EnableVertexAttribArray(static_cast<GLuint>(attrs[c]));
+                gpu.VertexAttribPointer(static_cast<GLuint>(attrs[c]),4,GL_FLOAT,GL_FALSE,16*sizeof(float),reinterpret_cast<const void*>(static_cast<std::uintptr_t>(c*4*sizeof(float))));
+                gpu.VertexAttribDivisor(static_cast<GLuint>(attrs[c]),1);
+            }
+            gpu.DrawElementsInstanced(GL_TRIANGLES,cached.index_count,GL_UNSIGNED_INT,nullptr,static_cast<GLsizei>(batch.second.size()));
+            for(int c=0;c<4;++c) if(attrs[c]>=0) {gpu.VertexAttribDivisor(static_cast<GLuint>(attrs[c]),0);gpu.DisableVertexAttribArray(static_cast<GLuint>(attrs[c]));}
+            gpu.DisableVertexAttribArray(static_cast<GLuint>(gpu.position));gpu.DisableVertexAttribArray(static_cast<GLuint>(gpu.normal));
+        }
+    } else {
+        for(const auto& batch:batches) for(const auto* instance:batch.second) {
+            GLfloat model[16]{},mvp[16]{};
+            for(int row=0;row<4;++row)for(int col=0;col<4;++col) {
+                model[col*4+row]=instance->world.values[static_cast<std::size_t>(row*4+col)];
+                mvp[col*4+row]=0;
+                for(int k=0;k<4;++k)mvp[col*4+row]+=view_projection[k*4+row]*model[col*4+k];
+            }
+            gpu.UniformMatrix4fv(gpu.mvp,1,GL_FALSE,mvp);gpu.UniformMatrix4fv(gpu.model,1,GL_FALSE,model);
+            draw_mesh(*instance->mesh);
+        }
+    }
+    gpu.UseProgram(0);gpu.BindBuffer(GL_ARRAY_BUFFER,0);gpu.BindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
 }
 static void scroll_callback(GLFWwindow* window, double, double y) {
     auto* s=static_cast<EditorState*>(glfwGetWindowUserPointer(window));
