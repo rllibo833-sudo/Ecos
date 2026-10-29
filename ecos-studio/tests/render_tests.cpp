@@ -160,6 +160,16 @@ void test_renders_only_resident_streamed_world_cells() {
                 "registers shared mesh used by streamed cells");
             auto combined = render_world_content_runtime_to_ppm(*runtime, registry, root, 96, 64);
             check(static_cast<bool>(combined), "renders all resident world cells into one frame");
+            auto camera_view = look_at({5.0F, 0.0F, 20.0F}, {5.0F, 0.0F, 0.0F}, {0.0F, 1.0F, 0.0F});
+            auto camera_projection = perspective(1.04719755F, 1.5F, 0.1F, 100.0F);
+            check(camera_view && camera_projection, "builds camera matrices for streamed world");
+            if (camera_view && camera_projection) {
+                auto camera_frame = render_world_content_runtime_to_ppm(*runtime, registry, root,
+                    multiply(camera_projection.value(), camera_view.value()), 96, 64);
+                check(static_cast<bool>(camera_frame), "renders resident streamed world through active camera");
+                if (camera_frame) check(camera_frame.value().starts_with("P6\\n96 64\\n255\\n"),
+                    "camera-aware streamed renderer emits a valid frame");
+            }
             if (combined) check(combined.value().starts_with("P6\n96 64\n255\n"),
                 "streamed world renderer returns a PPM frame");
 
