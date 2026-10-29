@@ -97,6 +97,8 @@ void test_scene_graph_resolves_mesh_assets_and_world_transforms() {
     AssetRegistry registry;
     check(static_cast<bool>(registry.register_asset(AssetRecord{"triangle", "mesh.obj", "assets/triangle.obj", {}})),
         "registers mesh asset for scene renderer");
+    check(static_cast<bool>(registry.register_asset(AssetRecord{"red-material", "material.mtl", "assets/red.mtl", {}})),
+        "registers MTL material asset for scene renderer");
     SceneGraph scene;
     auto left = scene.create_node("Left");
     auto right = scene.create_node("Right", left.value());
