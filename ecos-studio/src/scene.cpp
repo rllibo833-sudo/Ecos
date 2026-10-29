@@ -127,7 +127,7 @@ Result<void> SceneGraph::set_mesh_asset(NodeId node_id, std::string asset_id) {
 }
 
 Result<void> SceneGraph::set_material_asset(NodeId node_id, std::string asset_id) {
-    if (!asset_id.empty() && asset_id.find_first_of("|\\r\\n") != std::string::npos)
+    if (!asset_id.empty() && asset_id.find_first_of("|\r\n") != std::string::npos)
         return Result<void>::failure({ErrorCode::invalid_argument, "Material asset ID cannot contain pipes or newlines"});
     auto* node = find(node_id);
     if (!node) return Result<void>::failure({ErrorCode::not_found, "Scene node does not exist"});
