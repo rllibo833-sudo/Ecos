@@ -14,6 +14,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Validate ECOS Studio editor JavaScript
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path("ecos-studio/editor/index.html").read_text(encoding="utf-8")
+          scripts = re.findall(r"<script>(.*?)</script>", html, re.S)
+          if len(scripts) != 1:
+              raise SystemExit(f"Expected one inline editor script, found {len(scripts)}")
+          Path("/tmp/ecos-studio-editor.js").write_text(scripts[0], encoding="utf-8")
+          PY
+          node --check /tmp/ecos-studio-editor.js
       - name: Configure
         run: cmake -S ecos-studio -B build/ecos-studio -DCMAKE_BUILD_TYPE=Release
       - name: Build
