@@ -3,6 +3,9 @@
 #include "ecos_studio/platform.hpp"
 #include "ecos_studio/scene.hpp"
 #include "ecos_studio/scene_document.hpp"
+#include "ecos_studio/world_content_runtime.hpp"
+#include "ecos_studio/world_manifest.hpp"
+#include "ecos_studio/job_system.hpp"
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl2.h"
@@ -133,6 +136,12 @@ struct Vertex { float x{}, y{}, z{}; };
 struct Mesh { std::vector<Vertex> vertices; std::vector<std::uint32_t> triangles; };
 struct SceneInstance { std::shared_ptr<Mesh> mesh; ecos::studio::Matrix4 world{ecos::studio::Matrix4::identity()}; std::string name; std::string mesh_asset_id; ecos::studio::NodeId node_id{}; };
 struct EditorState {
+    std::filesystem::path world_manifest_path;
+    std::unique_ptr<ecos::studio::JobSystem> world_jobs;
+    std::unique_ptr<ecos::studio::WorldContentRuntime> world_runtime;
+    std::unordered_map<std::string, std::vector<SceneInstance>> streamed_instances;
+    std::unordered_map<std::string, int> asset_lod_tier;
+    float target_x{}, target_z{};
     Mesh mesh;
     std::vector<SceneInstance> scene_instances;
     std::vector<std::string> available_mesh_assets;
@@ -507,6 +516,10 @@ static void cursor_callback(GLFWwindow* w,double x,double y) {
 static void key_callback(GLFWwindow* w,int key,int,int action,int) {
     if(action!=GLFW_PRESS)return;
     auto* s=static_cast<EditorState*>(glfwGetWindowUserPointer(w));
+    if(key==GLFW_KEY_W) s->target_z-=100.0F;
+    if(key==GLFW_KEY_S) s->target_z+=100.0F;
+    if(key==GLFW_KEY_A) s->target_x-=100.0F;
+    if(key==GLFW_KEY_D) s->target_x+=100.0F;
     if(key==GLFW_KEY_ESCAPE)glfwSetWindowShouldClose(w,GLFW_TRUE);
     if(key==GLFW_KEY_R){s->yaw=25;s->pitch=18;s->distance=5;}
 }
@@ -581,10 +594,12 @@ int main(int argc,char** argv) {
         const std::string arg=argv[i];
         if (arg=="--project" && i+1<argc) state.project_root=argv[++i];
         else if (arg=="--scene" && i+1<argc) state.scene_path=argv[++i];
+        else if (arg=="--world-manifest" && i+1<argc) state.world_manifest_path=argv[++i];
         else if (arg=="--help" || arg=="-h") {
             std::cout << "ECOS Studio native editor\n"
                       << "  ecos-studio-editor [mesh.obj]\n"
-                      << "  ecos-studio-editor --project <project-dir> --scene <scene.ecscene>\n";
+                      << "  ecos-studio-editor --project <project-dir> --scene <scene.ecscene>\n"
+                      << "  ecos-studio-editor --project <project-dir> --world-manifest <world.ecworld>\n";
             return 0;
         } else if (!arg.empty() && arg[0]!='-') mesh_path=arg;
         else { std::cerr << "Unknown or incomplete argument: " << arg << '\n'; return 2; }
@@ -608,6 +623,16 @@ int main(int argc,char** argv) {
         std::string error;
         if(!load_obj(mesh_path,state.mesh,error)){std::cerr<<error<<'\n';return 2;}
         state.title+=" — "+mesh_path;
+    }
+    if (!state.world_manifest_path.empty()) {
+        if (state.project_root.empty()) { std::cerr << "--world-manifest requires --project\n"; return 2; }
+        auto manifest = ecos::studio::load_world_manifest(state.world_manifest_path);
+        if (!manifest) { std::cerr << "World manifest load failed: " << manifest.error().message << '\n'; return 2; }
+        state.world_jobs = std::make_unique<ecos::studio::JobSystem>(2);
+        auto runtime = ecos::studio::WorldContentRuntime::create(std::move(manifest.value()), *state.world_jobs, 64);
+        if (!runtime) { std::cerr << "World runtime creation failed: " << runtime.error().message << '\n'; return 2; }
+        state.world_runtime = std::move(runtime.value());
+        state.title += " — streamed world";
     }
     if(!glfwInit()){std::cerr<<"GLFW initialization failed\n";return 2;}
 #ifdef __APPLE__
@@ -633,8 +658,53 @@ int main(int argc,char** argv) {
         glViewport(0,0,width,height);glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
         glMatrixMode(GL_PROJECTION);glLoadIdentity();const double aspect=static_cast<double>(width)/height;const double nearp=0.05,farp=500.0,top=nearp*std::tan(60.0*3.141592653589793/360.0);
         glFrustum(-top*aspect,top*aspect,-top,top,nearp,farp);
-        glMatrixMode(GL_MODELVIEW);glLoadIdentity();glTranslatef(0,0,-state.distance);glRotatef(state.pitch,1,0,0);glRotatef(state.yaw,0,1,0);
-        draw_grid();if(state.scene_loaded)draw_scene_instances(state.scene_instances);else if(!state.mesh.triangles.empty())draw_mesh(state.mesh);
+        glMatrixMode(GL_MODELVIEW);glLoadIdentity();glTranslatef(-state.target_x,0,-state.distance-state.target_z);glRotatef(state.pitch,1,0,0);glRotatef(state.yaw,0,1,0);
+        if (state.world_runtime) {
+            const auto cell_x = static_cast<std::int64_t>(std::floor(state.target_x / 1000.0F));
+            const auto cell_z = static_cast<std::int64_t>(std::floor(state.target_z / 1000.0F));
+            auto streamed = state.world_runtime->update({cell_x, 0, cell_z}, 0, 1);
+            if (!streamed) state.status = "World streaming: " + streamed.error().message;
+            for (const auto& cell : state.world_runtime->manifest().cells) {
+                const auto* status = state.world_runtime->world().find(cell.id);
+                if (!status || status->state != ecos::studio::CellState::loaded) {
+                    state.streamed_instances.erase(cell.id);
+                    continue;
+                }
+                if (state.streamed_instances.find(cell.id) == state.streamed_instances.end()) {
+                    auto graph = state.world_runtime->scene_snapshot(cell.id);
+                    std::vector<SceneInstance> cell_instances;
+                    std::vector<std::string> assets;
+                    std::string load_error;
+                    if (graph && load_ecos_scene(state.project_root, graph.value(), cell_instances, assets, load_error)) {
+                        for (auto& instance : cell_instances) {
+                            instance.world.values[3] += static_cast<float>(cell.coord.x) * 1000.0F;
+                            instance.world.values[7] += static_cast<float>(cell.coord.y) * 1000.0F;
+                            instance.world.values[11] += static_cast<float>(cell.coord.z) * 1000.0F;
+                            state.asset_lod_tier[instance.mesh_asset_id] = 0;
+                        }
+                        state.streamed_instances.emplace(cell.id, std::move(cell_instances));
+                    } else if (!load_error.empty()) state.status = load_error;
+                }
+            }
+            draw_grid();
+            for (const auto& cell : state.streamed_instances) {
+                std::vector<SceneInstance> lod_visible;
+                lod_visible.reserve(cell.second.size());
+                for (const auto& instance : cell.second) {
+                    const float dx=instance.world.values[3]-state.target_x;
+                    const float dy=instance.world.values[7];
+                    const float dz=instance.world.values[11]-state.target_z;
+                    const float distance=std::sqrt(dx*dx+dy*dy+dz*dz);
+                    state.asset_lod_tier[instance.mesh_asset_id] = distance > 500.0F ? 1 : 0;
+                    if (state.asset_lod_tier[instance.mesh_asset_id] == 0) lod_visible.push_back(instance);
+                }
+                draw_scene_instances(lod_visible);
+            }
+        } else {
+            draw_grid();
+            if(state.scene_loaded)draw_scene_instances(state.scene_instances);
+            else if(!state.mesh.triangles.empty())draw_mesh(state.mesh);
+        }
         ImGui_ImplOpenGL2_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
