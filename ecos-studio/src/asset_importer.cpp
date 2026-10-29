@@ -2,6 +2,7 @@
 
 #include "ecos_studio/content_hash.hpp"
 #include "ecos_studio/material.hpp"
+#include "ecos_studio/asset_registry.hpp"
 #include "ecos_studio/platform.hpp"
 #include "ecos_studio/project.hpp"
 
@@ -276,6 +277,53 @@ Result<ImportedMaterialAsset> import_mtl_asset(const fs::path& project_root,
     }
     return Result<ImportedMaterialAsset>::success(
         ImportedMaterialAsset{asset_id, relative_path, digest, materials.value().size()});
+}
+
+Result<AssetRegistry> load_imported_asset_registry(const fs::path& project_root) {
+    const auto validation = validate_imported_assets(project_root);
+    if (!validation.ok) {
+        const std::string message = validation.errors.empty()
+            ? "Imported asset validation failed" : validation.errors.front();
+        return Result<AssetRegistry>::failure({ErrorCode::invalid_state, message});
+    }
+    std::error_code ec;
+    const auto canonical_root = fs::canonical(project_root, ec);
+    if (ec) return Result<AssetRegistry>::failure({ErrorCode::io_error,
+        "Cannot resolve project root: " + ec.message()});
+    const auto import_dir = canonical_root / "assets" / "imported";
+    AssetRegistry registry;
+    if (!fs::exists(import_dir, ec)) {
+        if (ec) return Result<AssetRegistry>::failure({ErrorCode::io_error,
+            "Cannot inspect imported asset directory: " + ec.message()});
+        return Result<AssetRegistry>::success(std::move(registry));
+    }
+    fs::directory_iterator iterator(import_dir, ec), end;
+    if (ec) return Result<AssetRegistry>::failure({ErrorCode::io_error,
+        "Cannot scan imported asset directory: " + ec.message()});
+    for (; iterator != end; iterator.increment(ec)) {
+        if (ec) return Result<AssetRegistry>::failure({ErrorCode::io_error,
+            "Failed while scanning imported asset directory: " + ec.message()});
+        if (iterator->path().extension() != ".ecasset") continue;
+        auto contents = platform::read_text_file(iterator->path());
+        if (!contents) return Result<AssetRegistry>::failure(contents.error());
+        std::map<std::string, std::string> fields;
+        std::string error;
+        if (!parse_metadata(contents.value(), fields, error))
+            return Result<AssetRegistry>::failure({ErrorCode::invalid_argument,
+                iterator->path().filename().string() + ": " + error});
+        std::string id, type, source;
+        if (!read_required(fields, "id", id, error) ||
+            !read_required(fields, "type", type, error) ||
+            !read_required(fields, "source", source, error)) {
+            return Result<AssetRegistry>::failure({ErrorCode::invalid_argument,
+                iterator->path().filename().string() + ": " + error});
+        }
+        auto registered = registry.register_asset(AssetRecord{id, type, source, {}});
+        if (!registered) return Result<AssetRegistry>::failure(registered.error());
+    }
+    auto dependencies = registry.validate_dependencies();
+    if (!dependencies) return Result<AssetRegistry>::failure(dependencies.error());
+    return Result<AssetRegistry>::success(std::move(registry));
 }
 
 ValidationResult validate_imported_assets(const fs::path& project_root) {

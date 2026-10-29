@@ -1,6 +1,8 @@
 #include "ecos_studio/asset_importer.hpp"
 #include "ecos_studio/content_hash.hpp"
 #include "ecos_studio/project.hpp"
+#include "ecos_studio/render.hpp"
+#include "ecos_studio/scene.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -70,6 +72,24 @@ int main() {
         check(read(project_root / "assets/imported/demo.materials.ecasset").find("type=material.mtl") != std::string::npos,
               "writes typed material asset metadata");
         check(ecos::studio::validate_imported_assets(project_root).ok, "validates mesh and material assets together");
+        auto registry = ecos::studio::load_imported_asset_registry(project_root);
+        check(static_cast<bool>(registry), "builds asset registry from validated project sidecars");
+        if (registry) {
+            check(registry.value().size() == 2, "registry includes both imported mesh and material");
+            check(registry.value().find("demo.triangle") != nullptr, "registry resolves imported mesh ID");
+            check(registry.value().find("demo.materials") != nullptr, "registry resolves imported material ID");
+            ecos::studio::SceneGraph scene;
+            auto node = scene.create_node("ImportedSurface");
+            check(static_cast<bool>(node), "creates scene node for imported assets");
+            if (node) {
+                check(static_cast<bool>(scene.set_mesh_asset(node.value(), "demo.triangle")), "assigns imported mesh");
+                check(static_cast<bool>(scene.set_material_asset(node.value(), "demo.materials")), "assigns imported material");
+                auto frame = ecos::studio::render_scene_graph_to_ppm(scene, registry.value(), project_root, 48, 48);
+                check(static_cast<bool>(frame), "renders imported mesh with imported material through scene pipeline");
+                if (frame) check(frame.value().starts_with("P6\\n48 48\\n255\\n"),
+                                 "imported asset pipeline produces a render frame");
+            }
+        }
     }
     auto duplicate_materials = ecos::studio::import_mtl_asset(project_root, mtl_path, "demo.materials");
     check(!duplicate_materials, "refuses to overwrite an existing MTL import");
