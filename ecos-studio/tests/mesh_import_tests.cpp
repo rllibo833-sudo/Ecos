@@ -99,6 +99,22 @@ v 1 0 0
 v 0 1 0
 f 1///1 2 3
 )OBJ"), "rejects malformed face corner with extra slash");
+    check(!import_obj_mesh(R"OBJ(v 0 0 0
+v 1 0 0
+v 0 1 0
+f 1/ 2/ 3/
+)OBJ"), "rejects empty texture-coordinate fields");
+    check(!import_obj_mesh(R"OBJ(v 0 0 0
+v 1 0 0
+v 0 1 0
+f 1// 2// 3//
+)OBJ"), "rejects empty normal fields");
+    check(!import_obj_mesh(R"OBJ(v 0 0 0
+v 1 0 0
+v 0 1 0
+vt 0 0
+f 1/1/ 2/1/ 3/1/
+)OBJ"), "rejects missing normals after texture coordinates");
 }
 }
 int main() {

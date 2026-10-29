@@ -44,14 +44,16 @@ bool parse_corner(const std::string& token, std::size_t positions, std::size_t t
     if (!parse_integer(p, raw) || !resolve_index(raw, positions, corner.position)) return false;
     if (first == std::string::npos) return true;
     const auto t = token.substr(first + 1, second == std::string::npos ? std::string::npos : second-first-1);
+    // OBJ face corners allow v, v/vt, v//vn, and v/vt/vn. A slash
+    // that introduces a missing final field is malformed.
+    if (second == std::string::npos && t.empty()) return false;
     if (!t.empty()) {
         if (!parse_integer(t, raw) || !resolve_index(raw, texcoords, corner.texcoord)) return false;
     }
     if (second != std::string::npos) {
         const auto n = token.substr(second + 1);
-        if (!n.empty()) {
-            if (!parse_integer(n, raw) || !resolve_index(raw, normals, corner.normal)) return false;
-        }
+        if (n.empty()) return false;
+        if (!parse_integer(n, raw) || !resolve_index(raw, normals, corner.normal)) return false;
     }
     return true;
 }
