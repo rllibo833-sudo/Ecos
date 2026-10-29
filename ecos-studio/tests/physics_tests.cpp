@@ -68,6 +68,35 @@ void test_ecs_collision_detection(){
  entities.get<ColliderComponent>(c)->radius=-1;
  check(!CollisionSystem::detect(entities),"rejects invalid collider data");
 }
+void test_ecs_raycast(){
+ using namespace ecos::studio;
+ EntityRegistry entities;
+ const auto far=entities.create(), near_entity=entities.create(), trigger=entities.create();
+ Transform tf; tf.position={6,0,0};
+ Transform tn; tn.position={3,0,0};
+ Transform tt; tt.position={1,0,0};
+ entities.emplace<SceneNodeComponent>(far,SceneNodeComponent{"far","",tf,{},{}});
+ entities.emplace<SceneNodeComponent>(near_entity,SceneNodeComponent{"near","",tn,{},{}});
+ entities.emplace<SceneNodeComponent>(trigger,SceneNodeComponent{"trigger","",tt,{},{}});
+ ColliderComponent sphere; sphere.shape=ColliderShape::sphere; sphere.radius=0.5F;
+ entities.emplace<ColliderComponent>(far,sphere);
+ entities.emplace<ColliderComponent>(near_entity,sphere);
+ sphere.trigger=true; entities.emplace<ColliderComponent>(trigger,sphere);
+ auto hit=PhysicsQuerySystem::raycast(entities,Ray{{0,0,0},{2,0,0}},10.0F);
+ check(hit&&hit.value()&&hit.value()->entity==trigger&&near(hit.value()->hit.distance,0.5F),
+       "ECS raycast returns nearest hit with world distance for non-unit direction");
+ hit=PhysicsQuerySystem::raycast(entities,Ray{{0,0,0},{1,0,0}},10.0F,0xFFFFFFFFU,false);
+ check(hit&&hit.value()&&hit.value()->entity==near_entity,
+       "raycast can exclude trigger colliders");
+ entities.get<ColliderComponent>(near_entity)->layer=2U;
+ hit=PhysicsQuerySystem::raycast(entities,Ray{{0,0,0},{1,0,0}},10.0F,1U,false);
+ check(hit&&hit.value()&&hit.value()->entity==far,
+       "raycast applies collision layer mask and selects next eligible hit");
+ hit=PhysicsQuerySystem::raycast(entities,Ray{{0,5,0},{1,0,0}},10.0F,1U,false);
+ check(hit&&!hit.value(),"raycast returns successful empty result on miss");
+ check(!PhysicsQuerySystem::raycast(entities,Ray{{0,0,0},{0,0,0}},10.0F),
+       "raycast rejects zero direction");
+}
 void test_collision_event_lifecycle(){
  using namespace ecos::studio;
  EntityRegistry entities;
@@ -130,4 +159,4 @@ void test_ecs_physics_integration(){
  check(!PhysicsSystem::step(entities,-0.1),"rejects negative delta time");
 }
 }
-int main(){test_overlaps();test_ray_aabb();test_ray_sphere();test_ecs_collision_detection();test_collision_event_lifecycle();test_ecs_physics_integration();if(failures){std::cerr<<failures<<" physics test(s) failed.\n";return 1;}std::cout<<"ECOS Studio collision and ECS physics tests passed.\n";return 0;}
+int main(){test_overlaps();test_ray_aabb();test_ray_sphere();test_ecs_collision_detection();test_ecs_raycast();test_collision_event_lifecycle();test_ecs_physics_integration();if(failures){std::cerr<<failures<<" physics test(s) failed.\n";return 1;}std::cout<<"ECOS Studio collision and ECS physics tests passed.\n";return 0;}

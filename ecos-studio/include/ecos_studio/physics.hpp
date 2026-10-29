@@ -6,6 +6,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <optional>
 #include <vector>
 
 namespace ecos::studio {
@@ -53,6 +54,12 @@ struct ColliderComponent {
     bool trigger{false};
 };
 
+struct ColliderRayHit {
+    Entity entity{};
+    RayHit hit{};
+    bool trigger{false};
+};
+
 struct CollisionPair {
     Entity first{};
     Entity second{};
@@ -78,6 +85,16 @@ public:
 
 private:
     std::vector<CollisionPair> active_pairs_;
+};
+
+// World-space ray query against ECS colliders. A missing hit is a successful empty result.
+class PhysicsQuerySystem {
+public:
+    [[nodiscard]] static Result<std::optional<ColliderRayHit>> raycast(
+        EntityRegistry& entities, const Ray& ray,
+        float max_distance = 3.402823466e+38F,
+        std::uint32_t layer_mask = 0xFFFFFFFFU,
+        bool include_triggers = true);
 };
 
 class CollisionSystem {

@@ -157,6 +157,54 @@ bool contact(const WorldCollider& a, const WorldCollider& b, Vec3& normal, float
 }
 }
 
+Result<std::optional<ColliderRayHit>> PhysicsQuerySystem::raycast(
+    EntityRegistry& entities, const Ray& ray, float max_distance,
+    std::uint32_t layer_mask, bool include_triggers) {
+    if (!valid_ray(ray, max_distance)) {
+        return Result<std::optional<ColliderRayHit>>::failure(
+            {ErrorCode::invalid_argument, "Ray query has invalid origin, direction, or distance"});
+    }
+    auto transformed = WorldTransformSystem::update(entities);
+    if (!transformed) return Result<std::optional<ColliderRayHit>>::failure(transformed.error());
+
+    std::optional<ColliderRayHit> nearest;
+    for (const auto entity : entities.entities_with<ColliderComponent>()) {
+        const auto* collider = entities.get<ColliderComponent>(entity);
+        const auto* world = entities.get<WorldTransformComponent>(entity);
+        if (!collider || !world || !valid_collider(*collider)) {
+            return Result<std::optional<ColliderRayHit>>::failure(
+                {ErrorCode::invalid_argument, "Ray query found invalid collider data or missing world transform"});
+        }
+        if ((collider->layer & layer_mask) == 0U || (collider->trigger && !include_triggers)) continue;
+
+        const auto& m = world->matrix.values;
+        const Vec3 center{m[3],m[7],m[11]};
+        const Vec3 scales{component_scale_x(world->matrix),component_scale_y(world->matrix),component_scale_z(world->matrix)};
+        if (!finite(center) || !finite(scales)) {
+            return Result<std::optional<ColliderRayHit>>::failure(
+                {ErrorCode::invalid_argument, "Ray query encountered a non-finite world transform"});
+        }
+
+        Result<RayHit> candidate = Result<RayHit>::success({});
+        if (collider->shape == ColliderShape::sphere) {
+            const float radius = collider->radius * std::max({scales.x, scales.y, scales.z});
+            candidate = intersect_ray_sphere(ray, Sphere{center, radius}, max_distance);
+        } else {
+            const Vec3 extents{
+                std::abs(m[0])*collider->half_extents.x+std::abs(m[1])*collider->half_extents.y+std::abs(m[2])*collider->half_extents.z,
+                std::abs(m[4])*collider->half_extents.x+std::abs(m[5])*collider->half_extents.y+std::abs(m[6])*collider->half_extents.z,
+                std::abs(m[8])*collider->half_extents.x+std::abs(m[9])*collider->half_extents.y+std::abs(m[10])*collider->half_extents.z};
+            candidate = intersect_ray_aabb(ray, Aabb{subtract(center, extents), add(center, extents)}, max_distance);
+        }
+        if (!candidate) return Result<std::optional<ColliderRayHit>>::failure(candidate.error());
+        if (candidate.value().hit &&
+            (!nearest || candidate.value().distance < nearest->hit.distance)) {
+            nearest = ColliderRayHit{entity, candidate.value(), collider->trigger};
+        }
+    }
+    return Result<std::optional<ColliderRayHit>>::success(nearest);
+}
+
 Result<std::vector<CollisionPair>> CollisionSystem::detect(EntityRegistry& entities) {
     auto transformed = WorldTransformSystem::update(entities);
     if (!transformed) return Result<std::vector<CollisionPair>>::failure(transformed.error());
