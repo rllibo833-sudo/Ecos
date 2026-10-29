@@ -124,19 +124,19 @@ void test_renders_only_resident_streamed_world_cells() {
     std::filesystem::create_directories(root / "assets");
     {
         std::ofstream out(root / "assets/triangle.obj", std::ios::binary);
-        out << "v -0.4 -0.4 0\\nv 0.4 -0.4 0\\nv 0 0.4 0\\nf 1 2 3\\n";
+        out << "v -0.4 -0.4 0\nv 0.4 -0.4 0\nv 0 0.4 0\nf 1 2 3\n";
     }
     {
         std::ofstream out(root / "world.ecworld", std::ios::binary);
-        out << "format_version=1\\nworld_id=render-test\\n"
-               "cell=origin|region|0,0,0|cells/origin.ecell\\n"
-               "cell=east|region|10,0,0|cells/east.ecell\\n";
+        out << "format_version=1\nworld_id=render-test\n"
+               "cell=origin|region|0,0,0|cells/origin.ecell\n"
+               "cell=east|region|10,0,0|cells/east.ecell\n";
     }
     std::filesystem::create_directories(root / "cells");
     for (const auto* cell : {"origin", "east"}) {
         std::ofstream out(root / "cells" / (std::string(cell) + ".ecell"), std::ios::binary);
-        out << "format_version=2\\nscene_id=" << cell
-            << "\\nnode=1|-|Mesh|0,0,0|0,0,0|1,1,1|triangle\\n";
+        out << "format_version=2\nscene_id=" << cell
+            << "\nnode=1|-|Mesh|0,0,0|0,0,0|1,1,1|triangle\n";
     }
 
     auto manifest = load_world_manifest(root / "world.ecworld");
@@ -158,7 +158,7 @@ void test_renders_only_resident_streamed_world_cells() {
                 "registers shared mesh used by streamed cells");
             auto combined = render_world_content_runtime_to_ppm(*runtime, registry, root, 96, 64);
             check(static_cast<bool>(combined), "renders all resident world cells into one frame");
-            if (combined) check(combined.value().starts_with("P6\\n96 64\\n255\\n"),
+            if (combined) check(combined.value().starts_with("P6\n96 64\n255\n"),
                 "streamed world renderer returns a PPM frame");
 
             auto unload = runtime->update({0, 0, 0}, 0, 0);
