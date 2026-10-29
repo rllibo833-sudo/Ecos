@@ -68,3 +68,37 @@ Setiap perubahan pada pemicu, tujuan, konflik, ending, angka wilayah, hukum, ata
 - Dokumen tujuan protagonis dan dokumen cabang akhir mencantumkan empat hasil romantis yang sama; dokumen cabang akhir juga memuat “belum mengaku”. Matriks di atas membedakan empat ending emosional dari jalur bebas yang belum tentu ending formal.
 - Pemicu, tujuan, dan konflik kini memiliki rantai sebab-akibat yang eksplisit. Bentuk kehilangan, waktu, identitas orang yang disukai, adegan pembuka, klimaks, dan mekanisme pemilihan ending tetap terbuka; tidak diisi dengan asumsi.
 - Lore final tidak menyatakan seluruh cerita sudah berupa naskah lengkap atau game sudah terimplementasi. Ia menetapkan baseline konsistensi untuk pengembangan berikutnya.
+
+## 9. Protokol tunggal untuk seluruh lore
+
+Dokumen ini adalah **pengarah kontinuitas**, bukan pengganti atau ringkasan yang menghapus isi dokumen lain. Seluruh dokumen di `lore-final/01` sampai `lore-final/09` adalah bagian dari satu dunia dan tetap menyimpan detail domain masing-masing. Folder `90-audit-dan-keputusan` mencatat pertanyaan, konflik, dan keputusan audit; folder `99-arsip` menyediakan konteks historis, tetapi tidak mengalahkan keputusan aktif yang tercatat.
+
+### Urutan pemeriksaan saat ada perbedaan
+1. Periksa apakah kedua pernyataan memang membahas entitas, waktu, tempat, skala, dan kondisi yang sama.
+2. Bedakan fakta eksplisit, baseline worldbuilding, usulan, hal terbuka, keyakinan karakter, rumor, dan status implementasi.
+3. Bandingkan dokumen domain yang paling langsung membahas topik dengan dokumen kontinuitas ini. Jangan memenangkan satu dokumen hanya karena namanya mengandung kata “final”; periksa isi, status, konteks, dan keputusan pemilik yang tercatat.
+4. Jika konflik belum dapat diputuskan dari sumber, catat kedua versi di folder audit sebagai **belum terselesaikan**. Jangan menebak, menghapus versi, atau menyamarkan kontradiksi dengan kalimat umum.
+5. Jika keputusan dibuat, catat keputusan, alasan, sumber yang terdampak, versi yang digantikan, serta tautan/daftar dokumen yang wajib diselaraskan.
+6. Perbarui semua dokumen terdampak dalam satu rangkaian perubahan. Dokumen domain tetap memuat detail lengkap; indeks hanya menautkan dan menetapkan hubungan lintas-domain.
+7. Periksa ulang rujukan internal, nama dan ejaan, angka dan satuan, kronologi, sebab-akibat, status fakta, serta klaim fitur yang sudah berjalan.
+
+### Rekam konflik minimum
+Setiap temuan audit harus mencatat:
+- **ID/topik konflik**
+- **Dokumen dan bagian yang terlibat**
+- **Pernyataan A dan B** beserta konteksnya
+- **Jenis masalah:** kontradiksi, istilah ambigu, duplikasi, celah informasi, kronologi, skala/satuan, atau klaim implementasi
+- **Status:** terbuka, menunggu keputusan, diputuskan, atau sudah diselaraskan
+- **Keputusan dan alasan** (jika ada)
+- **Dampak lintas-dokumen** dan pemeriksaan yang masih diperlukan
+
+### Aturan istilah dan fakta
+- Istilah penting harus memiliki satu makna yang dapat dikenali; jika maknanya berbeda menurut konteks, jelaskan perbedaan konteks tersebut.
+- Nama karakter, tempat, institusi, teknologi, angka, satuan, dan kronologi harus diperiksa lintas-dokumen.
+- Dua pernyataan yang tampak berbeda tidak otomatis konflik bila membahas waktu, skala, sudut pandang, atau status pengetahuan yang berbeda; konteks itu harus dinyatakan.
+- Ringkasan tidak menggantikan detail sumber. Duplikasi boleh dipertahankan bila membantu pembaca, tetapi harus konsisten dan menunjuk ke acuan terkait.
+- Narator, fakta dunia, keyakinan karakter, rumor masyarakat, legenda, dan hipotesis tidak boleh diperlakukan sebagai kategori yang sama.
+- Empat ending Rezman tetap merupakan cabang emosional yang tercatat; jalur menunda/tidak mengikuti cerita bukan otomatis ending formal kelima. Nama dan identitas Sabrine atau tokoh lain tidak boleh dipaksakan ke peran tertentu sebelum sumber dan keputusan lore menyatakannya.
+
+### Gerbang selesai
+Audit sebuah topik baru dianggap selesai jika konflik telah diputuskan atau sengaja ditandai terbuka, seluruh dokumen terdampak telah diselaraskan, detail sumber tetap utuh, dan klaim faktual/implementasi tidak melampaui bukti. Audit seluruh lore belum boleh disebut tuntas sebelum seluruh dokumen aktif diperiksa; pemeriksaan awal beberapa dokumen bukan sertifikasi untuk seluruh koleksi.
