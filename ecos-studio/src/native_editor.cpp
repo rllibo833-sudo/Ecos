@@ -67,6 +67,7 @@ static bool load_obj(const std::string& path, Mesh& out, std::string& error) {
     for (auto& v:next.vertices) { v.x=(v.x-cx)*2/span;v.y=(v.y-cy)*2/span;v.z=(v.z-cz)*2/span; }
     out=std::move(next); return true;
 }
+static void draw_mesh(const Mesh& mesh);
 static bool load_ecos_scene(const std::filesystem::path& project_root,
                             const std::filesystem::path& scene_path,
                             std::vector<SceneInstance>& instances, std::string& error) {
