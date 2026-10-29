@@ -209,6 +209,42 @@ void test_camera_projection_and_engine_frame_integration() {
         }
         check(geometry,"camera projection rasterizes visible geometry");
     }
+    // A triangle crossing the near plane must be clipped, not discarded.
+    auto near_crossing=import_obj_mesh("v -0.6 -0.5 0\nv 0.6 -0.5 0\nv 0 0.6 2.95\nf 1 2 3\n");
+    check(static_cast<bool>(near_crossing),"imports triangle crossing the camera near plane");
+    if (near_crossing) {
+        auto clipped=render_scene_to_ppm({RenderMeshInstance{&near_crossing.value(),Matrix4::identity()}},vp,96,64);
+        check(static_cast<bool>(clipped),"clips triangle that crosses the near plane");
+        if (clipped) {
+            const auto payload=clipped.value().find("255\n")+4;
+            bool visible=false;
+            for (std::size_t i=payload;i+2<clipped.value().size();i+=3) {
+                const auto r=static_cast<std::uint8_t>(clipped.value()[i]);
+                const auto g=static_cast<std::uint8_t>(clipped.value()[i+1]);
+                const auto b=static_cast<std::uint8_t>(clipped.value()[i+2]);
+                if (r!=18||g!=22||b!=30) { visible=true; break; }
+            }
+            check(visible,"near-plane clipping preserves the visible part of a triangle");
+        }
+    }
+    // A triangle extending beyond the left viewport should retain its visible portion.
+    auto edge_crossing=import_obj_mesh("v -8 -0.5 0\nv 0.4 -0.5 0\nv 0 0.5 0\nf 1 2 3\n");
+    check(static_cast<bool>(edge_crossing),"imports triangle crossing the viewport edge");
+    if (edge_crossing) {
+        auto clipped=render_scene_to_ppm({RenderMeshInstance{&edge_crossing.value(),Matrix4::identity()}},vp,96,64);
+        check(static_cast<bool>(clipped),"clips triangle crossing a viewport edge");
+        if (clipped) {
+            const auto payload=clipped.value().find("255\n")+4;
+            bool visible=false;
+            for (std::size_t i=payload;i+2<clipped.value().size();i+=3) {
+                const auto r=static_cast<std::uint8_t>(clipped.value()[i]);
+                const auto g=static_cast<std::uint8_t>(clipped.value()[i+1]);
+                const auto b=static_cast<std::uint8_t>(clipped.value()[i+2]);
+                if (r!=18||g!=22||b!=30) { visible=true; break; }
+            }
+            check(visible,"viewport clipping preserves visible edge geometry");
+        }
+    }
     auto shifted_view=look_at({1.0F,0.0F,3.0F},{0,0,0},{0,1,0});
     if (shifted_view) {
         auto shifted=render_scene_to_ppm({RenderMeshInstance{&mesh.value(),Matrix4::identity()}},
