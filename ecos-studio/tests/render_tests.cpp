@@ -1,6 +1,9 @@
 #include "ecos_studio/mesh.hpp"
 #include "ecos_studio/render.hpp"
 #include "ecos_studio/asset_registry.hpp"
+#include "ecos_studio/world_content_runtime.hpp"
+#include "ecos_studio/world_manifest.hpp"
+#include "ecos_studio/job_system.hpp"
 
 #include <cstdint>
 #include <iostream>
@@ -113,6 +116,62 @@ void test_scene_graph_resolves_mesh_assets_and_world_transforms() {
     std::filesystem::remove_all(root);
 }
 
+
+void test_renders_only_resident_streamed_world_cells() {
+    using namespace ecos::studio;
+    const auto root = std::filesystem::temp_directory_path() / "ecos-streamed-world-render";
+    std::filesystem::remove_all(root);
+    std::filesystem::create_directories(root / "assets");
+    {
+        std::ofstream out(root / "assets/triangle.obj", std::ios::binary);
+        out << "v -0.4 -0.4 0\\nv 0.4 -0.4 0\\nv 0 0.4 0\\nf 1 2 3\\n";
+    }
+    {
+        std::ofstream out(root / "world.ecworld", std::ios::binary);
+        out << "format_version=1\\nworld_id=render-test\\n"
+               "cell=origin|region|0,0,0|cells/origin.ecell\\n"
+               "cell=east|region|10,0,0|cells/east.ecell\\n";
+    }
+    std::filesystem::create_directories(root / "cells");
+    for (const auto* cell : {"origin", "east"}) {
+        std::ofstream out(root / "cells" / (std::string(cell) + ".ecell"), std::ios::binary);
+        out << "format_version=2\\nscene_id=" << cell
+            << "\\nnode=1|-|Mesh|0,0,0|0,0,0|1,1,1|triangle\\n";
+    }
+
+    auto manifest = load_world_manifest(root / "world.ecworld");
+    check(static_cast<bool>(manifest), "loads streamed-render world manifest");
+    if (manifest) {
+        JobSystem jobs(2);
+        auto created = WorldContentRuntime::create(std::move(manifest.value()), jobs, 2);
+        check(static_cast<bool>(created), "creates streamed-render runtime");
+        if (created) {
+            auto runtime = std::move(created.value());
+            auto started = runtime->update({0, 0, 0}, 10, 10);
+            check(started && started.value().started_loads == 2, "schedules both nearby scene cells");
+            jobs.wait_idle();
+            auto completed = runtime->update({0, 0, 0}, 10, 10);
+            check(completed && completed.value().completed_loads == 2, "loads both streamed scene cells");
+            AssetRegistry registry;
+            check(static_cast<bool>(registry.register_asset(
+                AssetRecord{"triangle", "mesh.obj", "assets/triangle.obj", {}})),
+                "registers shared mesh used by streamed cells");
+            auto combined = render_world_content_runtime_to_ppm(*runtime, registry, root, 96, 64);
+            check(static_cast<bool>(combined), "renders all resident world cells into one frame");
+            if (combined) check(combined.value().starts_with("P6\\n96 64\\n255\\n"),
+                "streamed world renderer returns a PPM frame");
+
+            auto unload = runtime->update({0, 0, 0}, 0, 0);
+            check(unload && unload.value().unloaded_cells == 1, "unloads the distant cell");
+            auto resident_only = render_world_content_runtime_to_ppm(*runtime, registry, root, 96, 64);
+            check(static_cast<bool>(resident_only), "renders the remaining resident cell");
+            if (combined && resident_only) check(combined.value() != resident_only.value(),
+                "unloading a cell removes its geometry from subsequent frames");
+        }
+    }
+    std::filesystem::remove_all(root);
+}
+
 void test_rejects_bad_inputs() {
     using namespace ecos::studio;
     MeshData mesh;
@@ -132,6 +191,7 @@ int main() {
     test_renders_multiple_transformed_instances_in_shared_scene();
     test_rejects_bad_inputs();
     test_scene_graph_resolves_mesh_assets_and_world_transforms();
+    test_renders_only_resident_streamed_world_cells();
     if (failures) { std::cerr << failures << " test(s) failed.\n"; return 1; }
     std::cout << "ECOS Studio CPU renderer tests passed.\n";
     return 0;
