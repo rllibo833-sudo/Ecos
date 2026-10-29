@@ -45,12 +45,12 @@ jobs:
           cell=east|region|1,0,0|cells/east.ecell
           EOF
           cat > /tmp/ecos-studio-world-project/world/cells/origin.ecell <<'EOF'
-          format_version=1
+          format_version=2
           scene_id=origin
           node=1|-|Origin Triangle|0,0,0|0,0,0|1,1,1|world-triangle
           EOF
           cat > /tmp/ecos-studio-world-project/world/cells/east.ecell <<'EOF'
-          format_version=1
+          format_version=2
           scene_id=east
           node=1|-|East Triangle|0,0,0|0,0,0|1,1,1|world-triangle
           EOF
