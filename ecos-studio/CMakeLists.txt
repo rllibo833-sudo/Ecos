@@ -7,7 +7,7 @@ find_package(Threads REQUIRED)
 add_library(ecos_studio_core
     src/core.cpp src/project.cpp src/result.cpp src/platform.cpp
     src/scene.cpp src/scene_editor.cpp src/scene_document.cpp src/camera_controller.cpp src/asset_registry.cpp src/world.cpp src/world_streaming.cpp src/world_manifest.cpp
-    src/mesh.cpp src/render.cpp src/content_hash.cpp src/input.cpp src/time.cpp src/engine_loop.cpp src/camera.cpp src/physics.cpp src/material.cpp src/audio.cpp
+    src/mesh.cpp src/render.cpp src/render_backend.cpp src/content_hash.cpp src/input.cpp src/time.cpp src/engine_loop.cpp src/camera.cpp src/physics.cpp src/material.cpp src/audio.cpp
     src/package_manager.cpp src/asset_importer.cpp src/entity.cpp src/job_system.cpp src/world_content.cpp src/world_content_runtime.cpp src/world_transform.cpp
 )
 target_include_directories(ecos_studio_core PUBLIC include)
@@ -64,6 +64,9 @@ target_link_libraries(ecos-studio-content-hash-tests PRIVATE ecos_studio_core)
 add_executable(ecos-studio-render-tests tests/render_tests.cpp)
 target_link_libraries(ecos-studio-render-tests PRIVATE ecos_studio_core)
 add_test(NAME cpu_reference_renderer COMMAND ecos-studio-render-tests)
+add_executable(ecos-studio-render-backend-tests tests/render_backend_tests.cpp)
+target_link_libraries(ecos-studio-render-backend-tests PRIVATE ecos_studio_core)
+add_test(NAME render_backend_contract COMMAND ecos-studio-render-backend-tests)
 add_test(NAME content_hash_sha256 COMMAND ecos-studio-content-hash-tests)
 add_test(NAME cli_help COMMAND ecos-studio --help)
 add_executable(ecos-studio-input-tests tests/input_tests.cpp)
