@@ -134,7 +134,7 @@ static void clear_gpu_mesh_cache() {
 }
 struct Vertex { float x{}, y{}, z{}; };
 struct Mesh { std::vector<Vertex> vertices; std::vector<std::uint32_t> triangles; };
-struct SceneInstance { std::shared_ptr<Mesh> mesh; ecos::studio::Matrix4 world{ecos::studio::Matrix4::identity()}; std::string name; std::string mesh_asset_id; ecos::studio::NodeId node_id{}; };
+struct SceneInstance { std::shared_ptr<Mesh> mesh; ecos::studio::Matrix4 world{ecos::studio::Matrix4::identity()}; std::string name; std::string mesh_asset_id; ecos::studio::NodeId node_id{}; bool is_lod_proxy{false}; };
 struct AssetLodPolicy {
     float full_detail_distance_m{500.0F};
     int selected_tier{0}; // 0=full detail, 1=detail skipped pending registered proxy mesh
@@ -145,6 +145,7 @@ struct EditorState {
     std::unique_ptr<ecos::studio::WorldContentRuntime> world_runtime;
     std::unordered_map<std::string, std::vector<SceneInstance>> streamed_instances;
     std::unordered_map<std::string, AssetLodPolicy> asset_lod_registry;
+    std::unordered_map<std::string, std::shared_ptr<Mesh>> asset_lod_proxy_meshes;
     float target_x{}, target_z{};
     Mesh mesh;
     std::vector<SceneInstance> scene_instances;
@@ -420,6 +421,14 @@ static bool sphere_in_frustum(const std::array<FrustumPlane,6>& planes, float x,
     for (const auto& p:planes) if (p.x*x+p.y*y+p.z*z+p.d < -radius) return false;
     return true;
 }
+static std::array<float,3> asset_color(const std::string& id) {
+    std::uint32_t hash=2166136261u;
+    for (const unsigned char ch : id) { hash ^= ch; hash *= 16777619u; }
+    const float r=0.32F+static_cast<float>((hash>>0)&0xffu)/255.0F*0.58F;
+    const float g=0.32F+static_cast<float>((hash>>8)&0xffu)/255.0F*0.58F;
+    const float b=0.32F+static_cast<float>((hash>>16)&0xffu)/255.0F*0.58F;
+    return {r,g,b};
+}
 static void draw_scene_instances(const std::vector<SceneInstance>& instances) {
     if (!gpu.ready) return;
     GLfloat view[16]{},projection[16]{},view_projection[16]{};
@@ -462,11 +471,12 @@ static void draw_scene_instances(const std::vector<SceneInstance>& instances) {
     }
     gpu.UseProgram(gpu.program);
     gpu.UniformMatrix4fv(gpu.mvp,1,GL_FALSE,view_projection);
-    gpu.Uniform3f(gpu.albedo,0.28F,0.58F,0.95F);
     if(gpu.instancing_ready) {
         if(!gpu.instance_buffer) gpu.GenBuffers(1,&gpu.instance_buffer);
         for(const auto& batch:batches) {
             if(batch.second.empty()) continue;
+            const auto color=asset_color(batch.second.front()->mesh_asset_id);
+            gpu.Uniform3f(gpu.albedo,color[0],color[1],color[2]);
             auto found=gpu_mesh_cache.find(batch.first);
             if(found==gpu_mesh_cache.end()) { draw_mesh(*batch.second.front()->mesh); continue; }
             std::vector<float> matrices; matrices.reserve(batch.second.size()*16);
@@ -492,6 +502,8 @@ static void draw_scene_instances(const std::vector<SceneInstance>& instances) {
         }
     } else {
         for(const auto& batch:batches) for(const auto* instance:batch.second) {
+            const auto color=asset_color(instance->mesh_asset_id);
+            gpu.Uniform3f(gpu.albedo,color[0],color[1],color[2]);
             GLfloat model[16]{},mvp[16]{};
             for(int row=0;row<4;++row)for(int col=0;col<4;++col) {
                 model[col*4+row]=instance->world.values[static_cast<std::size_t>(row*4+col)];
@@ -693,7 +705,9 @@ int main(int argc,char** argv) {
             draw_grid();
             for (const auto& cell : state.streamed_instances) {
                 std::vector<SceneInstance> lod_visible;
+                std::vector<SceneInstance> lod_proxies;
                 lod_visible.reserve(cell.second.size());
+                lod_proxies.reserve(cell.second.size());
                 for (const auto& instance : cell.second) {
                     const float dx=instance.world.values[3]-state.target_x;
                     const float dy=instance.world.values[7];
@@ -701,9 +715,27 @@ int main(int argc,char** argv) {
                     const float distance=std::sqrt(dx*dx+dy*dy+dz*dz);
                     auto& lod = state.asset_lod_registry[instance.mesh_asset_id];
                     lod.selected_tier = distance > lod.full_detail_distance_m ? 1 : 0;
-                    if (lod.selected_tier == 0) lod_visible.push_back(instance);
+                    if (lod.selected_tier == 0) {
+                        lod_visible.push_back(instance);
+                    } else {
+                        auto& proxy_mesh = state.asset_lod_proxy_meshes[instance.mesh_asset_id];
+                        if (!proxy_mesh) {
+                            proxy_mesh = std::make_shared<Mesh>();
+                            proxy_mesh->vertices={{-1,-1,-1},{1,-1,-1},{1,1,-1},{-1,1,-1},{-1,-1,1},{1,-1,1},{1,1,1},{-1,1,1}};
+                            proxy_mesh->triangles={0,2,1,0,3,2,4,5,6,4,6,7,0,1,5,0,5,4,3,7,6,3,6,2,0,4,7,0,7,3,1,2,6,1,6,5};
+                        }
+                        SceneInstance proxy=instance;
+                        proxy.mesh=proxy_mesh;
+                        proxy.is_lod_proxy=true;
+                        proxy.name=instance.name+" [LOD proxy]";
+                        constexpr float half_extent=12.0F;
+                        for (int row=0;row<3;++row) for (int col=0;col<3;++col)
+                            proxy.world.values[static_cast<std::size_t>(row*4+col)] *= half_extent;
+                        lod_proxies.push_back(std::move(proxy));
+                    }
                 }
                 draw_scene_instances(lod_visible);
+                draw_scene_instances(lod_proxies);
             }
         } else {
             draw_grid();
