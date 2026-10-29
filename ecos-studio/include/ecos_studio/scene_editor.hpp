@@ -29,6 +29,8 @@ public:
  [[nodiscard]] Result<void> rename_node(NodeId node, std::string name);
  [[nodiscard]] Result<void> set_transform(NodeId node, const Transform& transform);
  [[nodiscard]] Result<void> reparent(NodeId node, std::optional<NodeId> parent);
+ [[nodiscard]] Result<void> set_mesh_asset(NodeId node, std::string asset_id);
+ [[nodiscard]] Result<void> set_material_asset(NodeId node, std::string asset_id);
  [[nodiscard]] Result<void> undo();
  [[nodiscard]] Result<void> redo();
  [[nodiscard]] bool can_undo() const noexcept { return !undo_.empty(); }
@@ -37,12 +39,13 @@ public:
  [[nodiscard]] std::size_t redo_count() const noexcept { return redo_.size(); }
  void clear() noexcept;
 private:
- enum class Kind { create, erase, rename, transform, parent };
+ enum class Kind { create, erase, rename, transform, parent, mesh_asset, material_asset };
  struct Command {
   Kind kind{Kind::transform}; NodeId node{0};
   Transform before_transform{}; Transform after_transform{};
   std::optional<NodeId> before_parent; std::optional<NodeId> after_parent;
   std::string before_name; std::string after_name;
+  std::string before_asset_id; std::string after_asset_id;
   std::vector<SceneNode> subtree;
  };
  [[nodiscard]] Result<void> apply(const Command& command, bool forward);

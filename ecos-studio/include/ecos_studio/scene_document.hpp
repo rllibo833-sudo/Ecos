@@ -29,6 +29,8 @@ public:
     [[nodiscard]] Result<void> rename_node(NodeId node, std::string name);
     [[nodiscard]] Result<void> set_transform(NodeId node, const Transform& transform);
     [[nodiscard]] Result<void> reparent(NodeId node, std::optional<NodeId> parent);
+    [[nodiscard]] Result<void> set_mesh_asset(NodeId node, std::string asset_id);
+    [[nodiscard]] Result<void> set_material_asset(NodeId node, std::string asset_id);
     [[nodiscard]] Result<void> undo();
     [[nodiscard]] Result<void> redo();
 

@@ -51,6 +51,54 @@ void test_document_edit_lifecycle() {
     check(document.selection().selected_nodes().empty(), "load clears stale selection");
 }
 
+void test_asset_assignment_edit_lifecycle() {
+    using namespace ecos::studio;
+    SceneDocument document("asset-scene");
+    auto node = document.create_node("StaticMesh");
+    check(node, "creates node for asset assignment");
+    if (!node) return;
+    check(document.set_mesh_asset(node.value(), "environment.rock"),
+          "assigns mesh asset through scene document");
+    check(document.set_material_asset(node.value(), "materials.stone"),
+          "assigns material asset through scene document");
+    const auto* assigned = document.scene().find(node.value());
+    check(assigned && assigned->mesh_asset_id == "environment.rock",
+          "mesh assignment reaches scene graph");
+    check(assigned && assigned->material_asset_id == "materials.stone",
+          "material assignment reaches scene graph");
+    check(document.undo(), "undoes material assignment");
+    check(document.scene().find(node.value())->material_asset_id.empty(),
+          "undo restores previous material reference");
+    check(document.redo(), "redoes material assignment");
+    check(document.scene().find(node.value())->material_asset_id == "materials.stone",
+          "redo restores material reference");
+    check(document.undo(), "undoes material assignment before mesh undo");
+    check(document.undo(), "undoes mesh assignment");
+    check(document.scene().find(node.value())->mesh_asset_id.empty(),
+          "undo restores previous mesh reference");
+    check(document.redo(), "redoes mesh assignment");
+    check(document.set_material_asset(node.value(), "materials.stone"),
+          "reapplies material reference");
+    auto saved = document.save();
+    check(saved, "serializes assigned mesh and material references");
+    if (!saved) return;
+    SceneDocument restored;
+    check(restored.load(saved.value()), "loads serialized asset assignments");
+    const auto nodes = restored.scene().nodes();
+    check(nodes.size() == 1, "restored scene retains assigned node");
+    if (!nodes.empty()) {
+        check(nodes[0].mesh_asset_id == "environment.rock",
+              "serialized scene preserves mesh asset reference");
+        check(nodes[0].material_asset_id == "materials.stone",
+              "serialized scene preserves material asset reference");
+    }
+    const auto revision = document.revision();
+    check(!document.set_material_asset(999999U, "materials.invalid"),
+          "rejects asset assignment to missing node");
+    check(document.revision() == revision,
+          "failed asset assignment does not advance document revision");
+}
+
 void test_document_failure_is_atomic() {
     using namespace ecos::studio;
     SceneDocument document("before");
@@ -80,6 +128,7 @@ void test_document_failure_is_atomic() {
 
 int main() {
     test_document_edit_lifecycle();
+    test_asset_assignment_edit_lifecycle();
     test_document_failure_is_atomic();
     if (failures != 0) {
         std::cerr << failures << " test(s) failed.\n";

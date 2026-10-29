@@ -46,6 +46,18 @@ Result<void> SceneDocument::reparent(NodeId node, std::optional<NodeId> parent) 
     return result;
 }
 
+Result<void> SceneDocument::set_mesh_asset(NodeId node, std::string asset_id) {
+    auto result = history_.set_mesh_asset(node, std::move(asset_id));
+    if (result) mark_changed();
+    return result;
+}
+
+Result<void> SceneDocument::set_material_asset(NodeId node, std::string asset_id) {
+    auto result = history_.set_material_asset(node, std::move(asset_id));
+    if (result) mark_changed();
+    return result;
+}
+
 Result<void> SceneDocument::undo() {
     auto result = history_.undo();
     if (result) {
