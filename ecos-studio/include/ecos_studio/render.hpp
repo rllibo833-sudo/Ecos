@@ -29,6 +29,9 @@ struct RenderMeshInstance {
 [[nodiscard]] Result<std::string> render_scene_to_ppm(
     const std::vector<RenderMeshInstance>& instances,
     std::uint32_t width, std::uint32_t height);
+[[nodiscard]] Result<std::string> render_scene_to_ppm(
+    const std::vector<RenderMeshInstance>& instances, const Matrix4& view_projection,
+    std::uint32_t width, std::uint32_t height);
 
 [[nodiscard]] Result<std::string> render_scene_graph_to_ppm(
     const SceneGraph& scene, const AssetRegistry& assets,
@@ -37,6 +40,10 @@ struct RenderMeshInstance {
 [[nodiscard]] Result<std::string> render_world_content_runtime_to_ppm(
     const WorldContentRuntime& runtime, const AssetRegistry& assets,
     const std::filesystem::path& asset_root,
+    std::uint32_t width, std::uint32_t height);
+[[nodiscard]] Result<std::string> render_world_content_runtime_to_ppm(
+    const WorldContentRuntime& runtime, const AssetRegistry& assets,
+    const std::filesystem::path& asset_root, const Matrix4& view_projection,
     std::uint32_t width, std::uint32_t height);
 
 } // namespace ecos::studio
