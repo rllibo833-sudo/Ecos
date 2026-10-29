@@ -4,6 +4,8 @@
 #include "ecos_studio/world_content_runtime.hpp"
 #include "ecos_studio/world_manifest.hpp"
 #include "ecos_studio/job_system.hpp"
+#include "ecos_studio/camera.hpp"
+#include "ecos_studio/engine_loop.hpp"
 
 #include <cstdint>
 #include <iostream>
@@ -172,6 +174,51 @@ void test_renders_only_resident_streamed_world_cells() {
     std::filesystem::remove_all(root);
 }
 
+
+void test_camera_projection_and_engine_frame_integration() {
+    using namespace ecos::studio;
+    auto mesh=import_obj_mesh("v -0.7 -0.6 0\\nv 0.7 -0.6 0\\nv 0 0.7 0\\nf 1 2 3\\n");
+    check(static_cast<bool>(mesh), "imports triangle for camera renderer");
+    if (!mesh) return;
+    auto view=look_at({0,0,3},{0,0,0},{0,1,0});
+    auto projection=perspective(1.04719755F,1.5F,0.1F,100.0F);
+    check(view&&projection,"creates view and perspective matrices");
+    if (!view||!projection) return;
+    const auto vp=multiply(projection.value(),view.value());
+    auto image=render_scene_to_ppm({RenderMeshInstance{&mesh.value(),Matrix4::identity()}},vp,96,64);
+    check(static_cast<bool>(image),"renders a mesh through the camera view-projection matrix");
+    if (image) {
+        check(image.value().starts_with("P6\\n96 64\\n255\\n"),"camera renderer emits a valid PPM header");
+        const auto offset=image.value().find("255\\n")+4;
+        bool geometry=false;
+        for(std::size_t i=offset;i+2<image.value().size();i+=3) {
+            const auto r=static_cast<std::uint8_t>(image.value()[i]);
+            const auto g=static_cast<std::uint8_t>(image.value()[i+1]);
+            const auto b=static_cast<std::uint8_t>(image.value()[i+2]);
+            if(r!=18||g!=22||b!=30){geometry=true;break;}
+        }
+        check(geometry,"camera projection rasterizes visible geometry");
+    }
+    auto shifted_view=look_at({1.0F,0.0F,3.0F},{0,0,0},{0,1,0});
+    if (shifted_view) {
+        auto shifted=render_scene_to_ppm({RenderMeshInstance{&mesh.value(),Matrix4::identity()}},
+            multiply(projection.value(),shifted_view.value()),96,64);
+        check(shifted&&image&&shifted.value()!=image.value(),
+            "moving the camera changes the rendered frame");
+    }
+    EngineLoop loop;
+    bool callback_rendered=false;
+    FrameCallbacks callbacks;
+    callbacks.render=[&](double,const InputSnapshot&) {
+        auto frame=render_scene_to_ppm({RenderMeshInstance{&mesh.value(),Matrix4::identity()}},
+            vp,96,64);
+        callback_rendered=static_cast<bool>(frame);
+    };
+    const auto report=loop.frame(1.0/60.0,callbacks);
+    check(report.rendered&&callback_rendered,
+        "engine frame render callback produces a camera-projected world frame");
+}
+
 void test_rejects_bad_inputs() {
     using namespace ecos::studio;
     MeshData mesh;
@@ -192,6 +239,7 @@ int main() {
     test_rejects_bad_inputs();
     test_scene_graph_resolves_mesh_assets_and_world_transforms();
     test_renders_only_resident_streamed_world_cells();
+    test_camera_projection_and_engine_frame_integration();
     if (failures) { std::cerr << failures << " test(s) failed.\n"; return 1; }
     std::cout << "ECOS Studio CPU renderer tests passed.\n";
     return 0;
