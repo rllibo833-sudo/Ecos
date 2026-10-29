@@ -109,14 +109,18 @@ void test_mesh_asset_reference_round_trip_and_v1_compatibility() {
     check(serialized && serialized.value().find("format_version=2\n") == 0, "uses scene format v2 when mesh refs exist");
     if (!serialized) return;
     auto loaded = deserialize_scene(serialized.value());
-    check(loaded, "loads scene format v2");
+    check(loaded, "loads scene format v3");
     if (loaded) {
         const auto* node = loaded.value().find(mesh_node.value());
         check(node && node->mesh_asset_id == "crate.mesh", "round trip preserves mesh asset ID");
+        check(node && node->material_asset_id == "painted.mtl", "round trip preserves material asset ID");
     }
     auto legacy = deserialize_scene("format_version=1\nscene_id=legacy\nnode=1|-|Legacy|0,0,0|0,0,0|1,1,1\n");
     check(legacy && legacy.value().find(1)->mesh_asset_id.empty(), "v1 scene remains compatible");
-    check(!graph.set_mesh_asset(mesh_node.value(), "bad|asset"), "rejects delimiters in asset ID");
+    check(!graph.set_mesh_asset(mesh_node.value(), "bad|asset"), "rejects delimiters in mesh asset ID");
+    check(!graph.set_material_asset(mesh_node.value(), "bad|material"), "rejects delimiters in material asset ID");
+    auto v2 = deserialize_scene("format_version=2\\nscene_id=v2\\nnode=1|-|Mesh|0,0,0|0,0,0|1,1,1|crate.mesh\\n");
+    check(v2 && v2.value().find(1)->mesh_asset_id == "crate.mesh" && v2.value().find(1)->material_asset_id.empty(), "v2 scenes remain compatible");
 }
 void test_rejects_bad_documents() {
     using namespace ecos::studio;
