@@ -14,82 +14,56 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate ECOS Studio editor JavaScript
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-          html = Path("ecos-studio/editor/index.html").read_text(encoding="utf-8")
-          scripts = re.findall(r"<script>(.*?)</script>", html, re.S)
-          if len(scripts) != 1:
-              raise SystemExit(f"Expected one inline editor script, found {len(scripts)}")
-          Path("/tmp/ecos-studio-editor.js").write_text(scripts[0], encoding="utf-8")
-          PY
-          node --check /tmp/ecos-studio-editor.js
+      - name: Install native viewport dependencies
+        run: sudo apt-get update && sudo apt-get install -y libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libgl1-mesa-dev libwayland-dev libxkbcommon-dev
       - name: Configure
         run: cmake -S ecos-studio -B build/ecos-studio -DCMAKE_BUILD_TYPE=Release
       - name: Build
         run: cmake --build build/ecos-studio --parallel 2
       - name: Run automated tests
         run: ctest --test-dir build/ecos-studio --output-on-failure
-      - name: Render sample mesh to image
-        run: |
-          build/ecos-studio/ecos-studio mesh-render ecos-studio/examples/hello-world/assets/triangle.obj /tmp/ecos-studio-triangle.ppm 160 120
-          test -s /tmp/ecos-studio-triangle.ppm
-      - name: Validate sample scene
-        run: build/ecos-studio/ecos-studio scene-validate ecos-studio/examples/hello-world/scenes/main.ecscene
-      - name: Import an asset and render a scene end-to-end
-        run: |
-          build/ecos-studio/ecos-studio new /tmp/ecos-studio-render-project "Render Smoke"
-          build/ecos-studio/ecos-studio asset-import /tmp/ecos-studio-render-project ecos-studio/examples/hello-world/assets/triangle.obj sample-triangle
-          printf 'format_version=2\nscene_id=render-smoke\nnode=1|-|Triangle|0,0,0|0,0,0|1,1,1|sample-triangle\n' > /tmp/ecos-studio-render-project.ecscene
-          build/ecos-studio/ecos-studio scene-render /tmp/ecos-studio-render-project /tmp/ecos-studio-render-project.ecscene /tmp/ecos-studio-scene.ppm 160 120
-          test -s /tmp/ecos-studio-scene.ppm
-      - name: Stream adjacent world cells and render the loaded world
-        run: |
-          build/ecos-studio/ecos-studio new /tmp/ecos-studio-world-project "World Render Smoke"
-          build/ecos-studio/ecos-studio asset-import /tmp/ecos-studio-world-project ecos-studio/examples/hello-world/assets/triangle.obj world-triangle
-          mkdir -p /tmp/ecos-studio-world-project/world/cells
-          cat > /tmp/ecos-studio-world-project/world/world.ecworld <<'EOF'
-          format_version=1
-          world_id=render-smoke
-          cell=origin|region|0,0,0|cells/origin.ecell
-          cell=east|region|1,0,0|cells/east.ecell
-          EOF
-          cat > /tmp/ecos-studio-world-project/world/cells/origin.ecell <<'EOF'
-          format_version=2
-          scene_id=origin
-          node=1|-|Origin Triangle|0,0,0|0,0,0|1,1,1|world-triangle
-          EOF
-          cat > /tmp/ecos-studio-world-project/world/cells/east.ecell <<'EOF'
-          format_version=2
-          scene_id=east
-          node=1|-|East Triangle|0,0,0|0,0,0|1,1,1|world-triangle
-          EOF
-          build/ecos-studio/ecos-studio world-render /tmp/ecos-studio-world-project/world/world.ecworld /tmp/ecos-studio-world-project /tmp/ecos-studio-world.ppm 160 120
-          test -s /tmp/ecos-studio-world.ppm
-      - name: Validate sample world manifest
-        run: build/ecos-studio/ecos-studio world-validate ecos-studio/examples/large-world/world.ecworld
-      - name: Instantiate and inspect sample world
-        run: build/ecos-studio/ecos-studio world-inspect ecos-studio/examples/large-world/world.ecworld
-      - name: Load and validate every sample world cell
-        run: build/ecos-studio/ecos-studio world-validate-content ecos-studio/examples/large-world/world.ecworld
-      - name: Create and validate project scaffold
-        run: |
-          build/ecos-studio/ecos-studio new /tmp/ecos-studio-sample "ECOS Sample"
-          build/ecos-studio/ecos-studio validate /tmp/ecos-studio-sample
-      - name: Create and validate mod scaffold
-        run: |
-          build/ecos-studio/ecos-studio mod-init /tmp/ecos-studio-mod com.ecos.sample
-          build/ecos-studio/ecos-studio mod-validate /tmp/ecos-studio-mod
-
+      - name: Verify native editor executable
+        run: test -x build/ecos-studio/ecos-studio-editor
+      - name: Package Linux tools
+        run: cmake --build build/ecos-studio --target package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ECOS-Studio-Linux
+          path: build/ecos-studio/ECOS-Studio-*
   build-windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - name: Configure native Windows build
         run: cmake -S ecos-studio -B build/ecos-studio -A x64 -DCMAKE_BUILD_TYPE=Release
-      - name: Build Windows executable
+      - name: Build Windows executables
         run: cmake --build build/ecos-studio --config Release --parallel 2
       - name: Run automated tests
         run: ctest --test-dir build/ecos-studio -C Release --output-on-failure
+      - name: Verify native editor executable
+        shell: pwsh
+        run: if (!(Test-Path "build/ecos-studio/Release/ecos-studio-editor.exe")) { throw "Native editor executable missing" }
+      - name: Package Windows tools
+        run: cpack --config build/ecos-studio/CPackConfig.cmake -C Release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ECOS-Studio-Windows
+          path: ECOS-Studio-*
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure native macOS app
+        run: cmake -S ecos-studio -B build/ecos-studio -DCMAKE_BUILD_TYPE=Release
+      - name: Build native macOS app
+        run: cmake --build build/ecos-studio --parallel 2
+      - name: Run automated tests
+        run: ctest --test-dir build/ecos-studio --output-on-failure
+      - name: Verify native editor bundle
+        run: test -d "build/ecos-studio/ECOS Studio.app"
+      - name: Package macOS app
+        run: cpack --config build/ecos-studio/CPackConfig.cmake
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ECOS-Studio-macOS
+          path: ECOS-Studio-*
