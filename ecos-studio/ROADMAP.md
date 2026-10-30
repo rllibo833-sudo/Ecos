@@ -52,8 +52,10 @@ Dokumen ini adalah satu-satunya roadmap engineering kanonis untuk branch `ecos-s
 
 ## R5 — Runtime gameplay
 
-- [x] Frame loop, input snapshots, camera math, query collision dasar, software PCM mixer.
-- [ ] Physics simulation dan collision response.
+- [~] Standalone native game executable with a playable sample (ECOS Rally); project-authored game packaging and editor play-in-editor remain open.
+
+- [x] Frame loop, input snapshots, camera math, query collision, ECS rigid-body simulation/contact response, collision events, software PCM mixer.
+- [x] Physics simulation dasar: ECS rigid-body integration, contact resolution, friction, dan collision events.
 - [ ] Audio device backend, decoding, spatial audio.
 - [ ] Sandboxed scripting, gameplay APIs, hot reload, debugging.
 - [ ] Play-in-editor, runtime inspection, profiling dan crash diagnostics.
@@ -63,7 +65,7 @@ Dokumen ini adalah satu-satunya roadmap engineering kanonis untuk branch `ecos-s
 - [x] Data-only mod scaffold dan dependency resolver lokal.
 - [ ] API/format version compatibility, mount rules, conflict reports dan permission model.
 - [ ] Build cook pipeline, reproducible game builds dan target platform validation.
-- [ ] Sample game end-to-end yang dibuat, dijalankan, diuji, dan didokumentasikan memakai toolchain.
+- [~] Standalone ECOS Rally vertical slice: separate executable, fixed-step/input/ECS/AABB gameplay, win/restart loop, packaged target, and Linux virtual-display smoke test. Asset-driven project cooking and editor-to-runtime deployment remain open.
 - [ ] Creator SDK docs dan migration policy yang mengikuti implementasi.
 
 ## Kriteria kemajuan

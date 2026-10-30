@@ -41,6 +41,8 @@ else()
 endif()
 add_executable(ecos-studio src/main.cpp)
 add_executable(ecos-studio-editor src/native_editor.cpp)
+add_executable(ecos-studio-game src/game_main.cpp)
+target_link_libraries(ecos-studio-game PRIVATE ecos_studio_core glfw OpenGL::GL)
 target_link_libraries(ecos-studio-editor PRIVATE ecos_studio_core glfw OpenGL::GL ecos_imgui)
 if(APPLE)
     set_target_properties(ecos-studio-editor PROPERTIES MACOSX_BUNDLE TRUE OUTPUT_NAME "ECOS Studio")
@@ -96,6 +98,15 @@ target_link_libraries(ecos-studio-render-backend-tests PRIVATE ecos_studio_core)
 add_test(NAME render_backend_contract COMMAND ecos-studio-render-backend-tests)
 add_test(NAME content_hash_sha256 COMMAND ecos-studio-content-hash-tests)
 add_test(NAME cli_help COMMAND ecos-studio --help)
+add_test(NAME standalone_game_help COMMAND ecos-studio-game --help)
+if(UNIX AND NOT APPLE)
+    find_program(XVFB_RUN_EXECUTABLE xvfb-run)
+    if(XVFB_RUN_EXECUTABLE)
+        add_test(NAME standalone_game_window_smoke
+            COMMAND ${XVFB_RUN_EXECUTABLE} -a $<TARGET_FILE:ecos-studio-game> --smoke-test)
+        set_tests_properties(standalone_game_window_smoke PROPERTIES TIMEOUT 30)
+    endif()
+endif()
 add_executable(ecos-studio-input-tests tests/input_tests.cpp)
 target_link_libraries(ecos-studio-input-tests PRIVATE ecos_studio_core Threads::Threads)
 add_test(NAME input_events_and_frame_state COMMAND ecos-studio-input-tests)
@@ -143,6 +154,10 @@ install(TARGETS ecos-studio-editor
     BUNDLE DESTINATION .
 )
 install(TARGETS ecos-studio
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    BUNDLE DESTINATION .
+)
+install(TARGETS ecos-studio-game
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     BUNDLE DESTINATION .
 )

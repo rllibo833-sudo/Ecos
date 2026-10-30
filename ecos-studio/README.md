@@ -31,6 +31,15 @@ Dokumen teknis untuk implementasi terakhir: [Native viewport, world streaming, L
 - Query collision AABB/sphere dan software PCM mixer; physics simulation dan audio-device output belum tersedia.
 - CI build dan automated tests lintas Linux, Windows, dan macOS.
 
+### Standalone game runtime — initial playable vertical slice
+
+- A separately launched GLFW/OpenGL game executable, independent of the editor.
+- Fixed-step updates, keyboard input, ECS-backed actors, AABB paddle/ball collisions, scoring, win/restart flow.
+- Linux CI launches the real window/render loop under Xvfb; Windows and macOS compile/package the target.
+- Sample controls and build instructions: [ECOS Rally](examples/standalone-rally/README.md).
+
+This is a first end-to-end runtime slice, not completion of scripting, asset-driven gameplay, PBR rendering, or production physics/audio integration.
+
 ## Roadmap prioritas
 
 1. **Stabilkan jalur viewport dan world LOD:** verifikasi build lintas platform, bounds proxy, shading, culling, dan fallback rendering.
