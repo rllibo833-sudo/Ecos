@@ -28,7 +28,7 @@ Dokumen teknis untuk implementasi terakhir: [Native viewport, world streaming, L
 - CPU reference rasterizer dengan depth buffer dan directional shading untuk output PPM.
 - World-cell lifecycle model dan validator manifest `.ecworld`; jalur viewport streaming adalah lapisan awal, belum sistem world streaming produksi.
 - Camera/projection math, input abstraction, bounded fixed-step frame clock, engine frame loop.
-- Query collision AABB/sphere dan software PCM mixer; physics simulation dan audio-device output belum tersedia.
+- Query collision AABB/sphere, ECS rigid-body integration/contact response, collision events, dan software PCM mixer; audio-device output, advanced constraints, serta spatial audio belum tersedia.
 - CI build dan automated tests lintas Linux, Windows, dan macOS.
 
 ### Standalone game runtime — initial playable vertical slice
@@ -46,7 +46,7 @@ This is a first end-to-end runtime slice, not completion of scripting, asset-dri
 2. **Material dan lighting:** mesh normals yang benar, material assignment, tekstur, pencahayaan, lalu pipeline PBR.
 3. **World runtime produksi:** asynchronous I/O, worker scheduling, cancellation, eviction, floating origin, streaming telemetry, dan budget.
 4. **Workflow editor:** asset browser/import UI, material editor, transform/gizmo workflow, save/recovery, undo/redo yang tahan lama.
-5. **Runtime gameplay:** physics simulation, audio backend, scripting sandbox, play-in-editor, debugging/profiling.
+5. **Runtime gameplay:** advanced physics constraints, audio backend, scripting sandbox, play-in-editor, debugging/profiling.
 6. **Pipeline konten dan mod SDK:** format berversi, validasi, permission model, compatibility checks, dan tooling bagi developer eksternal.
 7. **Skala dan kualitas AAA:** stress tests, profiling target PC, rendering modern, kualitas aset, stabilitas, dan game contoh end-to-end.
 
@@ -70,7 +70,7 @@ Jalankan command sesuai target yang dibangun. Status CI terkini harus diperiksa 
 
 ## Batas yang belum tercapai
 
-Belum ada klaim bahwa ECOS Studio sudah setara Unreal Engine atau mampu memproduksi game AAA secara penuh. Renderer modern dengan PBR/texture pipeline, material editor lengkap, asynchronous world streaming produksi, physics simulation, scripting/gameplay runtime, play-in-editor, profiling suite, dan workflow distribusi matang masih menjadi pekerjaan terbuka.
+Belum ada klaim bahwa ECOS Studio sudah setara Unreal Engine atau mampu memproduksi game AAA secara penuh. Renderer modern dengan PBR/texture pipeline, material editor lengkap, asynchronous world streaming produksi, advanced physics constraints, audio-device output, scripting/hot reload, play-in-editor, profiling suite, dan workflow distribusi matang masih menjadi pekerjaan terbuka.
 
 ## Prinsip engineering
 

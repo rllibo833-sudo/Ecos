@@ -32,7 +32,7 @@ The native viewport has an early GPU path with shared mesh cache, frustum cullin
 | Materials/lighting | Per-asset flat albedo and simple directional shader | Normal correctness, material resources, textures, PBR |
 | World runtime | Cell lifecycle plus viewport-driven initial loading and LOD | Async I/O, scheduling, eviction, floating origin and telemetry |
 | Editor | Native viewport, Outliner/Inspector basics, save and undo/redo | Asset browser, gizmos, material editor and reliable workflows |
-| Physics | AABB/sphere query primitives | Simulation, contacts, constraints and stepping |
+| Physics | AABB/sphere queries, ECS rigid-body integration, contact resolution and collision events | Broadphase/solver scalability, advanced constraints and editor integration |
 | Audio | Software PCM mixer | Device output, decoding and spatial audio |
 | Scripting/gameplay | Not implemented as a complete runtime | Sandboxed API, reload, debugging and play-in-editor |
 | Mod SDK | Data-only bootstrap and dependency resolution | Version compatibility, permissions and runtime mounts |
